@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LoginBackGroundPic.jpg</file>
+        <file>favicon.ico</file>
+        <file>search.png</file>
+        <file>Client.css</file>
+        <file>ListCircul.png</file>
+        <file>RandomPlay.png</file>
+        <file>SingleCycle.png</file>
+        <file>lastMusic.png</file>
+        <file>nextMusic.png</file>
+        <file>openMusic.png</file>
+        <file>stopMusic.png</file>
+        <file>handle.png</file>
+        <file>MusicListPix.png</file>
+        <file>volumeCross.png</file>
+        <file>volumeOpen.png</file>
+        <file>MainBackgroundPic.jpg</file>
+        <file>AppPic.png</file>
+        <file>Clear.png</file>
+        <file>MinWin.png</file>
+        <file>Set.png</file>
+        <file>Skin.png</file>
+    </qresource>
+</RCC>

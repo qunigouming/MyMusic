@@ -1,0 +1,101 @@
+#functionList::item{
+	height: 50px;
+	font-size: 40px;
+}
+
+#switchBtn {
+    font-size: 10px;
+    background-color: transparent;
+    image: url(:/ListCircul.png);
+}
+
+
+/* #lastMusicBtn {
+    background-color: transparent;
+    image: url(:/lastMusic.png);
+} */
+
+#stopMusicBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: rgba(197, 192, 192, 0.3);
+    margin: 5px;
+    border-image: url(:/stopMusic.png);
+}
+
+#stopMusicBtn:hover {
+    background-color: rgba(197, 192, 192, 0.6);
+}
+
+#nextMusicBtn {
+    background-color: transparent;
+    image: url(:/nextMusic.png);
+}
+
+/* .tableWidget {
+    border: 2px solid rgb(26, 207, 235);
+} */
+
+/* 鼠标停在item上 */
+#tableWidget::item:hover {
+    background: #ddd;
+}
+
+/* item选中时 */
+#tableWidget::item:selected {
+    background: rgba(56, 56, 56, 0.301);
+}
+
+/* .switchBtn {
+    border-style: hidden;
+    border-image: url(:/ListCircul.png);
+} */
+
+#lastMusicBtn {
+    border-style: hidden;
+    border-image: url(:/lastMusic.png);
+}
+
+/* #stopMusicBtn {
+    border-style: hidden;
+    border-image: url(:/stopMusic.png);
+} */
+
+#PlayMusicBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: rgba(197, 192, 192, 0.3);
+    margin: 5px;
+    border-image: url(:/openMusic.png);
+}
+
+/* #nextMusicBtn {
+    border-style: hidden;
+    border-image: url(:/nextMusic.png);
+} */
+
+#volumeBtn {
+    border-style: hidden;
+    border-image: url(:/volumeOpen.png);
+}
+
+#NoVolume {
+    border-style: hidden;
+    border-image: url(:/volumeCross.png);
+}
+
+#MusiclistBtn {
+    border-style: hidden;
+    border-image: url(:/MusicListPix.png);
+}
+
+#NoMusicLabel {
+    background-color: #ddd;
+    color: rgb(85, 85, 85);
+    padding-top: 80px;
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(12, 12, 12, 0.7)
+}
