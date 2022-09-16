@@ -12,6 +12,7 @@ MusicList::MusicList(QStringList list,QWidget *parent) :
     ListStatus = LISTPLAYER::LOOP;          //默认循环播放
     AnewCreateList();       //生成变化列表
     MusicIndex = 0;
+    ui->tableWidget->verticalHeader()->hide();
     hide();             //默认隐藏
     ShowMusicList();
     // 不可编辑
@@ -41,7 +42,7 @@ MusicList::~MusicList()
 void MusicList::setMusicList(QStringList list)
 {
     m_MusicList = list;
-    ShowMusicList();
+    ShowMusicList();        //显示列表
 }
 
 //设置音乐下标
@@ -62,7 +63,7 @@ void MusicList::ListModeChange()
     emit PlayStatusChange();
 }
 
-//针对列表播放模式重新创建列表
+//针对列表播放模式重新创建列表并展示列表
 void MusicList::AnewCreateList()
 {
     switch(ListStatus){

@@ -4,16 +4,18 @@
 #include <QMessageBox>
 #include <QRegExpValidator>
 
+
 Login::Login(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Login)
 {
     ui->setupUi(this);
     setObjectName("LoGinWindow");
-    ui->registerBtn->setStyleSheet("QPushButton:hover{color: #0ff;}");
     ui->userLinE->setFocus();
     ui->pwdLinE->setValidator(new QRegExpValidator(QRegExp(("^[\u4E00-\u9FA5A-Za-z0-9_]+$")))); //输入限制，只能输入数字字符下划线
     m_tcp = new TcpSocket(this);
+    m_config = new ConfigFile();
+    connect(m_config,&ConfigFile::ReadSignal,this,&Login::ConfigRead);   //绑定读取信号
     connect(m_tcp,&TcpSocket::RegistJudge,this,&Login::RecvRegist);     //注册信号
     connect(m_tcp,&TcpSocket::LoginJudge,this,&Login::RecvLogin);       //登录信号
 }
@@ -90,8 +92,7 @@ void Login::RecvRegist(REGISTTYPE type)
         }
         case REGISTTYPE::OK:{
             QMessageBox::information(this,"注册","注册成功");
-            this->hide();       //隐藏登录窗口
-            MainWindow::getInstance().ShowWindow(m_name);
+            Login_Successfully();
             break;
         }
         default:
@@ -112,8 +113,7 @@ void Login::RecvLogin(LOGINTYPE type)
             break;
         }
         case LOGINTYPE::OK:{
-            this->hide();
-            MainWindow::getInstance().ShowWindow(m_name);
+            Login_Successfully();
             break;
         }
         default:
@@ -122,10 +122,29 @@ void Login::RecvLogin(LOGINTYPE type)
     }
 }
 
+void Login::ConfigRead()
+{
+    m_name = m_config->m_userName;
+    m_password = m_config->m_pwd;
+    //qDebug() << m_name << m_password;
+    ui->userLinE->setText(m_name);
+    ui->pwdLinE->setText(m_password);
+    ui->remePwdCBox->setChecked(m_config->m_status);
+}
+
 QString Login::strToMd5(QString str)
 {
     QString strMd5;
     QByteArray array = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5);
     strMd5.append(array.toHex());
     return strMd5;
+}
+
+//登录/注册成功处理函数
+void Login::Login_Successfully()
+{
+    this->hide();
+    MainWindow::getInstance().ShowWindow(m_name);
+    //保存用户名密码和状态
+    m_config->WriteFile(m_name,ui->pwdLinE->text(),ui->remePwdCBox->isChecked());
 }

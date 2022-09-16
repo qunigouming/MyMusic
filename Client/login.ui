@@ -78,8 +78,11 @@ background-color: qlineargradient(spread:pad, x1:0.487, y1:0.0113636, x2:0.483, 
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: &quot;slategrey&quot;;
-background-color: &quot;transparent&quot;;</string>
+         <string notr="true">QPushButton {
+	color: &quot;slategrey&quot;;
+	background-color: &quot;transparent&quot;;
+}
+QPushButton:hover{color: #0ff;}</string>
         </property>
         <property name="text">
          <string>注册账号</string>
@@ -142,7 +145,8 @@ background-color: &quot;transparent&quot;;</string>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(255, 163, 14);</string>
+            <string notr="true">color: rgb(255, 163, 14);
+padding-left: 50px;</string>
            </property>
            <property name="text">
             <string>My音乐</string>
@@ -210,6 +214,9 @@ background-color: &quot;transparent&quot;;</string>
            <property name="text">
             <string>用户名:</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -225,6 +232,9 @@ background-color: &quot;transparent&quot;;</string>
            </property>
            <property name="text">
             <string>密码:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -308,14 +318,27 @@ background-color: &quot;transparent&quot;;</string>
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="remePwdCBox">
+           <property name="styleSheet">
+            <string notr="true">QCheckBox {
+	color: rgb(148,148,148);
+}
+QCheckBox:hover { color: &quot;#aaa&quot;; }</string>
+           </property>
            <property name="text">
             <string>记住密码</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="findPwdLab">
+           <property name="styleSheet">
+            <string notr="true">QLabel {
+	color: rgb(148,148,148);
+	margin-right: 10px;
+}
+QLabel:hover { color: &quot;#aaa&quot;; }</string>
+           </property>
            <property name="text">
             <string>找回密码</string>
            </property>
@@ -339,7 +362,7 @@ background-color: &quot;transparent&quot;;</string>
       </item>
       <item>
        <widget class="QWidget" name="widget_4" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="6,2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="8,2">
          <property name="spacing">
           <number>0</number>
          </property>

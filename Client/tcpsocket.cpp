@@ -4,7 +4,7 @@
 
 TcpSocket::TcpSocket(QObject *parent) : QTcpSocket(parent),
     m_port(16888),
-    m_ip("172.18.102.178")
+    m_ip("127.0.0.1")
 {
     connectToHost(QHostAddress(m_ip),m_port);
     connect(this,&TcpSocket::readyRead,this,&TcpSocket::recvmsg);
@@ -56,13 +56,6 @@ void TcpSocket::sendmsg(TcpMSGType type,QString MusicName)
     }
 }
 
-/*
- * 2022年8月26日18点21分
-该函数在读取服务器传来的音乐数据时，有时tcp会读取到未知的一段数据导致程序崩溃，
-该数据经过反复排查，仍然未找到未知数据的来源，猜测是第二段数据和第一段数据被一起发送了
-程序崩溃原因大致找到，是因为未知数据的长度导致文件指针没有被创建，导致程序访问空指针从而崩溃，
-解决方法如下： 判断文件指针是否为空，为空重新创建
-*/
 //收到服务器信息给界面
 void TcpSocket::recvmsg(){
     QByteArray array;
@@ -141,7 +134,7 @@ void TcpSocket::recvmsg(){
 //                filelen = 0;
 //                qDebug() << "文件全部接收完毕";
 //                emit MusicOpenRequest(m_DataMsg);        //通知主窗口读取文件
-//                //m_DataMsg->clear();
+//                //m_DataMsg.clear();
 //            }
 //            break;
 //        }

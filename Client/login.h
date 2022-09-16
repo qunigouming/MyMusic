@@ -4,7 +4,6 @@
 #include <QDialog>
 #include "tcpsocket.h"
 #include "mainwindow.h"
-#include <QCryptographicHash>           //包含MD5算法库
 
 namespace Ui {
 class Login;
@@ -28,12 +27,16 @@ private slots:
     void RecvRegist(REGISTTYPE);
     void RecvLogin(LOGINTYPE);
 
+    void ConfigRead();      //读取到配置文件
+
 private:
     QString strToMd5(QString str);              //将密码转换为加密后的字符串
+    void Login_Successfully();
     Ui::Login *ui;
     QString m_name;             //用户名
     QString m_password;         //密码
     TcpSocket *m_tcp;
+    ConfigFile *m_config;
 };
 
 #endif // LOGIN_H

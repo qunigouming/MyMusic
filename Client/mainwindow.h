@@ -12,6 +12,7 @@
 #include "musiclist.h"
 #include <QMouseEvent>
 #include <QAction>
+#include <QBuffer>
 
 namespace Ui {
 class MainWindow;
@@ -70,6 +71,7 @@ private:
 
     QString m_MusicName;                //当前播放的音乐名称
     QMediaPlayer *m_MusicPlayer;        //音乐播放设备
+    //QBuffer* buff;
     bool SearchBtnflag = true;          //搜索按钮状态
     qint64 m_MusicTimeLen;              //音乐时间长度
     qint64 m_CurrentMusicTime;          //当前音乐时间长度

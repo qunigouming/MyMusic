@@ -58,6 +58,8 @@ void MainWindow::GetMusicList(QStringList list)
 //收到播放回复，准备播放
 void MainWindow::MusicPlayer()
 {
+    //buff->setBuffer(&musicData);
+    //buff->open(QIODevice::ReadOnly);
     ui->stopMusicBtn->setToolTip("播放");
     ui->stopMusicBtn->setStyleSheet("QPushButton {"
                                         "width: 36px;"
@@ -69,7 +71,7 @@ void MainWindow::MusicPlayer()
                                     "}");
     qDebug() << "重新设置播放媒体";
     m_MusicPlayer->setMedia(QUrl::fromLocalFile("/MyMusic/Music.mp3"));
-    //m_MusicPlayer->setMedia(QMediaContent(),&buffer);
+    //m_MusicPlayer->setMedia(QMediaContent(),buff);
 }
 
 //双击列表item发送播放请求
@@ -77,9 +79,8 @@ void MainWindow::MusicOpenQuest(QTableWidgetItem *item)
 {
     int row_index = item->row();        //获取所在列表的行
     m_MusicListW->SetMusicIndex(row_index);
-    m_MusicName = m_MusicList.at(row_index);        //获取音乐名字
+    m_MusicName = m_MusicList.at(row_index);        //获取当前(顺序)列表中被点击的音乐名字
     //播放前先设置播放媒体为空，好让socket修改文件
-//    QMediaContent content;
     m_MusicPlayer->setMedia(QMediaContent());
     qDebug() << "设置播放媒体为空";
     m_tcp->sendmsg(TcpMSGType::MUSICOPEN_REQUEST,m_MusicName);        //发送播放请求
@@ -95,19 +96,17 @@ void MainWindow::initWindow()
         style += QLatin1String(file.readAll());
         this->setStyleSheet(style);
     }else qDebug() << "导入失败";
+    ui->tableWidget->verticalHeader()->setFixedWidth(30);
     m_tcp = Login::getInstance().SendSocket();
     m_tcp->sendmsg(TcpMSGType::MUSICLIST_REQUEST);        //发送请求数据
     ui->volumeBtn->installEventFilter(this);
-    QListWidgetItem *item = new QListWidgetItem;
-    item->setText("音乐大厅");
-    item->setTextAlignment(Qt::AlignCenter);
 
+    //buff = new QBuffer(this);
     //为搜索框右边添加一个小按钮
     searchAction = new QAction(ui->searchLinE);
     searchAction->setIcon(QIcon(":/search.png"));
     searchAction->setCheckable(true);
     ui->searchLinE->addAction(searchAction,QLineEdit::TrailingPosition);
-    ui->functionList->addItem(item);
     connect(searchAction,&QAction::triggered,this,[=](bool checked){
         if (checked){
             QString musicname = ui->searchLinE->text();

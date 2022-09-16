@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>998</width>
-    <height>589</height>
+    <width>1038</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,19 +33,19 @@
     <widget class="QWidget" name="widget_2" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="spacing">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QWidget" name="TitleWidget" native="true">
@@ -313,8 +313,22 @@ color: #fff;</string>
          <item>
           <widget class="QListWidget" name="functionList">
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">border: 0;
+border-right: 2px solid rgb(224,224,224);</string>
            </property>
+           <item>
+            <property name="text">
+             <string>音乐大厅</string>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="textAlignment">
+             <set>AlignCenter</set>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
@@ -346,6 +360,12 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
              </property>
              <item>
               <widget class="QTableWidget" name="tableWidget">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>556</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QHeaderView::section
 {
@@ -371,14 +391,38 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
                 <number>0</number>
                </property>
                <property name="columnCount">
-                <number>1</number>
+                <number>2</number>
                </property>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                <number>750</number>
+               </attribute>
+               <attribute name="horizontalHeaderHighlightSections">
+                <bool>true</bool>
+               </attribute>
                <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>37</number>
+                <number>50</number>
                </attribute>
                <attribute name="verticalHeaderDefaultSectionSize">
                 <number>37</number>
                </attribute>
+               <attribute name="verticalHeaderMinimumSectionSize">
+                <number>30</number>
+               </attribute>
+               <column>
+                <property name="text">
+                 <string>歌曲</string>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Microsoft YaHei</family>
+                  <pointsize>12</pointsize>
+                  <stylestrategy>PreferDefault</stylestrategy>
+                 </font>
+                </property>
+                <property name="textAlignment">
+                 <set>AlignCenter</set>
+                </property>
+               </column>
                <column/>
               </widget>
              </item>
