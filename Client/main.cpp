@@ -1,12 +1,13 @@
 #include "login.h"
 #include <QApplication>
-#include "mainwindow.h"
+#include "registerdia.h"
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Login::getInstance().show();
-    //MainWindow::getInstance().show();
+    //Login::getInstance().show();
+    RegisterDia d;
+    d.show();
     return a.exec();
 }

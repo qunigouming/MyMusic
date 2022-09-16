@@ -260,7 +260,7 @@ padding-left: 50px;</string>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: red</string>
+            <string notr="true">color: red;</string>
            </property>
            <property name="text">
             <string/>

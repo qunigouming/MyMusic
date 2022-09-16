@@ -32,7 +32,8 @@ SOURCES += \
     tcpsocket.cpp \
     mainwindow.cpp \
     volume.cpp \
-    musiclist.cpp
+    musiclist.cpp \
+    registerdia.cpp
 
 HEADERS += \
     protocol.h \
@@ -42,13 +43,15 @@ HEADERS += \
     tcpsocket.h \
     mainwindow.h \
     volume.h \
-    musiclist.h
+    musiclist.h \
+    registerdia.h
 
 FORMS += \
     login.ui \
     mainwindow.ui \
     volume.ui \
-    musiclist.ui
+    musiclist.ui \
+    registerdia.ui
 
 RESOURCES += \
     ../Pic/res.qrc
