@@ -6,6 +6,7 @@ RegisterDia::RegisterDia(QWidget *parent) :
     ui(new Ui::RegisterDia)
 {
     ui->setupUi(this);
+    setWindowFlag(Qt::FramelessWindowHint);
 }
 
 RegisterDia::~RegisterDia()
