@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
-    <height>355</height>
+    <width>520</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
 	border: 1px solid rgb(197, 197, 197);
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,9">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -36,7 +36,7 @@
     <number>17</number>
    </property>
    <item>
-    <widget class="QWidget" name="widget_7" native="true">
+    <widget class="QWidget" name="titleWidget" native="true">
      <property name="styleSheet">
       <string notr="true">border-bottom: 2px solid rgb(157,212,252);</string>
      </property>
@@ -63,10 +63,10 @@
           <number>0</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
@@ -144,9 +144,12 @@ border-style: hidden;</string>
           <widget class="QPushButton" name="exitWinodwBtn">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>0</height>
+             <width>40</width>
+             <height>40</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>关闭</string>
            </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
@@ -155,6 +158,10 @@ border-style: hidden;</string>
             <string notr="true">QPushButton {
 	qproperty-icon: url(:/Clear.png);
 	border-style: hidden;
+}
+
+QPushButton::hover {
+	background-color: rgb(255, 0, 0);
 }</string>
            </property>
            <property name="text">
