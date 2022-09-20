@@ -133,8 +133,14 @@ color: rgb(255, 163, 14);</string>
             <enum>Qt::DefaultContextMenu</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">border: 1px solid rgba(12, 12, 12, 0.5);
-border-radius: 5px;</string>
+            <string notr="true">QLineEdit {
+	border: 1px solid rgba(12, 12, 12, 0.5);
+	border-radius: 9px;
+}
+
+QLineEdit::hover {
+	border: 1px solid rgb(79, 79, 79);
+}</string>
            </property>
            <property name="maxLength">
             <number>30</number>
@@ -201,9 +207,36 @@ color: #fff;</string>
          </item>
          <item>
           <widget class="QWidget" name="widget_11" native="true">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QPushButton" name="pushButton">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>45</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>换色</string>
               </property>
@@ -211,6 +244,10 @@ color: #fff;</string>
                <string notr="true">QPushButton {
 	qproperty-icon: url(:/Skin.png);
 	border-style: hidden;
+}
+
+QPushButton::hover {
+	background-color: rgb(183, 221, 255);
 }</string>
               </property>
               <property name="text">
@@ -220,6 +257,12 @@ color: #fff;</string>
             </item>
             <item>
              <widget class="QPushButton" name="SetBtn">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>45</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>设置</string>
               </property>
@@ -227,6 +270,10 @@ color: #fff;</string>
                <string notr="true">QPushButton{
 	qproperty-icon: url(:/Set.png);
 	border-style: hidden;
+}
+
+QPushButton::hover {
+	background-color: rgb(183, 221, 255);
 }
 </string>
               </property>
@@ -253,9 +300,36 @@ color: #fff;</string>
          </item>
          <item>
           <widget class="QWidget" name="widget_7" native="true">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QPushButton" name="MinWindowBtn">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>45</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>最小化</string>
               </property>
@@ -263,6 +337,10 @@ color: #fff;</string>
                <string notr="true">QPushButton {
 	qproperty-icon: url(:/MinWin.png);
 	border-style: hidden;
+}
+
+QPushButton::hover {
+	background-color: rgb(183, 221, 255);
 }</string>
               </property>
               <property name="text">
@@ -272,6 +350,12 @@ color: #fff;</string>
             </item>
             <item>
              <widget class="QPushButton" name="ClearWindowBtn">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>45</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>关闭</string>
               </property>
@@ -279,6 +363,10 @@ color: #fff;</string>
                <string notr="true">QPushButton {
 	qproperty-icon: url(:/Clear.png);
 	border-style: hidden;
+}
+
+QPushButton::hover {
+	background-color: rgb(183, 221, 255);
 }</string>
               </property>
               <property name="text">
@@ -391,7 +479,7 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
                 <number>0</number>
                </property>
                <property name="columnCount">
-                <number>2</number>
+                <number>1</number>
                </property>
                <attribute name="horizontalHeaderDefaultSectionSize">
                 <number>750</number>
@@ -410,7 +498,7 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
                </attribute>
                <column>
                 <property name="text">
-                 <string>歌曲</string>
+                 <string>歌单</string>
                 </property>
                 <property name="font">
                  <font>
@@ -423,7 +511,6 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
                  <set>AlignCenter</set>
                 </property>
                </column>
-               <column/>
               </widget>
              </item>
             </layout>
@@ -528,6 +615,9 @@ background-color: qlineargradient(spread:pad, x1:0.054, y1:0.0340909, x2:1, y2:1
                 <family>微软雅黑</family>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">padding-left: 20px;</string>
               </property>
               <property name="text">
                <string/>
