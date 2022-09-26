@@ -11,7 +11,7 @@ class TcpSocket : public QTcpSocket
 {
     Q_OBJECT
 public:
-    explicit TcpSocket(QObject *parent = nullptr);
+    explicit TcpSocket(QObject *parent = nullptr, const QString ip = "");
     ~TcpSocket();
     void sendmsg(TcpMSGType type,QString MusicName = "");          //发送消息(向服务器写消息)
     void recvmsg();                         //读服务器消息

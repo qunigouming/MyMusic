@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QRegExpValidator>
+#include <QInputDialog>
 
 
 Login::Login(QWidget *parent) :
@@ -13,7 +14,10 @@ Login::Login(QWidget *parent) :
     setObjectName("LoGinWindow");
     ui->userLinE->setFocus();
     ui->pwdLinE->setValidator(new QRegExpValidator(QRegExp(("^[\u4E00-\u9FA5A-Za-z0-9_]+$")))); //输入限制，只能输入数字字符下划线
-    m_tcp = new TcpSocket(this);
+    QString ip;
+    while (ip.isEmpty())
+        ip = QInputDialog::getText(this,"服务器ip地址","IPV4地址");
+    m_tcp = new TcpSocket(this,ip);
     m_config = new ConfigFile();
     connect(m_config,&ConfigFile::ReadSignal,this,&Login::ConfigRead);   //绑定读取信号
     connect(m_tcp,&TcpSocket::RegistJudge,this,&Login::RecvRegist);     //注册信号

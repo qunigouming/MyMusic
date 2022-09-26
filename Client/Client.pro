@@ -33,7 +33,9 @@ SOURCES += \
     mainwindow.cpp \
     volume.cpp \
     musiclist.cpp \
-    registerdia.cpp
+    registerdia.cpp \
+    set.cpp \
+    tcpworkthread.cpp
 
 HEADERS += \
     protocol.h \
@@ -44,14 +46,17 @@ HEADERS += \
     mainwindow.h \
     volume.h \
     musiclist.h \
-    registerdia.h
+    registerdia.h \
+    set.h \
+    tcpworkthread.h
 
 FORMS += \
     login.ui \
     mainwindow.ui \
     volume.ui \
     musiclist.ui \
-    registerdia.ui
+    registerdia.ui \
+    set.ui
 
 RESOURCES += \
     ../Pic/res.qrc

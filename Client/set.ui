@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Set</class>
+ <widget class="QWidget" name="Set">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>798</width>
+    <height>485</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(241, 241, 241);</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>15</number>
+   </property>
+   <property name="leftMargin">
+    <number>15</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>15</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="SetLabel">
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+       <pointsize>-1</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 23px;
+font-weight: 400;
+margin-left: 13px;</string>
+     </property>
+     <property name="text">
+      <string>设置</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTabWidget {
+	background-color: rgb(241, 241, 241);
+	border-style: none;
+	padding-top: 50px;
+}
+
+QTabBar::tab {
+	font-size: 15px;
+	color: rgb(91, 91, 91);
+	background-color: rgb(241, 241, 241);
+	width: 70px;
+	height: 30px;
+	border-style: none;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+QTabBar::tab::selected {
+	font-size: 20px;
+	color: #000;
+	background-color: rgb(241, 241, 241);
+	font-weight: 400;
+	border-bottom: 3px solid rgb(8, 169, 255);
+}
+
+QTabBar::tab::hover {
+	color: #000;
+	background-color: rgb(241, 241, 241);
+}</string>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>上传</string>
+      </attribute>
+      <widget class="QPushButton" name="UploadBtn">
+       <property name="geometry">
+        <rect>
+         <x>520</x>
+         <y>330</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border: 1px solid rgb(193, 193, 193);
+	border-radius: 14px;
+	color: rgb(91, 91, 91);
+	background-color: rgb(241, 241, 241);
+}
+
+QPushButton::hover {
+	background-color: rgb(204, 204, 204);
+}
+
+QPushButton::pressed {
+	background-color: rgb(176, 176, 176);
+}</string>
+       </property>
+       <property name="text">
+        <string>上传</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Tab 2</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

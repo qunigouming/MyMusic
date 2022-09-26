@@ -2,9 +2,9 @@
 #include <QDebug>
 #include <QDir>
 
-TcpSocket::TcpSocket(QObject *parent) : QTcpSocket(parent),
+TcpSocket::TcpSocket(QObject *parent, const QString ip) : QTcpSocket(parent),
     m_port(16888),
-    m_ip("127.0.0.1")
+    m_ip(ip)
 {
     connectToHost(QHostAddress(m_ip),m_port);
     connect(this,&TcpSocket::readyRead,this,&TcpSocket::recvmsg);
@@ -67,10 +67,7 @@ void TcpSocket::recvmsg(){
         outType >> type >> Msglen;
         qDebug() << "正在获取消息类型和长度";
         qDebug() << "总字节:" << Msglen;
-//        QByteArray rubbish;
-//        outType >> rubbish;
     }
-    //qDebug() << "总字节:" << Msglen;
     switch(type){
         case TcpMSGType::REGIST_REPLY:{
             array = readAll();
@@ -93,7 +90,6 @@ void TcpSocket::recvmsg(){
         case TcpMSGType::MUSICOPEN_REPLY:{
             static uint filelen = 0;           //当前获取的资源大小
             filelen += this->bytesAvailable();
-            //qDebug() << filelen;
             if (filelen == 0 || m_file == nullptr){
                 QDir *dir = new QDir();
                 if (!dir->exists("/MyMusic"))        //没有则创建文件夹
@@ -107,15 +103,12 @@ void TcpSocket::recvmsg(){
                 if (filelen == 0)       //不为0表示发送粘包现象，可以不用直接跳出
                     return;
             }
-            //qDebug() << "剩下的字节数：" << this->bytesAvailable();
             m_file->write(this->readAll());
-            //qDebug() << filelen << m_file->size();
             if (filelen >= Msglen){
                 Msglen = 0;
                 filelen = 0;
-                //qDebug() << filelen;
                 m_file->close();
-                delete m_file;
+                m_file->deleteLater();
                 m_file = nullptr;
                 qDebug() << "文件全部接收完毕";
                 emit MusicOpenRequest();        //通知主窗口读取文件

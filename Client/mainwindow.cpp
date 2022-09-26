@@ -101,7 +101,10 @@ void MainWindow::initWindow()
     m_tcp->sendmsg(TcpMSGType::MUSICLIST_REQUEST);        //发送请求数据
     ui->volumeBtn->installEventFilter(this);
 
-    //buff = new QBuffer(this);
+    setWindow = new Set();
+    setWindow->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    ui->verticalLayout->addWidget(setWindow);
+    //buff = new QBuffer(this);Qt::CustomizeWindowHint
     //为搜索框右边添加一个小按钮
     searchAction = new QAction(ui->searchLinE);
     searchAction->setIcon(QIcon(":/search.png"));

@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QAction>
 #include <QBuffer>
+#include "set.h"
 
 namespace Ui {
 class MainWindow;
@@ -81,6 +82,7 @@ private:
     MusicList *m_MusicListW;            //音乐列表窗口
     int m_volume;                       //当前音量
 
+    Set* setWindow;
     //标题栏
     QPoint dragPosition;
 
