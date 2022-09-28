@@ -1,6 +1,7 @@
 #include "tcpsocket.h"
 #include <QDebug>
 #include <QDir>
+#include <QThread>
 
 TcpSocket::TcpSocket(QObject *parent, const QString ip) : QTcpSocket(parent),
     m_port(16888),
@@ -148,7 +149,7 @@ void TcpSocket::recvmsg(){
 }
 
 //从登录界面获取用户名和密码
-void TcpSocket::getUserPwd(QString &name, QString &pwd)
+void TcpSocket::setUserPwd(QString name, QString pwd)
 {
     m_name = name;
     m_password = pwd;

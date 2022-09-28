@@ -17,7 +17,6 @@ public:
     explicit Login(QWidget *parent = 0);
     ~Login();
     static Login &getInstance();
-    TcpSocket* SendSocket();            //给其他窗口转发套接字
 
 private slots:
     void on_loginBtn_clicked();
@@ -35,7 +34,6 @@ private:
     Ui::Login *ui;
     QString m_name;             //用户名
     QString m_password;         //密码
-    TcpSocket *m_tcp;
     ConfigFile *m_config;
 };
 

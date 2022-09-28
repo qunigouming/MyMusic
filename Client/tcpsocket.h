@@ -13,9 +13,6 @@ class TcpSocket : public QTcpSocket
 public:
     explicit TcpSocket(QObject *parent = nullptr, const QString ip = "");
     ~TcpSocket();
-    void sendmsg(TcpMSGType type,QString MusicName = "");          //发送消息(向服务器写消息)
-    void recvmsg();                         //读服务器消息
-    void getUserPwd(QString &name, QString &pwd);
 
 signals:
     void RegistJudge(REGISTTYPE);           //从服务器接收到注册回复时发送注册信号
@@ -24,6 +21,11 @@ signals:
     void MusicListRequest(QStringList);       //音乐列表请求
 
 public slots:
+    void sendmsg(TcpMSGType type,QString MusicName = "");          //发送消息(向服务器写消息)
+    void setUserPwd(QString name, QString pwd);
+
+private:
+    void recvmsg();                         //读服务器消息
 
 private:
     unsigned short m_port;        //服务器端口

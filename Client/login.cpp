@@ -4,7 +4,9 @@
 #include <QMessageBox>
 #include <QRegExpValidator>
 #include <QInputDialog>
+#include "tcpworkthread.h"
 
+extern TcpWorkThread* tcpworkthread;
 
 Login::Login(QWidget *parent) :
     QWidget(parent),
@@ -17,11 +19,11 @@ Login::Login(QWidget *parent) :
     QString ip;
     while (ip.isEmpty())
         ip = QInputDialog::getText(this,"服务器ip地址","IPV4地址");
-    m_tcp = new TcpSocket(this,ip);
+    tcpworkthread = new TcpWorkThread(ip);
     m_config = new ConfigFile();
     connect(m_config,&ConfigFile::ReadSignal,this,&Login::ConfigRead);   //绑定读取信号
-    connect(m_tcp,&TcpSocket::RegistJudge,this,&Login::RecvRegist);     //注册信号
-    connect(m_tcp,&TcpSocket::LoginJudge,this,&Login::RecvLogin);       //登录信号
+    connect(tcpworkthread,&TcpWorkThread::RegistJudge,this,&Login::RecvRegist);     //注册信号
+    connect(tcpworkthread,&TcpWorkThread::LoginJudge,this,&Login::RecvLogin);       //登录信号
 }
 
 Login::~Login()
@@ -33,11 +35,6 @@ Login &Login::getInstance()
 {
     static Login instance;
     return instance;
-}
-
-TcpSocket *Login::SendSocket()
-{
-    return m_tcp;
 }
 
 //登录按钮
@@ -52,8 +49,8 @@ void Login::on_loginBtn_clicked()
     else{
         m_name = ui->userLinE->text();
         m_password = strToMd5(ui->pwdLinE->text());
-        m_tcp->getUserPwd(m_name,m_password);
-        m_tcp->sendmsg(TcpMSGType::LOGIN_REQUEST);
+        tcpworkthread->setUserPwd(m_name,m_password);
+        tcpworkthread->sendmsg(TcpMSGType::LOGIN_REQUEST);
     }
 }
 
@@ -73,8 +70,8 @@ void Login::on_registerBtn_clicked()
     else{
         m_name = ui->userLinE->text();
         m_password = strToMd5(ui->pwdLinE->text());
-        m_tcp->getUserPwd(m_name,m_password);
-        m_tcp->sendmsg(TcpMSGType::REGIST_REQUEST);
+        tcpworkthread->setUserPwd(m_name,m_password);
+        tcpworkthread->sendmsg(TcpMSGType::REGIST_REQUEST);
     }
 }
 

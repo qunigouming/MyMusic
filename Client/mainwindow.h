@@ -66,7 +66,6 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);      //事件过滤器
 
 private:
-    TcpSocket *m_tcp;
     QString m_UserName;                 //当前窗口的用户名
     QAction *searchAction;             //搜索按钮
 

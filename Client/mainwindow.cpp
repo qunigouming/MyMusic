@@ -5,6 +5,9 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QBuffer>
+#include "tcpworkthread.h"
+
+extern TcpWorkThread* tcpworkthread;
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -19,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initTitle();
     initVolume();
     initMediaPlay();
-    connect(m_tcp,&TcpSocket::MusicListRequest,this,&MainWindow::GetMusicList);
-    connect(m_tcp,&TcpSocket::MusicOpenRequest,this,&MainWindow::MusicPlayer);          //接收到数据执行音乐播放操作
+    connect(tcpworkthread,&TcpWorkThread::MusicListRequest,this,&MainWindow::GetMusicList,Qt::QueuedConnection);
+    connect(tcpworkthread,&TcpWorkThread::MusicOpenRequest,this,&MainWindow::MusicPlayer,Qt::QueuedConnection);          //接收到数据执行音乐播放操作
     //connect(ui->tableWidget,&QTableWidget::doubleClicked,this,&MainWindow::MusicOpenQuest);
     connect(ui->tableWidget,&QTableWidget::itemDoubleClicked,this,&MainWindow::MusicOpenQuest);
     connect(m_MusicPlayer,SIGNAL(error(QMediaPlayer::Error)),this,SLOT(print(QMediaPlayer::Error)));
@@ -83,7 +86,7 @@ void MainWindow::MusicOpenQuest(QTableWidgetItem *item)
     //播放前先设置播放媒体为空，好让socket修改文件
     m_MusicPlayer->setMedia(QMediaContent());
     qDebug() << "设置播放媒体为空";
-    m_tcp->sendmsg(TcpMSGType::MUSICOPEN_REQUEST,m_MusicName);        //发送播放请求
+    tcpworkthread->sendmsg(TcpMSGType::MUSICOPEN_REQUEST,m_MusicName);        //发送播放请求
     ui->musicName->setText(m_MusicName);  //显示当前播放的音乐文本
 }
 
@@ -97,8 +100,7 @@ void MainWindow::initWindow()
         this->setStyleSheet(style);
     }else qDebug() << "导入失败";
     ui->tableWidget->verticalHeader()->setFixedWidth(30);
-    m_tcp = Login::getInstance().SendSocket();
-    m_tcp->sendmsg(TcpMSGType::MUSICLIST_REQUEST);        //发送请求数据
+    tcpworkthread->sendmsg(TcpMSGType::MUSICLIST_REQUEST);        //发送请求数据
     ui->volumeBtn->installEventFilter(this);
 
     setWindow = new Set();
@@ -299,7 +301,7 @@ void MainWindow::GetMusicName(QString MusicName)
 {
     m_MusicName = MusicName;
     m_MusicPlayer->setMedia(QMediaContent());
-    m_tcp->sendmsg(TcpMSGType::MUSICOPEN_REQUEST,m_MusicName);        //发送播放请求
+    tcpworkthread->sendmsg(TcpMSGType::MUSICOPEN_REQUEST,m_MusicName);        //发送播放请求
     ui->musicName->setText(m_MusicName);  //显示当前播放的音乐文本
 }
 
