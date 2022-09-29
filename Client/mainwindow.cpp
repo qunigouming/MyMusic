@@ -73,7 +73,7 @@ void MainWindow::MusicPlayer()
                                         "border-image: url(:/openMusic.png);"
                                     "}");
     qDebug() << "重新设置播放媒体";
-    m_MusicPlayer->setMedia(QUrl::fromLocalFile("/MyMusic/Music.mp3"));
+    m_MusicPlayer->setMedia(QUrl::fromLocalFile("./Config/Music.mp3"));
     //m_MusicPlayer->setMedia(QMediaContent(),buff);
 }
 
@@ -434,4 +434,15 @@ void MainWindow::on_MinWindowBtn_clicked()
 void MainWindow::on_ClearWindowBtn_clicked()
 {
     close();
+}
+
+void MainWindow::on_SetBtn_clicked()
+{
+    ui->functionWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_functionList_clicked(const QModelIndex &index)
+{
+    int row = index.row();
+    if (row == 0)   ui->functionWidget->setCurrentIndex(0);
 }

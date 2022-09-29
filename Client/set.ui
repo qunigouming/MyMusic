@@ -36,7 +36,6 @@
     <widget class="QLabel" name="SetLabel">
      <property name="font">
       <font>
-       <family>微软雅黑</family>
        <pointsize>-1</pointsize>
        <weight>50</weight>
        <bold>false</bold>

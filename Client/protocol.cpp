@@ -50,7 +50,7 @@ QString ConfigFile::toXOREncryptUncrypt(QString str, const QChar key)
 void ConfigFile::initDB()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/MyMusic/config.db");
+    db.setDatabaseName("./Config/config.db");
     if (!db.open())
         qDebug() << "Error: databases is not open" << db.lastError();
     QSqlQuery query;

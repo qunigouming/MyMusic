@@ -401,8 +401,27 @@ QPushButton::hover {
          <item>
           <widget class="QListWidget" name="functionList">
            <property name="styleSheet">
-            <string notr="true">border: 0;
-border-right: 2px solid rgb(224,224,224);</string>
+            <string notr="true">QListWidget {
+	border-style: none;
+	outline-style: none;
+	border-right: 2px solid rgb(224,224,224);
+}
+
+QListWidget::item {
+	font-weight: 300;
+	color: rgb(91, 91, 91);
+}
+
+QListWidget:item::selected {
+	font-weight: 500;
+	font-size: 13px;
+	color: #000;
+	background-color: rgb(246, 246, 246);
+}
+
+QListWidget:item::hover {
+	background-color: rgb(246, 246, 246);
+}</string>
            </property>
            <item>
             <property name="text">
@@ -410,7 +429,7 @@ border-right: 2px solid rgb(224,224,224);</string>
             </property>
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="textAlignment">
@@ -459,6 +478,10 @@ border-right: 2px solid rgb(224,224,224);</string>
     background: white;
     border: none;
 	padding-top: 5px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background:	rgba(255,255,255,10%);
 }</string>
                </property>
                <property name="frameShape">

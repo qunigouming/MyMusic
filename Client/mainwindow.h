@@ -62,6 +62,10 @@ private slots:
 
     void on_ClearWindowBtn_clicked();
 
+    void on_SetBtn_clicked();
+
+    void on_functionList_clicked(const QModelIndex &index);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);      //事件过滤器
 

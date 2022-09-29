@@ -1,6 +1,5 @@
 #include "tcpsocket.h"
 #include <QDebug>
-#include <QDir>
 #include <QThread>
 
 TcpSocket::TcpSocket(QObject *parent, const QString ip) : QTcpSocket(parent),
@@ -92,12 +91,7 @@ void TcpSocket::recvmsg(){
             static uint filelen = 0;           //当前获取的资源大小
             filelen += this->bytesAvailable();
             if (filelen == 0 || m_file == nullptr){
-                QDir *dir = new QDir();
-                if (!dir->exists("/MyMusic"))        //没有则创建文件夹
-                    dir->mkdir("/MyMusic");
-                if (dir != nullptr)
-                    delete dir;
-                m_file = new QFile("/MyMusic/Music.mp3");
+                m_file = new QFile("./Config/Music.mp3");
                 if (!m_file->open(QIODevice::WriteOnly | QIODevice::Truncate))
                     qDebug() << "文件打开失败";
                 else qDebug() << "打开文件";

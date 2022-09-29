@@ -3,6 +3,8 @@
 #include "registerdia.h"
 #include "tcpworkthread.h"
 #include <QDebug>
+#include <QDir>
+#include <QMessageBox>
 
 TcpWorkThread* tcpworkthread;
 
@@ -13,6 +15,12 @@ int main(int argc, char *argv[])
     qRegisterMetaType<TcpMSGType>("TcpMSGType");
     qRegisterMetaType<LOGINTYPE>("LOGINTYPE");
     qRegisterMetaType<REGISTTYPE>("REGISTTYPE");
+    //创建文件夹
+    QDir *dir = new QDir();
+    if (!dir->exists("./Config"))       //没有则创建文件夹
+        dir->mkdir("./Config");
+    if (dir != nullptr)
+        delete dir;
     Login::getInstance().show();
 //    RegisterDia d;
 //    d.show();
