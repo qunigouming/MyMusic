@@ -1,0 +1,22 @@
+create definer='root'@'localhost' procedure 'reg_user'(in 'new_name' varchar(255), in 'new_email' varchar(255), in 'new_pwd' varchar(255), out 'result' int)
+begin
+	declare exit handler for sqlexception
+	begin
+		rollback;
+		set result = -1;
+	end;
+	start transaction;
+	if exists(select 1 from 'user' where 'name' == new_name) then
+		set result = -2; --用户名存在
+		commit;
+	else
+		if exists(select 1 from 'user' where 'email' == new_email) then
+			set result = -3;
+			commit;
+		else
+			insert into 'user' ('name', 'email', 'pwd') values (new_name, new_email, new_pwd);
+			set result = 0;
+			commit;
+		end if;
+	end if;
+end

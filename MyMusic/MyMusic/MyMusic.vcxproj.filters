@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts</Extensions>
+    </Filter>
+    <Filter Include="tableview">
+      <UniqueIdentifier>{c5eb6608-2b68-406e-bc7a-91da5a41c55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tableview\Header Files">
+      <UniqueIdentifier>{13460178-53ce-41e0-a63a-811c8f775fed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tableview\Source Files">
+      <UniqueIdentifier>{a0613b8d-9d8d-4ab9-b7aa-f9cc6a914692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{f51ce29f-73d4-4228-9249-bfcc289ebf30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool\MetaTag">
+      <UniqueIdentifier>{c77f4ccd-ac89-46ea-929d-75900d0ddb88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool\ReadFile">
+      <UniqueIdentifier>{0b38baf0-21da-4b5f-afb7-7f611a090ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FFPlayer">
+      <UniqueIdentifier>{07e5596b-ec0c-40ac-a5e2-25f4d25bcff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FFPlayer\Header Files">
+      <UniqueIdentifier>{2d244291-88b0-4a48-87be-40259508b04f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FFPlayer\Source Files">
+      <UniqueIdentifier>{98750bbd-dabf-4962-b145-f98714dcc77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool\Common">
+      <UniqueIdentifier>{ab4d2d75-5e4c-433d-b515-37145bfbb14f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="colorblocklabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="complexionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="funclistwidgetitem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="httpmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="logindialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="registerdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="selectlocmusic_dlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tcpmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timerbutton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="windowmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\tableview.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\tableheaderview.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\sortproxymodel.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\songdelegate.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\tableviewmodel.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\playitemwidget.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview\elidedlabel.cpp">
+      <Filter>tableview\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaTag.cpp">
+      <Filter>Tool\MetaTag</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\directoryscannertask.cpp">
+      <Filter>Tool\ReadFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\FileInspectorImp.cpp">
+      <Filter>Tool\ReadFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\filescannerworker.cpp">
+      <Filter>Tool\ReadFile</Filter>
+    </ClCompile>
+    <ClCompile Include="RotationLabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFPlayer\AudioDecoder.cpp">
+      <Filter>FFPlayer\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFPlayer\DecoderThreadManager.cpp">
+      <Filter>FFPlayer\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFPlayer\FFPlayer.cpp">
+      <Filter>FFPlayer\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFPlayer\VideoDecoder.cpp">
+      <Filter>FFPlayer\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BottomPlayWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="colorblocklabel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="complexionwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="funclistwidgetitem.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="httpmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="logindialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="registerdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="selectlocmusic_dlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tcpmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="timerbutton.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="windowmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\songdelegate.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\sortproxymodel.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\tableview.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\tableheaderview.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\tableviewmodel.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\playitemwidget.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tableview\elidedlabel.h">
+      <Filter>tableview\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\directoryscannertask.h">
+      <Filter>Tool\ReadFile</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\FileInspectorImp.h">
+      <Filter>Tool\ReadFile</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\FileInspectorInterface.h">
+      <Filter>Tool\ReadFile</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\filescannerworker.h">
+      <Filter>Tool\ReadFile</Filter>
+    </QtMoc>
+    <QtMoc Include="FFPlayer\AudioDecoder.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="FFPlayer\DecoderInterface.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="FFPlayer\DecoderThreadManager.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="FFPlayer\FFPlayer.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="BottomPlayWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ProgressBar.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="complexionwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="logindialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="registerdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="selectlocmusic_dlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="BottomPlayWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaTag.h">
+      <Filter>Tool\MetaTag</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\FileInfo.h">
+      <Filter>Tool\ReadFile</Filter>
+    </ClInclude>
+    <ClInclude Include="RotationLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\blockqueue.h">
+      <Filter>Tool\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FFPlayer\VideoDecoder.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="source.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="tableview\res.qrc">
+      <Filter>tableview</Filter>
+    </QtRcc>
+  </ItemGroup>
+</Project>

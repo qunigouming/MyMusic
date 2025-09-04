@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>complexionWidget</class>
+ <widget class="QWidget" name="complexionWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>215</width>
+    <height>182</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#complexionWidget {
+	border: none;
+	border-radius: 30px;
+	background-color: #94cfe8;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="2,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ColorBlockLabel" name="color_lab_1">
+        <property name="styleSheet">
+         <string notr="true">#color_lab_1 {
+	border-radius: 15px;
+	background-color: #FFFFFF;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="color_namelab_1">
+        <property name="text">
+         <string>纯白</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QWidget" name="widget_2" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ColorBlockLabel" name="color_lab_2">
+        <property name="styleSheet">
+         <string notr="true">#color_lab_2 {
+	border-radius: 15px;
+	background-color: #99d4ed;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="color_namelab_2">
+        <property name="text">
+         <string>经典色</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QWidget" name="widget_3" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ColorBlockLabel" name="color_lab_3">
+        <property name="styleSheet">
+         <string notr="true">#color_lab_3 {
+	border-radius: 15px;
+	background-color: #000000;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="color_namelab_3">
+        <property name="text">
+         <string>纯黑</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QWidget" name="widget_4" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ColorBlockLabel" name="color_lab_4">
+        <property name="styleSheet">
+         <string notr="true">#color_lab_4 {
+	border-radius: 15px;
+	background-color: qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(237, 0, 91, 255), stop:0.0349908 rgba(253, 61, 38, 255), stop:0.166 rgba(248, 158, 34, 255), stop:0.333 rgba(249, 255, 55, 255), stop:0.5 rgba(87, 255, 12, 255), stop:0.666 rgba(34, 255, 146, 255), stop:0.833 rgba(46, 255, 255, 255), stop:0.961326 rgba(128, 63, 255, 255), stop:1 rgba(229, 26, 134, 255));
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="color_namelab_4">
+        <property name="text">
+         <string>自定义颜色</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorBlockLabel</class>
+   <extends>QLabel</extends>
+   <header>colorblocklabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

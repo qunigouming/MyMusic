@@ -1,0 +1,12 @@
+.vs/
+
+build/
+
+x64/
+
+# test file
+Client/
+
+*.user
+
+*.mdj

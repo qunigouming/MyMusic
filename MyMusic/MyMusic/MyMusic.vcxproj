@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3A86D277-338C-44DC-A829-3A255AA643AF}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
+    <QtInstall>msvc2019</QtInstall>
+    <QtModules>core;gui;network;widgets;opengl;multimedia</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
+    <QtInstall>msvc2019</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IncludePath>D:\Gitdown\vcpkg\installed\x64-windows\include;D:\ffmpeg-master-latest-win64-gpl-shared\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ffmpeg-master-latest-win64-gpl-shared\lib;D:\Gitdown\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ClCompile>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="BottomPlayWidget.cpp" />
+    <ClCompile Include="colorblocklabel.cpp" />
+    <ClCompile Include="complexionwidget.cpp" />
+    <ClCompile Include="FFPlayer\AudioDecoder.cpp" />
+    <ClCompile Include="FFPlayer\DecoderThreadManager.cpp" />
+    <ClCompile Include="FFPlayer\FFPlayer.cpp" />
+    <ClCompile Include="FFPlayer\VideoDecoder.cpp" />
+    <ClCompile Include="funclistwidgetitem.cpp" />
+    <ClCompile Include="global.cpp" />
+    <ClCompile Include="httpmanager.cpp" />
+    <ClCompile Include="logindialog.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="MetaTag.cpp" />
+    <ClCompile Include="ProgressBar.cpp" />
+    <ClCompile Include="registerdialog.cpp" />
+    <ClCompile Include="RotationLabel.cpp" />
+    <ClCompile Include="selectlocmusic_dlg.cpp" />
+    <ClCompile Include="tableview\elidedlabel.cpp" />
+    <ClCompile Include="tableview\playitemwidget.cpp" />
+    <ClCompile Include="tableview\songdelegate.cpp" />
+    <ClCompile Include="tableview\sortproxymodel.cpp" />
+    <ClCompile Include="tableview\tableheaderview.cpp" />
+    <ClCompile Include="tableview\tableview.cpp" />
+    <ClCompile Include="tableview\tableviewmodel.cpp" />
+    <ClCompile Include="tcpmanager.cpp" />
+    <ClCompile Include="timerbutton.cpp" />
+    <ClCompile Include="Tool\directoryscannertask.cpp" />
+    <ClCompile Include="Tool\FileInspectorImp.cpp" />
+    <ClCompile Include="Tool\filescannerworker.cpp" />
+    <ClCompile Include="windowmanager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="colorblocklabel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="complexionwidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="BottomPlayWidget.ui" />
+    <QtUic Include="complexionwidget.ui" />
+    <QtUic Include="logindialog.ui" />
+    <QtUic Include="mainwindow.ui" />
+    <QtUic Include="registerdialog.ui" />
+    <QtUic Include="selectlocmusic_dlg.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="funclistwidgetitem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="BottomPlayWidget.h" />
+    <ClInclude Include="Common\blockqueue.h" />
+    <QtMoc Include="FFPlayer\AudioDecoder.h" />
+    <QtMoc Include="FFPlayer\DecoderInterface.h" />
+    <QtMoc Include="FFPlayer\DecoderThreadManager.h" />
+    <QtMoc Include="FFPlayer\FFPlayer.h" />
+    <ClInclude Include="FFPlayer\VideoDecoder.h" />
+    <ClInclude Include="global.h" />
+    <ClInclude Include="MetaTag.h" />
+    <QtMoc Include="ProgressBar.h" />
+    <ClInclude Include="RotationLabel.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Tool\FileInfo.h" />
+    <QtMoc Include="Tool\filescannerworker.h" />
+    <QtMoc Include="Tool\FileInspectorInterface.h" />
+    <QtMoc Include="Tool\FileInspectorImp.h" />
+    <QtMoc Include="Tool\directoryscannertask.h" />
+    <QtMoc Include="tableview\tableviewmodel.h" />
+    <QtMoc Include="tableview\tableview.h" />
+    <QtMoc Include="tableview\tableheaderview.h" />
+    <QtMoc Include="tableview\sortproxymodel.h" />
+    <QtMoc Include="tableview\songdelegate.h" />
+    <QtMoc Include="tableview\playitemwidget.h" />
+    <QtMoc Include="tableview\elidedlabel.h" />
+    <QtMoc Include="windowmanager.h" />
+    <QtMoc Include="timerbutton.h" />
+    <QtMoc Include="tcpmanager.h" />
+    <QtMoc Include="selectlocmusic_dlg.h" />
+    <QtMoc Include="registerdialog.h" />
+    <QtMoc Include="mainwindow.h" />
+    <QtMoc Include="logindialog.h" />
+    <QtMoc Include="httpmanager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="source.qrc" />
+    <QtRcc Include="tableview\res.qrc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package message;
+
+message LoginReq {
+	int32 uid = 1;
+	string token = 2;
+}
+
+message LoginRsp {
+	int32 error = 1;
+}
+
+service StatusService {
+	rpc Login (LoginReq) returns (LoginRsp) {}
+}

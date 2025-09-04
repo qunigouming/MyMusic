@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>source/font/iconfont.ttf</file>
+        <file>source/icon/disLike.png</file>
+        <file>source/icon/like.png</file>
+        <file>source/icon/vip.png</file>
+        <file>source/icon/08.jpg</file>
+    </qresource>
+</RCC>

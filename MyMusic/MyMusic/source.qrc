@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>source/image/AppPic.png</file>
+        <file>source/image/defaulthead.png</file>
+        <file>source/font/windowfont.ttf</file>
+        <file>source/font/otherfont.ttf</file>
+        <file>config.ini</file>
+        <file>source/image/close.png</file>
+        <file>source/image/tipvip.png</file>
+        <file>source/image/dislike.png</file>
+        <file>source/image/like.png</file>
+        <file>source/image/default_album.png</file>
+    </qresource>
+</RCC>
