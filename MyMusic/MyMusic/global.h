@@ -54,8 +54,7 @@ struct ServerInfo {
 enum class PlayModel {
     LISTLOOP = 0,
     SINGLELOOP,
-    RANDOM,
-    SEQUENCE
+    RANDOM
 };
 
 #endif // GLOBAL_H

@@ -40,6 +40,7 @@ void AudioDecoder::free()
 {
     qDebug() << "AudioDecoder::~AudioDecoder()";
     _stream = nullptr;
+    _clock = 0;
     _pktQueue.clear([](AVPacket& pkt) { av_packet_unref(&pkt); });
     if (_swrCtx) {
         swr_free(&_swrCtx);
@@ -185,7 +186,7 @@ void AudioDecoder::start()
         if (pkt.pts != AV_NOPTS_VALUE) {
             _clock = av_q2d(_stream->time_base) * pkt.pts;
             // qDebug() << "audio clock:" << static_cast<int>(std::floor(_clock));
-            emit DecoderInterface::clockChanged(static_cast<int>(std::floor(_clock)));
+            emit DecoderInterface::clockChanged(_clock);
         }
 
         int ret = avcodec_send_packet(_decodecCtx, &pkt);
@@ -208,7 +209,7 @@ void AudioDecoder::start()
         if (_state == PlayerState::STOP)    break;
         _audioDevice->write((char*)_outFrame->data[0], size);
     }
-
+    qDebug() << "AudioDecoder::start() end";
     free();
-    emit decodingFinished();
+    emit DecoderInterface::decodingFinished();
 }

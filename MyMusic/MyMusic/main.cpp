@@ -13,7 +13,7 @@
 
 int main(int argc, char *argv[])
 {
-    qSetMessagePattern("[ %{time [hh:mm:ss]} %{file}: %{line} %{threadid} ] %{message}");
+    qSetMessagePattern("[ %{time [hh:mm:ss:zzz]} %{file}: %{line} %{threadid} ] %{message}");
     QApplication a(argc, argv);
 
     //加载字体文件

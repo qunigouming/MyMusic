@@ -40,9 +40,10 @@ private slots:
 
 private:
     void initBaseFuncLWg();     //initialize Base function ListWidget
-    void scanFileToTableView();
+    void scanFileToTableView(QStringList list);
     float calculateLuminace(const QColor &color);
     void calculateColors(const QColor& showcaseColor, QColor& listColor, QColor& uiColor, QColor& bottomColor);
+    void readLocalMusicConfig();
 
 private:
     Ui::MainWindow *ui;
@@ -50,7 +51,6 @@ private:
     SelectLocMusic_Dlg* selectlocmusic_dlg = nullptr;
     TableView* _am_view = nullptr;
     TableView* _lm_view = nullptr;
-    QStringList _scan_dir_paths;
 };
 
 #endif // MAINWINDOW_H

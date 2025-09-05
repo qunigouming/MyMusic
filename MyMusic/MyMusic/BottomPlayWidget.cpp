@@ -58,8 +58,12 @@ void BottomPlayWidget::playSigConnect()
     });
 
     // 监听播放器时钟信号
-    connect(_player, &FFPlayer::clockChanged, this, [this](int clock) {
-        ui->play_progressbar->setValue(clock);
+    connect(_player, &FFPlayer::clockChanged, this, [this](double clock) {
+        int s = static_cast<int>(std::floor(clock));
+        ui->play_progressbar->setValue(s);
+        if (s == _duration) {
+            emit _player->stop();
+        }
     });
 
     connect(_player, &FFPlayer::stateChanged, this, [this](PlayerState state) {
@@ -80,11 +84,11 @@ void BottomPlayWidget::playSigConnect()
     connect(_player, &FFPlayer::PlayFinished, this, [this] {
         // 当收到信号，FFPlayer已经清理完所有资源了，不用再调用stop清理一遍
         qDebug() << "播放完成";
-        if (_playModel == PlayModel::LISTLOOP) {
-            emit playNextSong();
-        }
-        else if (_playModel == PlayModel::SINGLELOOP) {
+        if (_playModel == PlayModel::SINGLELOOP) {
             _player->play(_current_SongPath);
+        }
+        else {
+            emit playNextSong(_playModel);
         }
         // ui->stopandplay_btn->setText(QChar(0xe00d));
     });
@@ -95,21 +99,22 @@ void BottomPlayWidget::uiSigConnect()
     connect(ui->play_model_btn, &QPushButton::clicked, this, [this] {
         switch (_playModel) {
             case PlayModel::LISTLOOP:
+                ui->play_model_btn->setText(QChar(0xe00c));
                 _playModel = PlayModel::SINGLELOOP;
                 break;
             case PlayModel::SINGLELOOP:
+                ui->play_model_btn->setText(QChar(0xe00a));
                 _playModel = PlayModel::RANDOM;
                 break;
             case PlayModel::RANDOM:
-                _playModel = PlayModel::SEQUENCE;
-                break;
-            case PlayModel::SEQUENCE:
+                ui->play_model_btn->setText(QChar(0xe00b));
                 _playModel = PlayModel::LISTLOOP;
                 break;
         }
+        emit playModelChanged(_playModel);
     });
     connect(ui->last_btn, &QPushButton::clicked, this, [this] {
-        emit playLastSong();
+        emit playLastSong(_playModel);
     });
 
     connect(ui->stopandplay_btn, &QPushButton::clicked, this, [this] {
@@ -123,7 +128,7 @@ void BottomPlayWidget::uiSigConnect()
     });
 
     connect(ui->next_btn, &QPushButton::clicked, this, [this] {
-        emit playNextSong();
+        emit playNextSong(_playModel);
     });
 
     connect(ui->play_progressbar, &ProgressBar::sliderReleased, _player, [this] {

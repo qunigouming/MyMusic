@@ -278,6 +278,9 @@
     <ClInclude Include="FFPlayer\VideoDecoder.h">
       <Filter>FFPlayer\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlayStatePrivate.h">
+      <Filter>FFPlayer\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="source.qrc">

@@ -17,7 +17,7 @@ FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 		}
 		emit initFinished();
 	});
-	connect(_audioDecoderMgr.get(), &DecoderThreadManager::clockChanged, this, [this](int clock) {
+	connect(_audioDecoderMgr.get(), &DecoderThreadManager::clockChanged, this, [this](double clock) {
 		emit clockChanged(clock);
 	});
 }
@@ -119,14 +119,18 @@ void FFPlayer::readFile()
 	ret = avformat_find_stream_info(_formatCtx, nullptr);
     END(avformat_find_stream_info);
 	if (_audioDecoderMgr->init(_formatCtx)) {
-		_audioDecoderMgr->start();
+		if (!_audioDecoderMgr->start()) {
+			qDebug() << "Audio decoder start failed";
+		}
 	} else {
 		qDebug() << "Audio decoder initialization failed";
 		return;
 	}
+	qDebug() << "into event loop";
 	QEventLoop loop;
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::initFinished, &loop, &QEventLoop::quit);
 	loop.exec();
+	qDebug() << "out of event loop";
 	// emit initFinished();
 	int streamIndex = _audioDecoderMgr->decoder() ? _audioDecoderMgr->decoder()->getStreamIndex() : -1;
 	qDebug() << "streamIndex" << streamIndex;

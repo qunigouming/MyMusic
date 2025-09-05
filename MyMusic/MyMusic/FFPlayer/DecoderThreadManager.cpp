@@ -15,7 +15,7 @@ bool DecoderThreadManager::init(AVFormatContext* fmtCtx)
     if (!fmtCtx || !_decoderFactory)    return false;
 
     _decoder.reset(_decoderFactory(fmtCtx, this));
-
+    qDebug() << "DecoderThreadManager::init";
     connect(_decoder.get(), &DecoderInterface::initFinished, this, &DecoderThreadManager::initFinished, Qt::QueuedConnection);
     connect(_decoder.get(), &DecoderInterface::clockChanged, this, &DecoderThreadManager::clockChanged, Qt::QueuedConnection);
     connect(_decoder.get(), &DecoderInterface::decodingFinished, this, &DecoderThreadManager::onDecodingFinished, Qt::QueuedConnection);
@@ -29,10 +29,11 @@ bool DecoderThreadManager::start()
 
     _thread = std::make_unique<QThread>();
     _decoder->moveToThread(_thread.get());
-
+    qDebug() << "DecoderThreadManager::start";
     connect(_thread.get(), &QThread::started, _decoder.get(), [this] {
         std::lock_guard<std::mutex> lock(_mutex);
         _decoder->init();
+        qDebug() << "DecoderThreadManager::start::started";
         _decoder->start();
     });
     connect(_decoder.get(), &DecoderInterface::decodingFinished, _thread.get(), &QThread::quit);
@@ -49,15 +50,10 @@ void DecoderThreadManager::stop()
         _thread->wait();
     }
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        //std::lock_guard<std::mutex> lock(_mutex);
         _decoder.reset();
     }
-    try {
-        _thread.reset();
-    }
-    catch (...) {
-        qDebug() << "DecoderThreadManager::stop() - Exception";
-    }
+    _thread.reset();
 }
 
 DecoderInterface* DecoderThreadManager::decoder() const

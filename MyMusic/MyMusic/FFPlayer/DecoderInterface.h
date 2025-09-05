@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "Common/blockqueue.h"
+#include "PlayStatePrivate.h"
 
 extern "C" {
 #include "libavcodec/avcodec.h"
@@ -28,12 +29,6 @@ if (ret < 0) { \
 #define RET(func) CODE(func, return ret;);
 #define CONTINUE(func) CODE(func, continue;);
 #define BREAK(func) CODE(func, break;);
-
-enum class PlayerState {
-    STOP = -1,
-	PLAYING,
-    PAUSE
-};
 
 class DecoderInterface : public QObject
 {
@@ -60,7 +55,7 @@ public:
 signals:
 	void initFinished(bool success);
 	void decodingFinished();
-	void clockChanged(int clock);
+	void clockChanged(double clock);
 public slots:
 	virtual void setDecoderState(PlayerState state) = 0;
 	virtual void start() = 0;

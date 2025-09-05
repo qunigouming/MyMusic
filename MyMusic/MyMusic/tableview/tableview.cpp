@@ -151,6 +151,34 @@ void TableView::addSong(const QList<SongInfo>& songs)
     }
 }
 
+void TableView::clearAllSongs()
+{
+    if (_batchTimer && _batchTimer->isActive()) {
+        _batchTimer->stop();
+    }
+
+    _pendingSongs.clear();
+    for (int row : _editorRows) {
+        QModelIndex index = _proxyModel->index(row, 1);
+        if (index.isValid()) {
+            closePersistentEditor(index);
+        }
+    }
+    _editorRows.clear();
+    if (_model) {
+        _model->clearAllSongs();
+    }
+
+    setVisibleProxyRange(-1, -1);
+
+    _hoveredRow = -1;
+    if (_delegate) {
+        _delegate->setHoveredRow(-1);
+    }
+
+    viewport()->update();
+}
+
 int TableView::rowCount()
 {
     return _proxyModel->rowCount();

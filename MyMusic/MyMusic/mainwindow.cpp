@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "funclistwidgetitem.h"
 #include "Tool/FileInspectorImp.h"
+#include <QJsonDocument>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -22,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->perletBtn->setText(QChar(0xe006));
     ui->setBtn->setText(QChar(0xe61c));
-    ui->complexionBtn->setText(QChar(0xe007));
+    ui->complexionBtn->setText(QChar(0xe009));
 
     ui->minimizeBtn->setText(QChar(0xe650));
     ui->zoomBtn->setText(QChar(0xe65d));
@@ -45,6 +46,12 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->music_icon->startRotation();
     connect(_lm_view, &TableView::rowDoubleClicked, this, [this](const SongInfo& info) {
         ui->bottomWid->play(info);
+    });
+
+    connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this](PlayModel model) {
+        if (model == PlayModel::LISTLOOP) {
+            
+        }
     });
 }
 
@@ -160,16 +167,17 @@ void MainWindow::initBaseFuncLWg()
             ui->stackedWidget->setCurrentIndex(0);
         } else if (currentRow == 1) {
             ui->stackedWidget->setCurrentIndex(3);
+            readLocalMusicConfig();
         }
     });
 }
 
-void MainWindow::scanFileToTableView()
+void MainWindow::scanFileToTableView(QStringList list)
 {
     QThread* thread = new QThread;
     FileInspectorImp* inspector = new FileInspectorImp;
     inspector->moveToThread(thread);
-    
+    _lm_view->clearAllSongs();
     connect(inspector, &FileInspectorImp::filesFound, this, [this](const QList<FileInfo>& files){
         for (auto& file : files) {
             QString name = file.title;
@@ -191,7 +199,7 @@ void MainWindow::scanFileToTableView()
     connect(thread, &QThread::finished, inspector, &QObject::deleteLater);
     connect(thread, &QThread::finished, thread, &QObject::deleteLater);
     thread->start();
-    inspector->startScan(_scan_dir_paths, "*.mp3");
+    inspector->startScan(list, "*.mp3");
 }
 
 float MainWindow::calculateLuminace(const QColor &color)
@@ -231,6 +239,24 @@ void MainWindow::calculateColors(const QColor& showcaseColor, QColor &listColor,
     }
 }
 
+void MainWindow::readLocalMusicConfig()
+{
+    // 读取配置文件
+    QFile file(QDir::currentPath() + "/config.json");
+    if (file.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+        QJsonObject obj = doc.object();
+        QStringList list;
+        for (auto& key : obj.keys()) {
+            if (obj[key].toBool()) {
+                list.append(key);
+            }
+        }
+        // 扫描文件
+        scanFileToTableView(list);
+    }
+}
+
 void MainWindow::on_complexionBtn_clicked()
 {
     QPoint popupPos = ui->complexionBtn->mapToGlobal(QPoint(0, 30));
@@ -267,8 +293,7 @@ void MainWindow::on_selectDir_Btn_clicked()
 
     // 获取扫描文件夹路径
     connect(selectlocmusic_dlg, &SelectLocMusic_Dlg::sig_selectDir, [this](const QStringList& path) {
-        _scan_dir_paths = path;
-        scanFileToTableView();
+        scanFileToTableView(path);
     });
     selectlocmusic_dlg->show();
 }

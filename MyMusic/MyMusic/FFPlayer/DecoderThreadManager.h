@@ -22,7 +22,7 @@ public:
 
 signals:
     void initFinished(bool success);        // 解码器初始化完成信号
-    void clockChanged(int clock);
+    void clockChanged(double clock);
 
 private slots:
     void onDecodingFinished();

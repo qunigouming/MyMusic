@@ -18,6 +18,7 @@ public:
 
     void addSong(const SongInfo& song);
     void addSong(const QList<SongInfo>& songs);
+    void clearAllSongs();
     int rowCount();
     void setBatchSize(int size);
 

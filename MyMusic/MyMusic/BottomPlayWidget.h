@@ -20,8 +20,9 @@ public:
 	void play(const SongInfo& info);
 
 signals:
-	void playLastSong();
-	void playNextSong();
+	void playLastSong(PlayModel);
+	void playNextSong(PlayModel);
+	void playModelChanged(PlayModel);
 
 private:
 	void informMainWindow();		// 通知主窗口

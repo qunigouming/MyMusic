@@ -113,6 +113,13 @@ public:
         endInsertRows();
     }
 
+    void clearAllSongs() {
+        if (_songs.isEmpty())   return;
+        beginResetModel();
+        _songs.clear();
+        endResetModel();
+    }
+
     const SongInfo& songAt(const int row) const {
         return _songs.at(row);
     }
