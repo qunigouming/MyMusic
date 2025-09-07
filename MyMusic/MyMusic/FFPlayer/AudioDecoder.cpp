@@ -8,7 +8,8 @@ AudioDecoder::AudioDecoder(AVFormatContext* fmtCtx, QObject* parent)
 
 AudioDecoder::~AudioDecoder()
 {
-    // free();
+    free();
+    qDebug() << "~AudioDecoder()";
 }
 
 bool AudioDecoder::init()
@@ -38,10 +39,9 @@ bool AudioDecoder::init()
 
 void AudioDecoder::free()
 {
-    qDebug() << "AudioDecoder::~AudioDecoder()";
     _stream = nullptr;
     _clock = 0;
-    _pktQueue.clear([](AVPacket& pkt) { av_packet_unref(&pkt); });
+    _pktQueue.clear();
     if (_swrCtx) {
         swr_free(&_swrCtx);
         _swrCtx = nullptr;
@@ -169,7 +169,9 @@ void AudioDecoder::start()
     while (true) {
         if (_state == PlayerState::STOP)    break;
         if (_pktQueue.empty() || _state == PlayerState::PAUSE) {
+            if (_state == PlayerState::STOP)    break;
             QThread::msleep(1);
+            qDebug() << "wait new packet" << _pktQueue.size();
             continue;
         }
         AVPacket pkt;
@@ -210,6 +212,5 @@ void AudioDecoder::start()
         _audioDevice->write((char*)_outFrame->data[0], size);
     }
     qDebug() << "AudioDecoder::start() end";
-    free();
     emit DecoderInterface::decodingFinished();
 }

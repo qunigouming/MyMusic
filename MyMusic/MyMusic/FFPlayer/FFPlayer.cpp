@@ -2,6 +2,7 @@
 #include <QEventLoop>
 #include "FFPlayer/AudioDecoder.h"
 #include <cstringt.h>
+#include <QTimer>
 
 FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 {
@@ -15,6 +16,7 @@ FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 		if (!_hasAudio) {
 			qDebug() << "Audio decoder initialization failed";
 		}
+		qDebug() << "Audio decoder initialization success";
 		emit initFinished();
 	});
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::clockChanged, this, [this](double clock) {
@@ -31,6 +33,7 @@ FFPlayer::~FFPlayer()
 void FFPlayer::play(const QString& filepath)
 {
 	if (!filepath.isEmpty()) _filepath = filepath;
+	stop();
 	setState(PlayerState::PLAYING);
 	std::thread([this]() {
 		readFile();
@@ -44,9 +47,27 @@ void FFPlayer::play()
 
 void FFPlayer::stop()
 {
+	qDebug() << "free FFPlayer";
 	setState(PlayerState::STOP);
-	if (_audioDecoderMgr->decoder())
-		_audioDecoderMgr->stop();
+	if (_hasAudio) {
+		// 清空音频相关资源
+		if (_audioDecoderMgr)
+			_audioDecoderMgr->stop();
+	}
+
+	// 清空视频相关资源
+	if (_hasVideo) {
+
+	}
+	_hasAudio = false;
+	_hasVideo = false;
+	_seek_pos = -1;
+
+	if (_formatCtx) {
+		avformat_close_input(&_formatCtx);
+		avformat_free_context(_formatCtx);
+		_formatCtx = nullptr;
+	}
 }
 
 void FFPlayer::pause()
@@ -72,7 +93,7 @@ int FFPlayer::getDuration()
 void FFPlayer::fateError()
 {
 	qDebug() << "ffmpeg fate error";
-	free();
+	stop();
 }
 
 void FFPlayer::setState(PlayerState state)
@@ -86,26 +107,6 @@ void FFPlayer::setState(PlayerState state)
 	if (_audioDecoderMgr->decoder()) {
         _audioDecoderMgr->decoder()->setDecoderState(state);
     }
-}
-
-void FFPlayer::free()
-{
-	qDebug() << "free FFPlayer";
-	// 清空音频相关资源
-	stop();
-
-	// 清空视频相关资源
-    if (_hasVideo) {
-
-	}
-
-	_hasVideo = false;
-
-	if (_formatCtx) {
-        avformat_close_input(&_formatCtx);
-        avformat_free_context(_formatCtx);
-        _formatCtx = nullptr;
-	}
 }
 
 void FFPlayer::readFile()
@@ -126,11 +127,22 @@ void FFPlayer::readFile()
 		qDebug() << "Audio decoder initialization failed";
 		return;
 	}
+
 	qDebug() << "into event loop";
 	QEventLoop loop;
+	QTimer timer;
+	timer.setSingleShot(true);
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::initFinished, &loop, &QEventLoop::quit);
+	connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    timer.start(2000);
 	loop.exec();
+	if (!timer.isActive()) {
+		qDebug() << "timer timeout";
+		emit PlayFinished();
+		return;
+	}
 	qDebug() << "out of event loop";
+
 	// emit initFinished();
 	int streamIndex = _audioDecoderMgr->decoder() ? _audioDecoderMgr->decoder()->getStreamIndex() : -1;
 	qDebug() << "streamIndex" << streamIndex;
@@ -157,6 +169,7 @@ void FFPlayer::readFile()
 		ret = av_read_frame(_formatCtx, &pkt);
 		if (ret == 0) {
             if (_hasAudio && pkt.stream_index == streamIndex) {
+				qDebug() << "push pkt" << _audioDecoderMgr->decoder()->getPktQueueSize();
 				_audioDecoderMgr->decoder()->pushPkt(pkt);
 			}
 			else {
@@ -170,10 +183,9 @@ void FFPlayer::readFile()
 		else {
 			ERROR_BUF;
 			qDebug() << "av_read_frame Error" << errbuf;
+			setState(PlayerState::STOP);
 			continue;
 		}
 	}
-	qDebug() << "play music finished";
-	free();
 	emit PlayFinished();
 }

@@ -34,8 +34,6 @@ private:
     void fateError();
     void setState(PlayerState state);
 
-    void free();
-
     void readFile();
 
 private:

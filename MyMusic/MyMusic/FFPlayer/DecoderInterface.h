@@ -34,7 +34,8 @@ class DecoderInterface : public QObject
 {
 	Q_OBJECT
 public:
-	explicit DecoderInterface(AVFormatContext* fmtCtx, QObject* parent = nullptr) : _formatCtx(fmtCtx), QObject(parent) {}
+	explicit DecoderInterface(AVFormatContext* fmtCtx, QObject* parent = nullptr)
+		: _formatCtx(fmtCtx), QObject(parent), _pktQueue(1000, [](AVPacket& pkt) { av_packet_unref(&pkt); }) {}
 	virtual ~DecoderInterface() {
 		qDebug() << "~DecoderInterface()";
 	};
@@ -50,6 +51,10 @@ public:
 
 	virtual void clearPkt() {
         _pktQueue.clear();
+	}
+
+	virtual int getPktQueueSize() {
+		return _pktQueue.size();
 	}
 
 signals:

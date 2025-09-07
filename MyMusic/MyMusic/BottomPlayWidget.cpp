@@ -37,7 +37,7 @@ void BottomPlayWidget::play(const SongInfo& info)
     // 若不是停止状态则先停止再播放
     if (_player->getState() != PlayerState::STOP) {
         qDebug() << "正在播放" << info.title;
-        _player->stop();
+       //  _player->stop();
     }
     _current_SongPath = info.path;
     _player->play(_current_SongPath);

@@ -11,7 +11,8 @@ template <typename T>
 class BlockQueue
 {
 public:
-    explicit BlockQueue(int MaxCapacity = 1000) : _capacity(MaxCapacity)
+    explicit BlockQueue(int MaxCapacity = 1000, std::function<void(T&)> clearCallBack = nullptr)
+        : _capacity(MaxCapacity), _clearCallBack(clearCallBack)
     {
         assert(MaxCapacity > 0);
         _isClose = false;
@@ -24,21 +25,17 @@ public:
 
     void clear()
     {
-        std::lock_guard<std::mutex> locker(_mtx);
-        while (!_q.empty()) {
-            _q.pop();
-        }
-        _condProducer.notify_all();
-        _condConsumer.notify_all();
-    }
-
-    void clear(std::function<void(T&)> cleaner)
-    {
-        std::lock_guard<std::mutex> locker(_mtx);
-        while (!_q.empty()) {
-            T tmp = _q.front();
-            cleaner(tmp);
-            _q.pop();
+        {
+            std::lock_guard<std::mutex> locker(_mtx);
+            while (!_q.empty()) {
+                if (_clearCallBack) {
+                    T tmp = _q.front();
+                    _clearCallBack(tmp);
+                    _q.pop();
+                } else {
+                    _q.pop();
+                }
+            }
         }
         _condProducer.notify_all();
         _condConsumer.notify_all();
@@ -55,13 +52,8 @@ public:
     }
     void Close()
     {
-        {
-            std::lock_guard<std::mutex> locker(_mtx);
-            while (!_q.empty()) _q.pop();
-            _isClose = true;
-        }
-        _condProducer.notify_all();
-        _condConsumer.notify_all();
+        _isClose = true;
+        clear();
     }
     int size()
     {
@@ -108,6 +100,7 @@ private:
     std::mutex _mtx;
     std::condition_variable _condConsumer;
     std::condition_variable _condProducer;
+    std::function<void(T&)> _clearCallBack;
 };
 
 #endif // BLOCKQUEUE_H
