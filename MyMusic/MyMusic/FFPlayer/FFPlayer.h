@@ -27,7 +27,10 @@ public slots:
 signals:
     void stateChanged(PlayerState state); // 状态变化信号，用于控制播放器状态
     void initFinished();                // 初始化成功信号
+
+    [[deprecated("It's not needed for the time being")]]
     void PlayFinished();                // 播放完毕信号
+
     void clockChanged(double clock);    // 时钟同步信号
 
 private:

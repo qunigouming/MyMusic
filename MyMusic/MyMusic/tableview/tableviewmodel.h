@@ -21,12 +21,13 @@ struct SongInfo {
     bool isVIP;
     QString author;
     QString path;
+    int insertOrder;
 
     SongInfo(QString str_title, QString str_duration, QString str_file_size,
         QString str_path, QString str_author = "", QString str_album = "未知专辑",
-        QString str_icon = ":/source/image/default_album.png", bool b_isLiked = false, bool b_isVIP = false)
+        QString str_icon = ":/source/image/default_album.png", bool b_isLiked = false, bool b_isVIP = false, int insertOrder = -1)
         : icon(str_icon), title(str_title), album(str_album), isLiked(b_isLiked), duration(str_duration),
-        file_size(str_file_size), isVIP(b_isVIP), author(str_author), path(str_path) {}
+        file_size(str_file_size), isVIP(b_isVIP), author(str_author), path(str_path), insertOrder(insertOrder) {}
 };
 
 class TableViewModel : public QAbstractTableModel
@@ -70,7 +71,7 @@ public:
         switch(role) {
             case Qt::DisplayRole:
                 switch (column) {
-                case 0: return index.row() + 1;
+                case 0: return song.insertOrder;
                 case 2: return song.album;
                 case 3: if (_type == MusicTableViewType::LOCAL_MODEL)   return song.file_size; else break;
                 case 4: return song.duration;
@@ -101,15 +102,19 @@ public:
         return true;
     }
 
-    void addSong(const SongInfo& song) {
+    void addSong(SongInfo& song) {
         beginInsertRows(QModelIndex(), _songs.size(), _songs.size());
+        song.insertOrder = ++_insertCounter;
         _songs.append(song);
         endInsertRows();
     }
 
-    void addSong(const QList<SongInfo>& songs) {
+    void addSong(QList<SongInfo>& songs) {
         beginInsertRows(QModelIndex(), _songs.size(), _songs.size() + songs.size() - 1);
-        _songs.append(songs);
+        for (auto& song : songs) {
+            song.insertOrder = ++_insertCounter;
+            _songs.append(song);
+        }
         endInsertRows();
     }
 
@@ -117,6 +122,7 @@ public:
         if (_songs.isEmpty())   return;
         beginResetModel();
         _songs.clear();
+        _insertCounter = 0;
         endResetModel();
     }
 
@@ -124,20 +130,11 @@ public:
         return _songs.at(row);
     }
 
-protected:
-    void sort(int column, Qt::SortOrder order) override {
-        if (column == 0)    return;
-        resetIndexes();
-    }
-
 private:
-    void resetIndexes() {
-        //for (int i = 0; i < _songs.size(); ++i) _songs[i].index = i + 1;
-        emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
-    }
     QVector<SongInfo> _songs;
 
     MusicTableViewType _type = MusicTableViewType::NET_MODEL;
+    int _insertCounter = 0;     // 插入计数器
 };
 
 #endif // TABLEVIEWMODEL_H

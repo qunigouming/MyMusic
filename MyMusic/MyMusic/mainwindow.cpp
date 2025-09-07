@@ -44,14 +44,46 @@ MainWindow::MainWindow(QWidget *parent)
 
     //ui->music_icon->setPixmap(QPixmap(":/source/image/default_album.png"));
     //ui->music_icon->startRotation();
-    connect(_lm_view, &TableView::rowDoubleClicked, this, [this](const SongInfo& info) {
-        ui->bottomWid->play(info);
-    });
-
-    connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this](PlayModel model) {
-        if (model == PlayModel::LISTLOOP) {
-            
+    connect(_lm_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [this](const QModelIndex& current, const QModelIndex& previous) {
+        if (current.isValid()) {
+            qDebug() << "Receive currentRowChanged";
+            _currentPlayIndex = current.row();
         }
+    });
+    connect(_lm_view, &TableView::rowDoubleClicked, this, [this](const SongInfo& info) {
+        qDebug() << "Receive rowDoubleClicked";
+        ui->bottomWid->play(info);
+        _currentPlayIndex = _lm_view->currentIndex().row();     // 更新播放索引
+    });
+    connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this](PlayModel model) {
+        qDebug() << "Receive playNextSong";
+        if (_lm_view->rowCount() == 0) return;
+        if (_currentPlayIndex == -1) return;
+        int nextIndex = 0;
+        if (model == PlayModel::LISTLOOP) {
+            nextIndex = _currentPlayIndex + 1;
+        } else if (model == PlayModel::SINGLELOOP) {
+            nextIndex = _currentPlayIndex;
+        }
+
+        if (nextIndex >= _lm_view->rowCount()) {
+            nextIndex = 0;
+        }
+        //int nextIndex = _currentPlayIndex + 1;
+        //if (nextIndex >= _lm_view->rowCount()) {
+        //    if (model == PlayModel::LISTLOOP) {
+        //        nextIndex = 0;
+        //    } else if (model == PlayModel::SINGLELOOP){
+
+        //        return;
+        //    }
+        //}
+
+        _currentPlayIndex = nextIndex;
+        SongInfo info = _lm_view->getSongInfoByProxyRow(nextIndex);
+        ui->bottomWid->play(info);
+        // 更新选中行
+        _lm_view->setCurrentIndex(_lm_view->model()->index(nextIndex, 0));
     });
 }
 

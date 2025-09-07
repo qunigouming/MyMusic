@@ -53,10 +53,6 @@ public:
         _pktQueue.clear();
 	}
 
-	virtual int getPktQueueSize() {
-		return _pktQueue.size();
-	}
-
 signals:
 	void initFinished(bool success);
 	void decodingFinished();

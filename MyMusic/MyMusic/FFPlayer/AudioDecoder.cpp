@@ -171,7 +171,6 @@ void AudioDecoder::start()
         if (_pktQueue.empty() || _state == PlayerState::PAUSE) {
             if (_state == PlayerState::STOP)    break;
             QThread::msleep(1);
-            qDebug() << "wait new packet" << _pktQueue.size();
             continue;
         }
         AVPacket pkt;

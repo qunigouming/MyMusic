@@ -6,6 +6,7 @@ SortProxyModel::SortProxyModel(QObject *parent)
 {
     setSortCaseSensitivity(Qt::CaseSensitive);          //区分大小写
     setSortLocaleAware(true);                           //
+    sort(-1, Qt::AscendingOrder);
 }
 
 //void SortProxyModel::setVisibleRange(int start, int end)
@@ -26,6 +27,14 @@ bool SortProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex 
 {
     TableViewModel* model = qobject_cast<TableViewModel*>(sourceModel());
     if (!model) return false;
+
+    if (sortColumn() == -1) {
+        qDebug() << "sort";
+        const SongInfo& leftSong = model->songAt(source_left.row());
+        const SongInfo& rightSong = model->songAt(source_right.row());
+        return leftSong.insertOrder < rightSong.insertOrder;
+    }
+
     int col = source_left.column();
     const SongInfo& leftSong = model->songAt(source_left.row());
     const SongInfo& rightSong = model->songAt(source_right.row());

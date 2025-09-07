@@ -22,6 +22,8 @@ public:
     int rowCount();
     void setBatchSize(int size);
 
+    SongInfo getSongInfoByProxyRow(int proxyRow) const;
+
 signals:
     void allSongsAdded();       // 添加完成信号
     void rowDoubleClicked(const SongInfo& path);

@@ -51,6 +51,8 @@ private:
     SelectLocMusic_Dlg* selectlocmusic_dlg = nullptr;
     TableView* _am_view = nullptr;
     TableView* _lm_view = nullptr;
+
+    int _currentPlayIndex = -1;
 };
 
 #endif // MAINWINDOW_H

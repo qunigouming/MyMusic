@@ -128,6 +128,7 @@ void FFPlayer::readFile()
 		return;
 	}
 
+	// 等待音频解码器初始化完成
 	qDebug() << "into event loop";
 	QEventLoop loop;
 	QTimer timer;
@@ -138,7 +139,8 @@ void FFPlayer::readFile()
 	loop.exec();
 	if (!timer.isActive()) {
 		qDebug() << "timer timeout";
-		emit PlayFinished();
+		stop();
+		// emit PlayFinished();
 		return;
 	}
 	qDebug() << "out of event loop";
@@ -169,7 +171,6 @@ void FFPlayer::readFile()
 		ret = av_read_frame(_formatCtx, &pkt);
 		if (ret == 0) {
             if (_hasAudio && pkt.stream_index == streamIndex) {
-				qDebug() << "push pkt" << _audioDecoderMgr->decoder()->getPktQueueSize();
 				_audioDecoderMgr->decoder()->pushPkt(pkt);
 			}
 			else {
@@ -187,5 +188,5 @@ void FFPlayer::readFile()
 			continue;
 		}
 	}
-	emit PlayFinished();
+	// emit PlayFinished();
 }

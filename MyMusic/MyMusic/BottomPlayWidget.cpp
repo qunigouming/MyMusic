@@ -34,11 +34,6 @@ void BottomPlayWidget::play(const SongInfo& info)
     ui->music_title->setText(info.title);
     ui->music_author->setText(info.author);
 
-    // 若不是停止状态则先停止再播放
-    if (_player->getState() != PlayerState::STOP) {
-        qDebug() << "正在播放" << info.title;
-       //  _player->stop();
-    }
     _current_SongPath = info.path;
     _player->play(_current_SongPath);
 }
@@ -62,7 +57,8 @@ void BottomPlayWidget::playSigConnect()
         int s = static_cast<int>(std::floor(clock));
         ui->play_progressbar->setValue(s);
         if (s == _duration) {
-            emit _player->stop();
+            _player->stop();
+            emit playNextSong(_playModel);
         }
     });
 
@@ -78,19 +74,6 @@ void BottomPlayWidget::playSigConnect()
             ui->stopandplay_btn->setText(QChar(0xe00d));
             break;
         }
-    });
-
-    // 监听播放器播放完成信号
-    connect(_player, &FFPlayer::PlayFinished, this, [this] {
-        // 当收到信号，FFPlayer已经清理完所有资源了，不用再调用stop清理一遍
-        qDebug() << "播放完成";
-        if (_playModel == PlayModel::SINGLELOOP) {
-            _player->play(_current_SongPath);
-        }
-        else {
-            emit playNextSong(_playModel);
-        }
-        // ui->stopandplay_btn->setText(QChar(0xe00d));
     });
 }
 

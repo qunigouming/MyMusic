@@ -189,6 +189,14 @@ void TableView::setBatchSize(int size)
     _batchSize = qMax(1, size);
 }
 
+SongInfo TableView::getSongInfoByProxyRow(int proxyRow) const
+{
+    if (!_proxyModel || !_model)    return SongInfo("", "", "", "");
+    QModelIndex proxyIndex = _proxyModel->index(proxyRow, 0);
+    QModelIndex sourceIndex = _proxyModel->mapToSource(proxyIndex);
+    return _model->songAt(sourceIndex.row());
+}
+
 void TableView::mouseMoveEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());
