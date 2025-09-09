@@ -2,6 +2,10 @@
 #include <QTime>
 #include <QFileInfo>
 #include <QStringConverter>
+#include <taglib/id3v2tag.h>
+#include <taglib/attachedpictureframe.h>
+#include <taglib/mpegfile.h>
+#include <taglib/flacfile.h>
 
 MetaTag::MetaTag(QString file_name) : _fileName(file_name), _fileRef(file_name.toStdWString().c_str())
 {
@@ -87,6 +91,65 @@ QString MetaTag::getFileSize()
 		return QString("%1%2").arg(sizeStr).arg(unit);
 	}
 	return QString();
+}
+
+QPixmap MetaTag::getCover()
+{
+	qDebug() << "getCover" << _fileName;
+	if (_fileName != "C:/Users/admin/Music/杀死那个石家庄人.mp3")	return QPixmap();
+	TagLib::MPEG::File mpegFile(_fileName.toStdWString().c_str());
+	//TagLib::MPEG::File* mpegFile = dynamic_cast<TagLib::MPEG::File*>(_fileRef.file());
+	//if (!mpegFile) {
+	//	qDebug() << "Not an MP3 file";
+	//	return QPixmap();
+	//}
+	qDebug() << "MP3 file" << _fileName << mpegFile.hasID3v2Tag() << mpegFile.hasID3v1Tag();
+	if (!mpegFile.isValid()) {
+		qDebug() << "Invalid file";
+		return QPixmap();
+	}
+
+	TagLib::ID3v2::Tag* id3v2Tag = mpegFile.ID3v2Tag();
+	if (!id3v2Tag) {
+		qDebug() << "No ID3v2 tag";
+		return QPixmap();
+	}
+
+	//TODO: 当前问题，一读取frames的迭代器，迭代器就会失效，导致后面无法获取到数据，疑似frames没有数据
+	// 查找所有 APIC 帧
+	TagLib::ID3v2::FrameList frames = id3v2Tag->frameList("APIC");
+	if (frames.isEmpty()) {
+		qDebug() << "No APIC frame";
+		return QPixmap();
+	}
+	for (auto it = frames.begin(); it != frames.end(); ++it) {
+		if (!*it) {
+			qDebug() << "Invalid frame";
+            continue;
+		}
+		
+        TagLib::ID3v2::AttachedPictureFrame* pictureFrame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame*>(*it);
+
+		if (pictureFrame) {
+			TagLib::ByteVector imageData = pictureFrame->picture();
+			// 将TagLib的ByteVector转换为QByteArray
+			QByteArray imageByteArray(imageData.data(), imageData.size());
+
+			// 从字节数组创建QPixmap
+			QPixmap coverImage;
+			if (coverImage.loadFromData(imageByteArray)) {
+				qDebug() << "成功加载专辑封面，尺寸: "
+					<< coverImage.width() << "x" << coverImage.height();
+				return coverImage;
+			}
+			else {
+				qDebug() << "无法从数据加载图像";
+			}
+		}
+	}
+
+	qDebug() << "无法获取专辑封面";
+    return QPixmap();
 }
 
 bool MetaTag::isMP3File()

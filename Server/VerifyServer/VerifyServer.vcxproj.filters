@@ -21,16 +21,19 @@
     <ClCompile Include="ConfigManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SmtpServer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="message.grpc.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="message.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VerifyGrpcServer.cpp">
+    <ClCompile Include="Email.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RedisManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VerifyServiceImpl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,21 +44,30 @@
     <ClInclude Include="Singleton.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SmtpServer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="message.grpc.pb.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="message.pb.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VerifyGrpcServer.h">
+    <ClInclude Include="Email.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RedisManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VerifyServiceImpl.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="message.proto">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="config.ini">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

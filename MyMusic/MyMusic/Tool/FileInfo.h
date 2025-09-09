@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QMetaType>
 #include <QDebug>
+#include <QPixmap>
 
 struct FileInfo {
     QString filePath;
@@ -13,16 +14,17 @@ struct FileInfo {
     QString album;
     QString duration;
     QString size;
+    QPixmap cover;
     QDateTime created;
     QDateTime modified;
 
     FileInfo() = default;
     FileInfo(const QString& path, QString title, QString artist,
         QString album, QString duration, QString size,
-        QDateTime created, QDateTime modified)
+        QPixmap cover, QDateTime created, QDateTime modified)
         : filePath(path), title(title), artist(artist),
         album(album), duration(duration), size(size),
-        created(created), modified(modified) {}
+        cover(cover), created(created), modified(modified) {}
 };
 
 inline QDebug operator<< (QDebug debug, const FileInfo &info) {

@@ -92,7 +92,15 @@ void SongDelegate::setEditorData(QWidget *editor, const QModelIndex &index) cons
 
         QModelIndex srcIndex = proxyModel->mapToSource(index);
         const SongInfo& song = model->songAt(srcIndex.row());
-        widget->setSongIcon(song.icon);
+        // 没图片用路径，有图片用图片
+        if (song.icon.isNull()) {
+            //qDebug() << "set icon from url" << song.icon_url;
+            widget->setSongIcon(song.icon_url);
+        }
+        else {
+            //qDebug() << "set icon from icon";
+            widget->setSongIcon(song.icon);
+        }
         widget->setSongName(song.title);
         widget->setAuthorName(song.author);
     } else QStyledItemDelegate::setEditorData(editor, index);

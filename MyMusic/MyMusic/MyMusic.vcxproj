@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2019</QtInstall>
-    <QtModules>core;gui;network;widgets;opengl;multimedia</QtModules>
+    <QtModules>core;gui;network;widgets;opengl;multimedia;sql</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -116,6 +116,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="MetaTag.cpp" />
+    <ClCompile Include="MysqlDao.cpp" />
+    <ClCompile Include="MysqlManager.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="registerdialog.cpp" />
     <ClCompile Include="RotationLabel.cpp" />
@@ -165,6 +167,8 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="MetaTag.h" />
     <QtMoc Include="ProgressBar.h" />
+    <ClInclude Include="MysqlDao.h" />
+    <ClInclude Include="MysqlManager.h" />
     <ClInclude Include="PlayStatePrivate.h" />
     <ClInclude Include="RotationLabel.h" />
     <ClInclude Include="Singleton.h" />

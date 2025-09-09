@@ -21,7 +21,7 @@ public:
 
 			//创建连接成功，释放其他资源
 			freeReplyObject(reply);
-			_connections.push(context);
+			_connections.push(std::unique_ptr<redisContext>(context));
 		}
 	}
 
@@ -30,22 +30,22 @@ public:
 		while (!_connections.empty()) _connections.pop();
 	}
 
-	redisContext* getConnection() {
+	std::unique_ptr<redisContext> getConnection() {
 		std::unique_lock<std::mutex> lock(_mutex);
 		_cond.wait(lock, [this] {
 			if (_b_stop) return true;
 			return !_connections.empty();
 		});
 		if (_b_stop) return nullptr;
-		auto* context = _connections.front();
+		auto context = std::move(_connections.front());
 		_connections.pop();
 		return context;
 	}
 
-	void returnConnection(redisContext* context) {
+	void returnConnection(std::unique_ptr<redisContext> context) {
 		std::lock_guard<std::mutex> lock(_mutex);
 		if (_b_stop) return;
-		_connections.push(context);
+		_connections.push(std::move(context));
 		_cond.notify_one();
 	}
 
@@ -58,7 +58,7 @@ private:
 	std::size_t _poolSize = 0;
 	const char* _host;
 	int _port;
-	std::queue<redisContext*> _connections;
+	std::queue<std::unique_ptr<redisContext>> _connections;
 	std::mutex _mutex;
 	std::condition_variable _cond;
 };
@@ -71,6 +71,7 @@ public:
 	bool Get(const std::string& key, std::string& value);
 	bool Set(const std::string& key, const std::string& value);
 	bool Auth(const std::string& password);
+	bool Expire(const std::string& key, int seconds);
 	void Close();
 private:
 	RedisManager();

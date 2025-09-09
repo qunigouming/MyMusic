@@ -23,6 +23,14 @@ int SortProxyModel::rowCount(const QModelIndex& parent) const
     return 0;
 }
 
+QVariant SortProxyModel::data(const QModelIndex& index, int role) const
+{
+    if (index.column() == 0 && role == Qt::DisplayRole) {
+        return index.row() + 1;
+    }
+    return QSortFilterProxyModel::data(index, role);
+}
+
 bool SortProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const
 {
     TableViewModel* model = qobject_cast<TableViewModel*>(sourceModel());
@@ -55,20 +63,4 @@ bool SortProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex 
     default:
         return QSortFilterProxyModel::lessThan(source_left, source_right);
     }
-}
-
-bool SortProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
-{
-    //// 若不指定显示范围，则显示所有行
-    //if (_visibleStart == -1 || _visibleEnd == -1)   return true;
-    //// 若用源模型行号处理，行号顺序会被改变，但是用代理模型顺序不变
-    //// 将源模型行号转换为代理模型行号
-    //QModelIndex proxyIndex = mapFromSource(sourceModel()->index(source_row, 0, source_parent));
-    //if (!proxyIndex.isValid()) return false;
-
-    //// 检查是否在可见范围内
-    //int proxyRow = proxyIndex.row();
-    //bool accept = proxyRow >= _visibleStart && proxyRow <= _visibleEnd;
-    //qDebug() << "filterAcceptsRow:" << source_row << "accept:" << accept;
-    return true;
 }

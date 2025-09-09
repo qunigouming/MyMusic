@@ -30,8 +30,9 @@ void DirectoryScannerTask::run()
         // 检查是否为mp3文件，并读取metadata
         QString file_path = it.fileInfo().absoluteFilePath();
         MetaTag tag(file_path);
+        if (tag.isMP3File() == false)   continue;   // 跳过非MP3文件
         FileInfo info(file_path, tag.getTitle(), tag.getArtist(),
-            tag.getAlbum(), tag.getDuration(), tag.getFileSize(),
+            tag.getAlbum(), tag.getDuration(), tag.getFileSize(), tag.getCover(),
             it.fileInfo().birthTime(), it.fileInfo().lastModified());
 
         files.append(info);

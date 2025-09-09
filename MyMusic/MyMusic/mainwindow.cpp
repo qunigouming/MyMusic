@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->perletBtn->setText(QChar(0xe006));
     ui->setBtn->setText(QChar(0xe61c));
     ui->complexionBtn->setText(QChar(0xe009));
-
+    srand(time(NULL));
     ui->minimizeBtn->setText(QChar(0xe650));
     ui->zoomBtn->setText(QChar(0xe65d));
     ui->closeBtn->setText(QChar(0xe67d));
@@ -59,25 +59,25 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Receive playNextSong";
         if (_lm_view->rowCount() == 0) return;
         if (_currentPlayIndex == -1) return;
+
+        // 通过不同播放模式获取下一首歌曲索引
         int nextIndex = 0;
         if (model == PlayModel::LISTLOOP) {
             nextIndex = _currentPlayIndex + 1;
         } else if (model == PlayModel::SINGLELOOP) {
             nextIndex = _currentPlayIndex;
+        } else if (model == PlayModel::RANDOM) {
+            // 通过随机数去生成下一首歌曲索引
+            // 若当前索引和下一首索引相同，则重新生成下一首索引
+            do {
+                nextIndex = rand() % _lm_view->rowCount();
+                qDebug() << "nextIndex" << nextIndex;
+            } while (nextIndex == _currentPlayIndex); 
         }
 
         if (nextIndex >= _lm_view->rowCount()) {
             nextIndex = 0;
         }
-        //int nextIndex = _currentPlayIndex + 1;
-        //if (nextIndex >= _lm_view->rowCount()) {
-        //    if (model == PlayModel::LISTLOOP) {
-        //        nextIndex = 0;
-        //    } else if (model == PlayModel::SINGLELOOP){
-
-        //        return;
-        //    }
-        //}
 
         _currentPlayIndex = nextIndex;
         SongInfo info = _lm_view->getSongInfoByProxyRow(nextIndex);
@@ -217,8 +217,9 @@ void MainWindow::scanFileToTableView(QStringList list)
             QString duration = file.duration;
             QString file_size = file.size;
             QString path = file.filePath;
+            QPixmap cover = file.cover;
             QString album = file.album;
-            _lm_view->addSong(SongInfo(name, duration, file_size, path, author, album));
+            _lm_view->addSong(SongInfo(name, duration, file_size, path, cover, author, album));
         }
     });
     connect(inspector, &FileInspectorImp::scanFinished, this, [this, thread](){

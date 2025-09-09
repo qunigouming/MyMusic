@@ -14,7 +14,7 @@ public:
 		return _instance;
 	}
 	~Singleton() = default;
-private:
+protected:
 	Singleton() = default;
 	Singleton(const Singleton<T>&) = delete;
 	Singleton& operator=(const Singleton<T>&) = delete;

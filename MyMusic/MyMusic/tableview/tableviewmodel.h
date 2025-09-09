@@ -12,7 +12,7 @@ enum class MusicTableViewType {
 };
 
 struct SongInfo {
-    QString icon;
+    QString icon_url;
     QString title;
     QString album;
     bool isLiked;
@@ -21,13 +21,21 @@ struct SongInfo {
     bool isVIP;
     QString author;
     QString path;
+    QPixmap icon;
     int insertOrder;
 
     SongInfo(QString str_title, QString str_duration, QString str_file_size,
-        QString str_path, QString str_author = "", QString str_album = "未知专辑",
-        QString str_icon = ":/source/image/default_album.png", bool b_isLiked = false, bool b_isVIP = false, int insertOrder = -1)
-        : icon(str_icon), title(str_title), album(str_album), isLiked(b_isLiked), duration(str_duration),
-        file_size(str_file_size), isVIP(b_isVIP), author(str_author), path(str_path), insertOrder(insertOrder) {}
+        QString str_path, QPixmap icon = QPixmap(), QString str_author = "", QString str_album = "未知专辑",
+        QString str_icon_url = "", bool b_isLiked = false, bool b_isVIP = false, int insertOrder = -1)
+        : icon_url(str_icon_url), icon(icon), title(str_title), album(str_album), isLiked(b_isLiked), duration(str_duration),
+        file_size(str_file_size), isVIP(b_isVIP), author(str_author), path(str_path), insertOrder(insertOrder) {
+        // 先获取歌曲的封面，如果没有封面则使用url，若还没有封面则使用默认封面
+        if (icon.isNull()) {
+            if (icon_url.isEmpty()) {
+                icon_url = ":/source/image/default_album.png";
+            }
+        }
+    }
 };
 
 class TableViewModel : public QAbstractTableModel
@@ -71,7 +79,7 @@ public:
         switch(role) {
             case Qt::DisplayRole:
                 switch (column) {
-                case 0: return song.insertOrder;
+                case 0: return QVariant();     // 代理模型会处理，这里返回QVariant()
                 case 2: return song.album;
                 case 3: if (_type == MusicTableViewType::LOCAL_MODEL)   return song.file_size; else break;
                 case 4: return song.duration;

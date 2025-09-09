@@ -23,6 +23,8 @@ protected:
 	Singleton(const Singleton<T>&) = delete;
 	Singleton& operator=(const Singleton<T>&) = delete;
 
-	static std::shared_ptr<T> _instance = nullptr;
+	static std::shared_ptr<T> _instance;
 };
 
+template<typename T>
+std::shared_ptr<T> Singleton<T>::_instance;

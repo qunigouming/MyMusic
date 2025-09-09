@@ -8,9 +8,9 @@ ConfigManager::ConfigManager()
 {
 	boost::filesystem::path current_path = boost::filesystem::current_path();
 	boost::filesystem::path config_path = current_path / "config.ini";
-
+	std::cout << "config_path: " << config_path << std::endl;
 	boost::property_tree::ptree pt;
-	boost::property_tree::read_ini(current_path.string(), pt);
+	boost::property_tree::read_ini(config_path.string(), pt);
 
 	for (const auto& section : pt) {
 		const std::string& section_name = section.first;

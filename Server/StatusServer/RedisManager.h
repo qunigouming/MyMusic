@@ -14,14 +14,14 @@ public:
 			}
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
-				std::cout << "RedisÈÏÖ¤Ê§°Ü" << std::endl;
+				std::cout << "Redisè®¤è¯å¤±è´¥" << std::endl;
 				freeReplyObject(reply);
 				continue;
 			}
 
-			//´´½¨Á¬½Ó³É¹¦£¬ÊÍ·ÅÆäËû×ÊÔ´
+			//åˆ›å»ºè¿žæŽ¥æˆåŠŸï¼Œé‡Šæ”¾å…¶ä»–èµ„æº
 			freeReplyObject(reply);
-			std::cout << "RedisÈÏÖ¤³É¹¦" << std::endl;
+			std::cout << "Redisè®¤è¯æˆåŠŸ" << std::endl;
 			_connections.push(context);
 		}
 
@@ -33,7 +33,7 @@ public:
 					_counter = 0;
 				}
 
-				std::this_thread::sleep_for(std::chrono::seconds(1));		//30Ãë·¢ËÍping
+				std::this_thread::sleep_for(std::chrono::seconds(1));		//30ç§’å‘é€ping
 			}
 		});
 	}
@@ -42,7 +42,7 @@ public:
 
 	}
 
-	//Çå¿ÕÁ¬½Ó
+	//æ¸…ç©ºè¿žæŽ¥
 	void ClearConnections() {
 		std::lock_guard<std::mutex> lock(_mutex);
 		while (!_connections.empty()) {
@@ -82,7 +82,7 @@ private:
 		std::lock_guard<std::mutex> lock(_mutex);
 		if (_b_stop)	return;
 		auto poolSize = _connections.size();
-		//¼ì²éÁ¬½Ó
+		//æ£€æŸ¥è¿žæŽ¥
 		for (int i = 0; i < poolSize && !_b_stop; i++) {
 			redisContext* context = _connections.front();
 			_connections.pop();
@@ -105,14 +105,14 @@ private:
 				auto reply = (redisReply*)redisCommand(context, "AUTH %s", _pwd);
 
 				if (reply->type == REDIS_REPLY_ERROR) {
-					std::cout << "ÈÏÖ¤Ê§°Ü" << std::endl;
+					std::cout << "è®¤è¯å¤±è´¥" << std::endl;
 					freeReplyObject(reply);
 					continue;
 				}
 
-				//ÈÏÖ¤³É¹¦
+				//è®¤è¯æˆåŠŸ
 				freeReplyObject(reply);
-				std::cout << "ÈÏÖ¤³É¹¦" << std::endl;
+				std::cout << "è®¤è¯æˆåŠŸ" << std::endl;
 				_connections.push(context);
 			}
 		}

@@ -2,6 +2,7 @@
 #include <QString>
 #include <taglib/fileref.h>
 #include <taglib/mpegfile.h>
+#include <QPixmap>
 
 class MetaTag
 {
@@ -13,6 +14,7 @@ public:
 	QString getAlbum();
     QString getDuration();
     QString getFileSize();
+	QPixmap getCover();			// 获取封面图片，仅限本地文件
 	bool isMP3File();
 private:
 	TagLib::FileRef _fileRef;

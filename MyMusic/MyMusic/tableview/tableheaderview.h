@@ -28,19 +28,32 @@ protected:
 
     void mouseReleaseEvent(QMouseEvent *e) override {
         int section = logicalIndexAt(e->pos());
-        if (1 == section || 2 == section || 4 == section) {
-            // 设置排序指示器
-            Qt::SortOrder order = Qt::AscendingOrder;
-            if (sortIndicatorSection() == section) {
-                order = (sortIndicatorOrder() == Qt::AscendingOrder)
-                ? Qt::DescendingOrder : Qt::AscendingOrder;
-            }
-            setSortIndicator(section, order);
+        if (section == 0 || section == 3) {
+            e->ignore();
+            return;
+        }
+        e->accept();
+        int currentSortSection = sortIndicatorSection();
+        Qt::SortOrder currentOrder = sortIndicatorOrder();
 
-            // 发出排序信号
-            emit sortIndicatorChanged(section, order);
-            e->accept();
-        } else QHeaderView::mouseReleaseEvent(e);
+        Qt::SortOrder newOrder = Qt::AscendingOrder;
+        int newSection = section;
+
+        if (currentSortSection == section) {
+            if (currentOrder == Qt::AscendingOrder)
+                newOrder = Qt::DescendingOrder;
+            else {
+                // 当前为降序，取消排序
+                newSection = -1;
+                newOrder = Qt::AscendingOrder;
+            }
+        }
+        else {
+            // 当前为不同列，默认升序
+            newOrder = Qt::AscendingOrder;
+        }
+        setSortIndicator(newSection, newOrder);
+        emit sortIndicatorChanged(newSection, newOrder);
     }
 
     void updateGeometries() override {

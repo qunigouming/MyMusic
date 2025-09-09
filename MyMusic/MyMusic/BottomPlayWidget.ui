@@ -153,6 +153,18 @@ QSlider::groove:horizontal:hover {
       </property>
       <item>
        <widget class="QWidget" name="widget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>220</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <property name="spacing">
           <number>0</number>
@@ -280,6 +292,19 @@ QSlider::groove:horizontal:hover {
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_17" native="true">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -326,6 +351,9 @@ QSlider::groove:horizontal:hover {
              <height>16777215</height>
             </size>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -353,6 +381,9 @@ QSlider::groove:horizontal:hover {
              <width>35</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -390,6 +421,9 @@ QSlider::groove:horizontal:hover {
            <property name="text">
             <string/>
            </property>
+           <property name="shortcut">
+            <string>Space</string>
+           </property>
            <property name="checkable">
             <bool>true</bool>
            </property>
@@ -414,6 +448,9 @@ QSlider::groove:horizontal:hover {
              <width>35</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -442,6 +479,9 @@ QSlider::groove:horizontal:hover {
              <width>35</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string/>

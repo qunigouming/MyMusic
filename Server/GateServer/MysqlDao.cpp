@@ -71,7 +71,7 @@ bool MysqlDao::LoginValid(const std::string& name, const std::string& passwd, in
 		id = res->getInt("id");
 		return true;
 	}
-	catch (sql::SQLException& exp) {
+	catch (sql::SQLException& e) {
 		std::cerr << "SQLException: " << e.what();
 		std::cerr << "(MySQL error code: " << e.getErrorCode();
 		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;

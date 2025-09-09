@@ -146,6 +146,12 @@
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MysqlManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MysqlDao.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -280,6 +286,12 @@
     </ClInclude>
     <ClInclude Include="PlayStatePrivate.h">
       <Filter>FFPlayer\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MysqlManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MysqlDao.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
