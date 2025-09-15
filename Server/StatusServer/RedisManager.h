@@ -21,7 +21,7 @@ public:
 
 			//创建连接成功，释放其他资源
 			freeReplyObject(reply);
-			std::cout << "Redis认证成功" << std::endl;
+			std::cout << "Redis 认证成功" << std::endl;
 			_connections.push(context);
 		}
 

@@ -126,14 +126,6 @@ TableView::~TableView() {
 
 void TableView::addSong(const SongInfo& song)
 {
-    //int currentRow = _proxyModel->rowCount();
-    //_model->addSong(song);
-    //// 获取新增的行在代理模型中的索引
-    //QModelIndex newIndex = _proxyModel->mapFromSource(_model->index(currentRow, 1));
-    //// 开启持久化编辑器
-    //if (newIndex.isValid()) {
-    //    openPersistentEditor(_proxyModel->index(newIndex.row(), 1));
-    //}
     // 添加到待处理列表
     _pendingSongs.append(song);
 

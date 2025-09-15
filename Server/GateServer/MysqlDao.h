@@ -54,11 +54,11 @@ public:
 		for (std::size_t i = 0; i < _poolSize; ++i) {
 			auto con = std::move(_pool.front());
 			_pool.pop();
-			//归还连接
+			//褰掕繕杩炴帴
 			Defer def([this, &con] {
 				_pool.push(std::move(con));
 			});
-			if (timestamp - con->_last_opt_time < 5) continue;			//操作时间相近不做操作
+			if (timestamp - con->_last_opt_time < 5) continue;			//鎿嶄綔鏃堕棿鐩歌繎涓嶅仛鎿嶄綔
 
 			try {
 				std::unique_ptr<sql::Statement> stmt(con->_con->createStatement());

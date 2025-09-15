@@ -687,7 +687,7 @@ font-size: 22px;</string>
             <string notr="true"/>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="mainPage">
             <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -741,6 +741,9 @@ font-size: 22px;</string>
              </property>
              <property name="text">
               <string>上传音乐</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
              </property>
             </widget>
            </widget>

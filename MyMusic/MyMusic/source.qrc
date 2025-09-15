@@ -10,5 +10,6 @@
         <file>source/image/dislike.png</file>
         <file>source/image/like.png</file>
         <file>source/image/default_album.png</file>
+        <file>source/image/default_user_head.png</file>
     </qresource>
 </RCC>

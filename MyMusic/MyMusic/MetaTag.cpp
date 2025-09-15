@@ -5,7 +5,10 @@
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
 #include <taglib/mpegfile.h>
-#include <taglib/flacfile.h>
+#include <QMediaPlayer>
+#include <QMediaMetadata>
+#include <QEventLoop>
+#include <QTimer>
 
 MetaTag::MetaTag(QString file_name) : _fileName(file_name), _fileRef(file_name.toStdWString().c_str())
 {
@@ -93,11 +96,69 @@ QString MetaTag::getFileSize()
 	return QString();
 }
 
+unsigned int MetaTag::getTrack()
+{
+	if (!_fileRef.isNull() && _fileRef.tag()) {
+        unsigned int track = _fileRef.tag()->track();
+		return track;
+	}
+	return 0;
+}
+unsigned int MetaTag::getYear()
+{
+	if (!_fileRef.isNull() && _fileRef.tag()) {
+        unsigned int year = _fileRef.tag()->year();
+		return year;
+	}
+	return 0;
+}
+QString MetaTag::getDescription()
+{
+    if (!_fileRef.isNull() && _fileRef.tag()) {
+        TagLib::String description = _fileRef.tag()->comment();
+		if (description.isEmpty())	return QString();
+		return QString::fromUtf8(description.toCString(true));
+	}
+	return QString();
+}
+//#define QMEDIA_GET_COVER
 QPixmap MetaTag::getCover()
 {
-	qDebug() << "getCover" << _fileName;
+#ifdef QMEDIA_GET_COVER
 	if (_fileName != "C:/Users/admin/Music/杀死那个石家庄人.mp3")	return QPixmap();
-	TagLib::MPEG::File mpegFile(_fileName.toStdWString().c_str());
+	QMediaPlayer player;
+	QEventLoop loop;
+	QTimer timer;
+	timer.setSingleShot(true);
+    QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+	QObject::connect(&player, &QMediaPlayer::mediaStatusChanged, [&](QMediaPlayer::MediaStatus status) {
+		qDebug() << "Media status changed to:" << status;
+		if (status == QMediaPlayer::LoadedMedia ||
+			status == QMediaPlayer::BufferedMedia ||
+			status == QMediaPlayer::InvalidMedia) {
+			loop.quit();
+		}
+	});
+	QObject::connect(&player, &QMediaPlayer::metaDataChanged, [&]() {
+		loop.quit();
+	});
+	player.setSource(QUrl::fromLocalFile(_fileName));
+	player.play();
+	timer.start(5000);
+    loop.exec();
+	QVariant coverVarient = player.metaData().value(QMediaMetaData::ThumbnailImage);
+	if (coverVarient.isValid()) {
+		return coverVarient.value<QPixmap>();
+	}
+	return QPixmap();
+#else
+	//qDebug() << "getCover" << _fileName;
+	//if (_fileName != "C:/Users/admin/Music/杀死那个石家庄人.mp3")	return QPixmap();
+	TagLib::MPEG::File mpegFile(_fileName.toUtf8().constData());
+	if (!mpegFile.isOpen()) {
+		qDebug() << "open failed";
+		return QPixmap();
+	}
 	//TagLib::MPEG::File* mpegFile = dynamic_cast<TagLib::MPEG::File*>(_fileRef.file());
 	//if (!mpegFile) {
 	//	qDebug() << "Not an MP3 file";
@@ -117,7 +178,7 @@ QPixmap MetaTag::getCover()
 
 	//TODO: 当前问题，一读取frames的迭代器，迭代器就会失效，导致后面无法获取到数据，疑似frames没有数据
 	// 查找所有 APIC 帧
-	TagLib::ID3v2::FrameList frames = id3v2Tag->frameList("APIC");
+	const TagLib::ID3v2::FrameList& frames = id3v2Tag->frameListMap()["APIC"];
 	if (frames.isEmpty()) {
 		qDebug() << "No APIC frame";
 		return QPixmap();
@@ -150,6 +211,7 @@ QPixmap MetaTag::getCover()
 
 	qDebug() << "无法获取专辑封面";
     return QPixmap();
+#endif
 }
 
 bool MetaTag::isMP3File()

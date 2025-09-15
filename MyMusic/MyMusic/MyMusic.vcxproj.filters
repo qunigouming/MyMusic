@@ -146,10 +146,13 @@
     <ClCompile Include="ProgressBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MysqlManager.cpp">
+    <ClCompile Include="UploadWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MysqlDao.cpp">
+    <ClCompile Include="DragDropLabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -238,6 +241,15 @@
     <QtMoc Include="ProgressBar.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="UploadWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DragDropLabel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="UserManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="complexionwidget.ui">
@@ -256,6 +268,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="BottomPlayWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="UploadWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -287,10 +302,7 @@
     <ClInclude Include="PlayStatePrivate.h">
       <Filter>FFPlayer\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MysqlManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MysqlDao.h">
+    <ClInclude Include="dataInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

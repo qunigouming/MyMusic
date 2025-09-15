@@ -2,6 +2,29 @@
 #include "RedisManager.h"
 #include "ConfigManager.h"
 #include "MysqlManager.h"
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <fstream>
+#include <sstream>
+
+std::string decode_base64(const std::string& val) {
+	using namespace boost::archive::iterators;
+	using It = transform_width<binary_from_base64<std::string::const_iterator>, 8, 6>;
+
+	// 复制输入字符串以便修改
+	std::string tmp = val;
+
+	// 计算需要添加的填充字符数量
+	size_t pad_chars = (4 - tmp.size() % 4) % 4;
+	tmp.append(pad_chars, '=');
+
+	// 替换 URL 安全的 Base64 字符（如果存在）
+	std::replace(tmp.begin(), tmp.end(), '-', '+');
+	std::replace(tmp.begin(), tmp.end(), '_', '/');
+
+	// 解码
+	return std::string(It(tmp.begin()), It(tmp.end()));
+}
 
 LogicSystem::~LogicSystem()
 {
@@ -63,8 +86,10 @@ void LogicSystem::Run()
 
 void LogicSystem::RegisterCallBack()
 {
-	_handler[MSG_USER_LOGIN_REQ] = std::bind(&LogicSystem::LoginHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_LOGIN_USER_REQ] = std::bind(&LogicSystem::LoginHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	_handler[ID_HEARTBEAT_REQ] = std::bind(&LogicSystem::HeartBeatHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_UPLOAD_FILE_REQ] = std::bind(&LogicSystem::UploadFileHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_UPLOAD_META_TYPE_REQ] = std::bind(&LogicSystem::UploadMetaTypeHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
 void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
@@ -78,10 +103,10 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 	Json::Value rspJson;
 	Defer defer([this, &rspJson, session] {
 		std::string str = rspJson.toStyledString();
-		session->Send(str, MSG_USER_LOGIN_RSP);
+		session->Send(str, ID_LOGIN_USER_RSP);
 	});
 
-	// ��֤token
+	// 验证token
 	std::string uid_str = std::to_string(uid);
 	std::string token_key = USERTOKENPREFIX + uid_str;
 	std::string token_value = "";
@@ -96,7 +121,7 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 	}
 	rspJson["error"] = ErrorCodes::Success;
 
-	// ��ȡ�û���ʼ��¼��Ϣ
+	// 获取用户初始登录信息
 	std::string base_key = USER_BASE_INFO + uid_str;
 	auto user_info = std::make_shared<UserInfo>();
 	success = GetBaseInfo(base_key, uid, user_info);
@@ -113,7 +138,7 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
     user_self_info["email"] = user_info->email;
 	rspJson["user_self_info"] = user_self_info;
 
-	// ��ȡ��������
+	// 获取所有音乐
 	std::list<std::shared_ptr<MusicInfo>> music_list;
 	success = MysqlManager::GetInstance()->GetAllMusicInfo(music_list);
 	if (!success) {
@@ -155,11 +180,99 @@ void LogicSystem::HeartBeatHandler(std::shared_ptr<Session> session, const short
     session->Send(rspJson.toStyledString(), ID_HEARTBEAT_RSP);
 }
 
+void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
+{
+    Json::Value root;
+    Json::Reader reader;
+    reader.parse(msg_data, root);
+
+	// 将文件保存
+	auto data = root["data"].asString();
+	Json::Value retValue;
+	Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_UPLOAD_FILE_RSP);
+	});
+	std::string decoded = decode_base64(data);
+	auto seq = root["seq"].asInt();
+	auto name = root["name"].asString();
+	auto total_size = root["total_size"].asInt();
+	auto trans_size = root["trans_size"].asInt();
+	auto file_path = ConfigManager::GetInstance()["Store"]["MusicPath"] + name;
+	std::cout << "file path is " << file_path << std::endl;
+	std::ofstream outfile;
+	if (seq == 1) {
+		outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
+	}
+	else {
+        outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::app);
+	}
+
+	if (!outfile) {
+		std::cerr << "open file failed" << std::endl;
+		return;
+	}
+	outfile.write(decoded.c_str(), decoded.size());
+	if (!outfile) {
+		std::cerr << "write file failed" << std::endl;
+		return;
+	}
+
+	outfile.close();
+	std::cout << "file upload success" << std::endl;
+    retValue["error"] = ErrorCodes::Success;
+    retValue["seq"] = seq;
+	retValue["name"] = name;
+    retValue["total_size"] = total_size;
+	retValue["trans_size"] = trans_size;
+}
+
+void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
+{
+	// 将数据转存到数据库中
+	Json::Value root;
+    Json::Reader reader;
+    reader.parse(msg_data, root);
+
+	// 插入歌手
+	MysqlManager::GetInstance()->getOrCreateArtist(root["artist"].asString());
+
+	// 插入专辑
+	Album album;
+	album.artist_name = root["artist"].asString();
+	// 将图片数据存储到磁盘中
+	std::string cover_data = decode_base64(root["icon"].asString());
+	std::string cover_url = ConfigManager::GetInstance()["Store"]["CoverPath"] + album.title;
+	std::ofstream file(cover_url, std::ios::out | std::ios::binary);
+	if (!file.is_open()) {
+		std::cerr << "open file failed" << std::endl;
+
+		return;
+	}
+	file.write(cover_data.c_str(), cover_data.size());
+	file.close();
+    album.cover_url = cover_url;
+    album.description = root["description"].asString();
+    album.release_date = root["release_date"].asString();
+    album.title = root["title"].asString();
+	MysqlManager::GetInstance()->getOrCreateAlbum(album);
+
+	// 插入歌曲
+	_song.title = root["title"].asString();
+	_song.album_title = root["album"].asString();
+	std::string artists = root["artists"].asString();
+	std::istringstream ss(artists);
+	std::string artist;
+	while (std::getline(ss, artist, '/')) _song.artist_names.push_back(artist);
+	_song.track_number = root["track"].asInt();
+	_song.duration = root["duration"].asInt();
+}
+
 bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo)
 {
 	std::string info_str = "";
 	bool b_base = RedisManager::GetInstance()->Get(base_key, info_str);
-	// Redis�������ݣ���Redis�л�ȡ
+	// Redis中有数据，从Redis中获取
 	if (b_base) {
 		Json::Reader reader;
 		Json::Value base_info;
@@ -174,11 +287,11 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 	}
 	else {
 		std::shared_ptr<UserInfo> user_info = nullptr;
-		user_info = MysqlManager::GetInstance()->GetUserInfo(userinfo->uid);
+		user_info = MysqlManager::GetInstance()->GetUserInfo(uid);
 		if (!user_info)	return false;
 		userinfo = user_info;
 
-		// �����ݿ�����д�뻺��
+		// 将数据库数据写入缓存
 		Json::Value redis_root;
 		redis_root["uid"] = userinfo->uid;
 		redis_root["name"] = userinfo->name;

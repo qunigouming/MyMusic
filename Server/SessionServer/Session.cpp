@@ -141,15 +141,26 @@ void Session::AsyncReadBody(int total_len)
 			self->_recv_msg_node->_current_len += bytes_transfered;
 			self->_recv_msg_node->_data[self->_recv_msg_node->_total_len] = '\0';
 			std::cout << "receive data is " << self->_recv_msg_node->_data << std::endl;
-			//´Ë´¦½«ÏûÏ¢Í¶µÝµ½Âß¼­¶ÓÁÐÖÐ
+			//æ­¤å¤„å°†æ¶ˆæ¯æŠ•é€’åˆ°é€»è¾‘é˜Ÿåˆ—ä¸­
 			LogicSystem::GetInstance()->PustMsg(std::make_shared<LogicNode>(self,self->_recv_msg_node));
-			//¼ÌÐø¼àÌýÍ·²¿½ÓÊÜÊÂ¼þ
+			//ç»§ç»­ç›‘å¬å¤´éƒ¨æŽ¥å—äº‹ä»¶
 			self->AsyncReadHead(HEAD_TOTAL_LEN);
 		}
 		catch (std::exception& exp) {
 			std::cout << "Read body error is:" << exp.what() << std::endl;
 		}
 	});
+}
+
+void Session::NotifyOffline(int uid)
+{
+	Json::Value retValue;
+	retValue["error"] = ErrorCodes::Success;
+	retValue["uid"] = uid;
+
+	std::string return_str = retValue.toStyledString();
+	Send(return_str, ID_NOTIFY_OFF_LINE_REQ);
+	return;
 }
 
 bool Session::IsHeartbeatExpired(std::time_t& now)
@@ -160,6 +171,12 @@ bool Session::IsHeartbeatExpired(std::time_t& now)
 		return true;
 	}
 	return false;
+}
+
+void Session::UpdateHeartbeat()
+{
+	time_t now = std::time(nullptr);
+	_last_heartbeat = now;
 }
 
 void Session::DealExceptionSession()
@@ -179,7 +196,7 @@ void Session::DealExceptionSession()
 	if (!success) return;
 
 	if (redis_session_id != _session_id) {
-		// ÓÐ¿Í»§ÔÚÆäËû·þÎñÆ÷µÇÂ¼
+		// æœ‰å®¢æˆ·åœ¨å…¶ä»–æœåŠ¡å™¨ç™»å½•
 		return;
 	}
 

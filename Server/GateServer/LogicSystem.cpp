@@ -38,7 +38,7 @@ LogicSystem::LogicSystem()
 		Json::Reader reader;
 		Json::Value src_root;
 		bool parse_success = reader.parse(body_str, src_root);
-		//½âÎö´íÎó
+		//è§£æé”™è¯¯
 		if (!parse_success) {
 			std::cout << "Failed to parse JSON data!" << std::endl;
 			root["error"] = ErrorCodes::Error_Json;
@@ -47,7 +47,7 @@ LogicSystem::LogicSystem()
 			return false;
 		}
 
-		//Json¸ñÊ½´íÎó
+		//Jsonæ ¼å¼é”™è¯¯
 		if (!src_root.isMember("email")) {
 			std::cout << "Failed to parse JSON data!" << std::endl;
 			root["error"] = ErrorCodes::Error_Json;
@@ -77,7 +77,7 @@ LogicSystem::LogicSystem()
 			std::string jsonstr = root.toStyledString();
 			beast::ostream(connection->_response.body()) << jsonstr;
 		});
-		//½âÎöJson
+		//è§£æJson
 		bool parse_success = reader.parse(body_str, root);
 		if (!parse_success) {
 			std::cout << "Failed to parse Json data!" << std::endl;
@@ -88,7 +88,7 @@ LogicSystem::LogicSystem()
 		auto email = root["email"].asString();
 		auto pwd = root["passwd"].asString();
 
-		//ÅĞ¶ÏÑéÖ¤ÂëµÄºÏÀíĞÔ
+		//åˆ¤æ–­éªŒè¯ç çš„åˆç†æ€§
 		std::string verify_code;
 		bool b_get_success = RedisManager::GetInstance()->Get(CODEPREFIX + email, verify_code);
 		if (!b_get_success) {
@@ -103,7 +103,7 @@ LogicSystem::LogicSystem()
 			return false;
 		}
 
-		//×¢²áÓÃ»§
+		//æ³¨å†Œç”¨æˆ·
 		int ecode = MysqlManager::GetInstance()->RegUser(name, pwd, email);
 		std::cout << "register code is: " << ecode << std::endl;
 		root["error"] = ecode;
@@ -113,7 +113,7 @@ LogicSystem::LogicSystem()
 		return true;
 	});
 
-	RegisterPost("/user_login", [](std::shared_ptr<HttpConnection> connection) {
+	RegisterPost("/get_server", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = beast::buffers_to_string(connection->_request.body().data());
 		std::cout << "receive body is " << body_str << std::endl;
 		connection->_response.set(http::field::content_type, "text/json");
@@ -131,9 +131,9 @@ LogicSystem::LogicSystem()
 			return false;
 		}
 
-		//ÑéÖ¤µÇÂ¼ÓÃ»§µÄÓĞĞ§ĞÔ
-		auto name = root["name"].toStyledString();
-		auto passwd = root["passwd"].toStyledString();
+		//éªŒè¯ç™»å½•ç”¨æˆ·çš„æœ‰æ•ˆæ€§
+		auto name = root["name"].asString();
+		auto passwd = root["passwd"].asString();
 		int id = 0;
 		bool login_valid = MysqlManager::GetInstance()->LoginValid(name, passwd, id);
 		if (!login_valid) {
@@ -141,7 +141,7 @@ LogicSystem::LogicSystem()
 			return true;
 		}
 
-		//»ñÈ¡ÁÄÌì·şÎñÆ÷µÄ¶Ë¿ÚµØÖ·
+		//è·å–èŠå¤©æœåŠ¡å™¨çš„ç«¯å£åœ°å€
 		auto reply = StatusGrpcClient::GetInstance()->GetChatServer(id);
 		if (reply.error()) {
 			std::cout << "grpc get chat server failed, error is " << reply.error() << std::endl;

@@ -351,6 +351,7 @@ void RegisterDialog::on_registerBtn_clicked()
     json["name"] = ui->userLineE->text();
     json["passwd"] = ui->pwdLineE->text();
     json["email"] = ui->emailLineE->text();
+    json["icon"] = ":/source/image/default_user_head.png";      // 使用默认头像
     json["verifycode"] = ui->verifCodeLineE->text();
     HttpManager::GetInstance()->PostRequest(QUrl(gate_url_prefix + "/user_register"), json, ReqID::ID_REGISTER_USER, Modules::REGISTERMOD);
 }

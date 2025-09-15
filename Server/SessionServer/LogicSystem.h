@@ -18,6 +18,8 @@ private:
 	void RegisterCallBack();
 	void LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
 	void HeartBeatHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
+	void UploadFileHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
+	void UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
 
 	bool GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo);
 	bool GetAllMusicInfo(std::list<std::shared_ptr<MusicInfo>>& music_list_info);
@@ -28,5 +30,7 @@ private:
 	std::atomic_bool _b_stop = false;
 	std::queue<std::shared_ptr<LogicNode>> _msg_que;
 	std::map<int, funcCallBack> _handler;
+
+	Song _song;
 };
 

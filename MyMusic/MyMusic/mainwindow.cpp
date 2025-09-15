@@ -11,6 +11,9 @@
 #include "funclistwidgetitem.h"
 #include "Tool/FileInspectorImp.h"
 #include <QJsonDocument>
+#include "UploadWidget.h"
+#include <QFileDialog>
+#include "UserManager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -41,6 +44,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->local_music_view->layout()->addWidget(_lm_view);
 
     initBaseFuncLWg();
+
+    ui->headIcon->setPixmap(QPixmap(UserManager::GetInstance()->getIcon()).scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->userLabel->setText(UserManager::GetInstance()->getName());
+
+    // 将音乐列表添加到TableView中
+    auto musicList = UserManager::GetInstance()->getMusicList();
+    for (auto& music : musicList) {
+        _am_view->addSong(SongInfo(music.get()));
+    }
 
     //ui->music_icon->setPixmap(QPixmap(":/source/image/default_album.png"));
     //ui->music_icon->startRotation();
@@ -85,6 +97,12 @@ MainWindow::MainWindow(QWidget *parent)
         // 更新选中行
         _lm_view->setCurrentIndex(_lm_view->model()->index(nextIndex, 0));
     });
+
+    connect(ui->upload_Btn, &QPushButton::clicked, this, [this]() {
+        qDebug() << "Upload clicked";
+        UploadWidget* uploadWidget = new UploadWidget(this);
+        uploadWidget->show();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -101,9 +119,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             QMouseEvent *e = static_cast<QMouseEvent*>(event);
             if (e->buttons() == Qt::LeftButton) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                dragPosition = e->globalPos();      //记录鼠标全局位置
+                dragPosition = e->globalPos() - parentWidget()->geometry().topLeft();      //记录鼠标全局位置
 #else
-                dragPosition = e->globalPosition().toPoint();      //记录鼠标全局位置
+                dragPosition = e->globalPosition().toPoint() - parentWidget()->geometry().topLeft();      //记录鼠标全局位置
 #endif
                 return true;
             }
@@ -113,15 +131,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             QMouseEvent *e = static_cast<QMouseEvent*>(event);
             if (e->buttons() == Qt::LeftButton){
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                QPoint tempPos = e->globalPos() - dragPosition;     //用一个临时位置记录鼠标移动变化
+                parentWidget()->move(e->globalPos() - dragPosition);
 #else
-                QPoint tempPos = e->globalPosition().toPoint() - dragPosition;     //用一个临时位置记录鼠标移动变化
-#endif
-                move(this->pos() + tempPos);        //鼠标移动多少，窗口走动多少
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                dragPosition = e->globalPos();
-#else
-                dragPosition = e->globalPosition().toPoint();
+                parentWidget()->move(e->globalPosition().toPoint() - dragPosition);
 #endif
                 return true;
             }

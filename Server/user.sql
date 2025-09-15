@@ -3,6 +3,7 @@ create table user (
 	name varchar(255) unique key not null comment '用户名',
 	email varchar(255) unique key not null comment '邮箱',
 	password varchar(255) not null comment '密码',
+	icon varchar(255) not null comment '头像',
 	sex tinyint not null default 0 comment '性别(0-未知, 1-男, 2-女)',
 	created_at timestamp default current_timestamp comment '创建时间',
 	updated_at timestamp default current_timestamp on update current_timestamp comment '更新时间'

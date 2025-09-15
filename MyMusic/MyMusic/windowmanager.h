@@ -13,6 +13,8 @@
 
 #include <QMainWindow>
 #include "logindialog.h"
+#include "mainwindow.h"
+#include <QSharedPointer>
 
 class WindowManager : public QMainWindow
 {
@@ -21,8 +23,12 @@ public:
     explicit WindowManager(QWidget *parent = nullptr);
     ~WindowManager() = default;
 
+private slots:
+    void slotSwitchMainWindow();
+
 private:
-    LoginDialog* _loginDialog = nullptr;
+    QSharedPointer<LoginDialog> _loginDialog;
+    QSharedPointer<MainWindow> _mainWindow;
 };
 
 #endif // WINDOWMANAGER_H

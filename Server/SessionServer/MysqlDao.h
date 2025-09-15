@@ -10,6 +10,7 @@
 #include <jdbc/cppconn/exception.h>
 #include "dataInfo.h"
 #include <queue>
+#include <vector>
 
 class SqlConnection
 {
@@ -30,7 +31,7 @@ public:
 				sql::mysql::MySQL_Driver *driver = sql::mysql::get_driver_instance();
 				auto* conn = driver->connect(url, user, pwd);
 				conn->setSchema(schema);
-				// ��ȡ��ǰʱ��
+				// 获取当前时间
 				auto current_time = std::chrono::system_clock::now().time_since_epoch();
 				long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(current_time).count();
 				_pool.push(std::make_unique<SqlConnection>(conn, timestamp));
@@ -61,13 +62,13 @@ public:
 		while (!_pool.empty()) _pool.pop();
 	}
 	void CheckConnection() {
-		// ��ȡ��ǰ������
+		// 读取当前连接数
 		size_t targetCount = 0;
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
 			targetCount = _pool.size();
 		}
-		size_t processed = 0;			// �Ѵ�����
+		size_t processed = 0;			// 已处理数
 
 		auto now = std::chrono::system_clock::now().time_since_epoch();
 		long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(now).count();
@@ -111,7 +112,7 @@ public:
 		}
 	}
 
-	//��������
+	//重新连接
 	bool ReConnect(long long timestamp) {
 		try {
 			sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
@@ -132,7 +133,7 @@ public:
 		}
 	}
 
-	// �����ӳ��л�ȡ����
+	// 从连接池中获取连接
 	std::unique_ptr<SqlConnection> GetConnection() {
 		std::unique_lock<std::mutex> lock(_mutex);
 		_cond.wait(lock, [this] {
@@ -145,7 +146,7 @@ public:
 		return conn;
 	}
 
-	// �������Ӹ����ӳ�
+	// 返回连接给连接池
 	void ReturnConnection(std::unique_ptr<SqlConnection> conn) {
 		if (_b_stop) return;
 		std::unique_lock<std::mutex> lock(_mutex);
@@ -181,6 +182,38 @@ public:
 	bool GetAllMusicInfo(MusicInfoListPtr& music_list_info);
 	std::shared_ptr<UserInfo> GetUserInfo(const int& uid);
 	std::shared_ptr<UserInfo> GetUserInfo(const std::string& name);
+
+	int getUserInfo();
+	// 获取或创建歌手
+	int getOrCreateArtist(const std::string& artist_name);
+
+	// 获取或创建专辑
+	int getOrCreateAlbum(const Album& album);
+
+	// 获取或创建歌曲
+	int getOrCreateSong(const Song& song);
+
+	// 创建歌曲和歌手关联
+	void createSongArtistIfNotExists(int song_id, int artist_id);
+
+	// 获取或创建歌单
+	int getOrCreatePlaylist(const Playlist& playlist);
+
+	// 创建歌单歌曲关联
+	void createPlaylistSong(const PlaylistSong& ps);
+
+private:
+	// 通用ID查询
+	int getIDFromTable(const std::string& table, const std::string& column, const std::string& value);
+
+	// 检查记录是否存在
+	bool recordExists(const std::string& table, const std::string& column, const std::string& value);
+
+	// 插入记录并返回ID
+	int insertRecord(const std::string& sql, const std::vector<std::string>& params);
+
+	// 验证专辑歌手匹配
+	bool verifyAlbumArtist(int album_id, int artist_id);
 
 private:
 	std::unique_ptr<MySqlPool> _pool;

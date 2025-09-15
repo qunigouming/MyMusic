@@ -59,8 +59,9 @@ bool MysqlDao::LoginValid(const std::string& name, const std::string& passwd, in
 		_pool->returnConnection(std::move(con));
 	});
 	try {
-		std::unique_ptr<sql::PreparedStatement> stmp(con->_con->prepareStatement("select * from user where name = ?"));
+		std::unique_ptr<sql::PreparedStatement> stmp(con->_con->prepareStatement("select id, password from user where name = ?"));
 		stmp->setString(1, name);
+
 		std::unique_ptr<sql::ResultSet> res(stmp->executeQuery());
 		std::string pwd = "";
 		if (res->next()) {

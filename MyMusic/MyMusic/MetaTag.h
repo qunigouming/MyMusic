@@ -14,7 +14,11 @@ public:
 	QString getAlbum();
     QString getDuration();
     QString getFileSize();
+	unsigned int getTrack();
+	unsigned int getYear();
+	QString getDescription();
 	QPixmap getCover();			// 获取封面图片，仅限本地文件
+
 	bool isMP3File();
 private:
 	TagLib::FileRef _fileRef;

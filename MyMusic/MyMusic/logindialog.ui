@@ -373,6 +373,9 @@ border-radius: 5px;
               <property name="text">
                <string>登录</string>
               </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>

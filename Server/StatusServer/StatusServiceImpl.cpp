@@ -15,7 +15,7 @@ std::string generate_unique_token() {
 
 StatusServiceImpl::StatusServiceImpl()
 {
-	//Ìí¼ÓChatServer·şÎñÆ÷ĞÅÏ¢
+	//æ·»åŠ ChatServeræœåŠ¡å™¨ä¿¡æ¯
 	auto& config = ConfigManager::GetInstance();
 	auto server_list = config["ChatServers"]["Name"];
 	std::stringstream ss(server_list);
@@ -71,17 +71,17 @@ ChatServer StatusServiceImpl::getChatServer()
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	auto minServer = _servers.begin()->second;
-	auto con_count = RedisManager::GetInstance()->HGet(LOGINCOUNT, minServer.name);
-	//²»´æÔÚÄ¬ÈÏ×î´óÖµ
-	if (con_count.empty())	minServer.con_count = INT_MAX;
-	else minServer.con_count = std::stoi(con_count);
-	for (auto& server : _servers) {
-		if (server.second.name == minServer.name)	continue;
-		auto min_count_str = RedisManager::GetInstance()->HGet(LOGINCOUNT, server.second.name);
-		if (min_count_str.empty()) server.second.con_count = INT_MAX;
-		else server.second.con_count = stoi(min_count_str);
-		if (server.second.con_count < minServer.con_count) minServer = server.second;
-	}
+	//auto con_count = RedisManager::GetInstance()->HGet(LOGINCOUNT, minServer.name);
+	////ä¸å­˜åœ¨é»˜è®¤æœ€å¤§å€¼
+	//if (con_count.empty())	minServer.con_count = INT_MAX;
+	//else minServer.con_count = std::stoi(con_count);
+	//for (auto& server : _servers) {
+	//	if (server.second.name == minServer.name)	continue;
+	//	auto min_count_str = RedisManager::GetInstance()->HGet(LOGINCOUNT, server.second.name);
+	//	if (min_count_str.empty()) server.second.con_count = INT_MAX;
+	//	else server.second.con_count = stoi(min_count_str);
+	//	if (server.second.con_count < minServer.con_count) minServer = server.second;
+	//}
 	return minServer;
 }
 

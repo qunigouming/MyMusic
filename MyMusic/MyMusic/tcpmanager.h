@@ -13,10 +13,10 @@ class TcpManager : public QObject, public Singleton<TcpManager>, public std::ena
     friend class Singleton<TcpManager>;
 public:
     ~TcpManager() = default;
-    void sendData(ReqID id, QString data);
 
 public slots:
     void slot_tcp_connect(ServerInfo serverinfo);
+    void slot_send_data(ReqID reqId, QByteArray data);
 private:
     explicit TcpManager(QObject *parent = nullptr);
     void initHandler();
@@ -25,7 +25,7 @@ private:
     QTcpSocket* _socket;
     QString _host;
     uint16_t _port;
-    QByteArray* _buffer;
+    QByteArray _buffer;
     bool _b_recv_pending = false;
     quint16 _message_id = 0;
     quint16 _message_len = 0;
@@ -34,7 +34,8 @@ signals:
     void sig_con_status(bool status);
     void sig_login_status(ErrorCode error);
     void sig_login_failed(ErrorCode error);
-    void sig_send_data(ReqID id, QByteArray data);
+    void sig_send_data(ReqID reqId, QByteArray data);
+    void sig_switch_mainwindow();
 };
 
 #endif // TCPMANAGER_H

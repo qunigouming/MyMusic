@@ -17,6 +17,7 @@ LoginDialog::LoginDialog(QWidget *parent)
     ui->closeBtn->setText(QChar(0xe67d));
     ui->TitleWidget->installEventFilter(this);
     ui->loginBtn->installEventFilter(this);
+    ui->loginBtn->setVisible(true);
     connect(HttpManager::GetInstance().get(), &HttpManager::sig_login_mod_finish, this, &LoginDialog::slot_login_mod_finish);
     connect(this, &LoginDialog::sig_con_tcpserver, TcpManager::GetInstance().get(), &TcpManager::slot_tcp_connect);
     connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, [&](bool status){
@@ -27,8 +28,8 @@ LoginDialog::LoginDialog(QWidget *parent)
             jsonObj["token"] = _token;
 
             QJsonDocument jsonDoc(jsonObj);
-            QString jsonStr = jsonDoc.toJson(QJsonDocument::Indented);
-            TcpManager::GetInstance()->sendData(ReqID::ID_LOGIN_USER_REQ, jsonStr);
+            QByteArray jsonStr = jsonDoc.toJson(QJsonDocument::Indented);
+            emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_LOGIN_USER_REQ, jsonStr);
         } else {
             QMessageBox::warning(this, "连接服务器", "服务器连接失败");
         }
@@ -41,6 +42,8 @@ LoginDialog::LoginDialog(QWidget *parent)
         //inform transform-window that change to mainwindow
         emit sig_switchMainWindow();
     });
+
+    initHttpReqHandler();
 }
 
 LoginDialog::~LoginDialog()
@@ -83,10 +86,12 @@ bool LoginDialog::eventFilter(QObject *obj, QEvent *event)
     if (obj == ui->loginBtn) {
         if (event->type() == QEvent::Enter) {
             if (!ui->loginBtn->isEnabled()) QApplication::setOverrideCursor(Qt::ForbiddenCursor);
+            return true;
         } else if (event->type() == QEvent::Leave) {
             QApplication::setOverrideCursor(Qt::ArrowCursor);
+            return true;
         }
-        return true;
+        return false;
     }
 
     return QWidget::eventFilter(obj,event);
@@ -148,7 +153,7 @@ void LoginDialog::slot_login_mod_finish(ReqID id, QString res, ErrorCode err)
         qDebug() << "json 解析失败";
         return;
     }
-
+    qDebug() << jsonDoc.object();
     _handlers[id](jsonDoc.object());
 }
 
@@ -162,9 +167,9 @@ void LoginDialog::initHttpReqHandler()
 
         ServerInfo serverInfo;
         serverInfo.Id = json["id"].toInt();
-        serverInfo.Host = json["Host"].toString();
-        serverInfo.Port = json["Port"].toString();
-        serverInfo.Token = json["Token"].toString();
+        serverInfo.Host = json["host"].toString();
+        serverInfo.Port = json["port"].toString();
+        serverInfo.Token = json["token"].toString();
 
         _uid = serverInfo.Id;
         _token = serverInfo.Token;

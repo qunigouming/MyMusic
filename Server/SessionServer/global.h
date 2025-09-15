@@ -7,6 +7,7 @@
 #include <boost\asio.hpp>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 //data define length
 #define MAX_LENGTH 1024 * 1024 * 2
@@ -24,25 +25,25 @@
 #define LOCK_PREFIX "lock_"
 #define LOCK_COUNT "lockcount"
 
-// ·Ö²¼Ê½ËøµÄ³ÖÓĞÊ±¼ä
+// åˆ†å¸ƒå¼é”çš„æŒæœ‰æ—¶é—´
 #define LOCK_TIME_OUT 10
-// ·Ö²¼Ê½ËøµÄÖØÊÔÊ±¼ä
+// åˆ†å¸ƒå¼é”çš„é‡è¯•æ—¶é—´
 #define ACQUIRE_TIME_OUT 5
 
 enum ErrorCodes {
 	Success = 0,
-	Error_Json = 1001,  //Json½âÎö´íÎó
-	RPCFailed = 1002,  //RPCÇëÇó´íÎó
-	VarifyExpired = 1003, //ÑéÖ¤Âë¹ıÆÚ
-	VarifyCodeErr = 1004, //ÑéÖ¤Âë´íÎó
-	UserExist = 1005,       //ÓÃ»§ÒÑ¾­´æÔÚ
-	PasswdErr = 1006,    //ÃÜÂë´íÎó
-	EmailNotMatch = 1007,  //ÓÊÏä²»Æ¥Åä
-	PasswdUpFailed = 1008,  //¸üĞÂÃÜÂëÊ§°Ü
-	PasswdInvalid = 1009,   //ÃÜÂë¸üĞÂÊ§°Ü
-	TokenInvalid = 1010,   //TokenÊ§Ğ§
-	UidInvalid = 1011,  //uidÎŞĞ§
-	EtherInvalid = 0x7777,  //Ether´íÎó
+	Error_Json = 1001,  //Jsonè§£æé”™è¯¯
+	RPCFailed = 1002,  //RPCè¯·æ±‚é”™è¯¯
+	VarifyExpired = 1003, //éªŒè¯ç è¿‡æœŸ
+	VarifyCodeErr = 1004, //éªŒè¯ç é”™è¯¯
+	UserExist = 1005,       //ç”¨æˆ·å·²ç»å­˜åœ¨
+	PasswdErr = 1006,    //å¯†ç é”™è¯¯
+	EmailNotMatch = 1007,  //é‚®ç®±ä¸åŒ¹é…
+	PasswdUpFailed = 1008,  //æ›´æ–°å¯†ç å¤±è´¥
+	PasswdInvalid = 1009,   //å¯†ç æ›´æ–°å¤±è´¥
+	TokenInvalid = 1010,   //Tokenå¤±æ•ˆ
+	UidInvalid = 1011,  //uidæ— æ•ˆ
+	EtherInvalid = 0x7777,  //Etheré”™è¯¯
 };
 
 class Defer {
@@ -57,14 +58,15 @@ private:
 	std::function<void()> _func;
 };
 
-//User request message id
-enum MESSAGE_REQ_IDS {
-	MSG_USER_LOGIN_REQ = 0x2001,	//User login
-    ID_HEARTBEAT_REQ = 0x2002,		// Heartbeat request
-};
-
-//User response message id
-enum MSSAGE_RSP_IDS {
-	MSG_USER_LOGIN_RSP = 0x5001,		//User login backsourcing
-	ID_HEARTBEAT_RSP = 0x5002,			// Heartbeat response
+enum MSG_ID {
+	ID_LOGIN_USER_REQ = 1004,
+	ID_LOGIN_USER_RSP = 1005,
+	ID_UPLOAD_FILE_REQ = 1006,
+	ID_UPLOAD_FILE_RSP = 1007,
+	ID_UPLOAD_META_TYPE_REQ = 1008,
+	ID_UPLOAD_META_TYPE_RSP = 1009,
+	ID_NOTIFY_OFF_LINE_REQ = 1010,		// é€šçŸ¥ç”¨æˆ·ä¸‹çº¿
+    ID_NOTIFY_OFF_LINE_RSP = 1011,
+	ID_HEARTBEAT_REQ = 1012,
+    ID_HEARTBEAT_RSP = 1013,
 };

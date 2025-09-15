@@ -24,7 +24,13 @@ enum ReqID {
     ID_REGISTER_USER = 1002,
     ID_GET_SERVER = 1003,
     ID_LOGIN_USER_REQ = 1004,
-    IO_LOGIN_USER_RSP = 1005
+    ID_LOGIN_USER_RSP = 1005,
+    ID_UPLOAD_FILE_REQ = 1006,
+    ID_UPLOAD_FILE_RSP = 1007,
+    ID_UPLOAD_META_TYPE_REQ = 1008,
+    ID_UPLOAD_META_TYPE_RSP = 1009,
+    ID_NOTIFY_OFF_LINE_REQ = 1010,		// 通知用户下线
+    ID_NOTIFY_OFF_LINE_RSP = 1011,
 };
 
 enum Modules {
@@ -55,52 +61,6 @@ enum class PlayModel {
     LISTLOOP = 0,
     SINGLELOOP,
     RANDOM
-};
-
-struct UserInfo {
-    QString head_icon;
-    QString name;
-    QString email;
-    QString password;
-    int sex;
-};
-
-struct Artist {
-    QString name;
-};
-
-struct Album {
-    QString title;
-    QString artist_name;
-    QString release_date;
-    QString cover_url;
-    QString description;
-};
-
-struct Song {
-    QString title;
-    QString album_title;
-    int duration;
-    int track_number;
-    QString file_url;
-    QVector<QString> artist_names;
-};
-
-// 歌单
-struct Playlist{
-    QString user_name;
-    QString name;
-    QString description;
-    QString cover_url;
-    bool is_default;
-};
-
-struct PlaylistSong{
-    QString playlist_name;
-    QString user_name;
-    QString song_title;
-    QString album_title;
-    int position;
 };
 
 #endif // GLOBAL_H

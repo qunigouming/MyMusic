@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QIcon>
+#include "dataInfo.h"
 
 enum class MusicTableViewType {
     NET_MODEL = 1,
@@ -35,6 +36,28 @@ struct SongInfo {
                 icon_url = ":/source/image/default_album.png";
             }
         }
+    }
+
+    SongInfo(MusicInfo& music_info) {
+        icon_url = QString::fromStdString(music_info.song_icon);
+        title = QString::fromStdString(music_info.title);
+        album = QString::fromStdString(music_info.album);
+        isLiked = music_info.is_like;
+        duration = QString::number(music_info.duration);
+        isVIP = false;
+        author = QString::fromStdString(music_info.artists);
+        path = QString::fromStdString(music_info.file_url);
+    }
+
+    SongInfo(MusicInfo* music_info) {
+        icon_url = QString::fromStdString(music_info->song_icon);
+        title = QString::fromStdString(music_info->title);
+        album = QString::fromStdString(music_info->album);
+        isLiked = music_info->is_like;
+        duration = QString::number(music_info->duration);
+        isVIP = false;
+        author = QString::fromStdString(music_info->artists);
+        path = QString::fromStdString(music_info->file_url);
     }
 };
 
