@@ -15,12 +15,12 @@ public:
 			}
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
-				std::cout << "RedisÈÏÖ¤Ê§°Ü" << std::endl;
+				std::cout << "Redisè®¤è¯å¤±è´¥" << std::endl;
 				freeReplyObject(reply);
 				continue;
 			}
 
-			//´´½¨Á¬½Ó³É¹¦£¬ÊÍ·ÅÆäËû×ÊÔ´
+			//åˆ›å»ºè¿žæŽ¥æˆåŠŸï¼Œé‡Šæ”¾å…¶ä»–èµ„æº
 			freeReplyObject(reply);
 			_connections.push(context);
 		}

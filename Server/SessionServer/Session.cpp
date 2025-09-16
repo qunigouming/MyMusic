@@ -10,6 +10,7 @@ Session::Session(boost::asio::io_context& ioc, Server* server) : _socket(ioc), _
 	boost::uuids::uuid uid = boost::uuids::random_generator()();
 	_session_id = boost::uuids::to_string(uid);
 	_recv_head_node = std::make_shared<MessageNode>(HEAD_TOTAL_LEN);
+	_last_heartbeat = std::time(nullptr);
 }
 
 Session::~Session()
@@ -25,6 +26,11 @@ tcp::socket& Session::GetSocket()
 std::string& Session::GetUid()
 {
 	return _session_id;
+}
+
+void Session::SetUserUid(int uid)
+{
+	_user_uid = uid;
 }
 
 void Session::Start()
@@ -79,7 +85,7 @@ void Session::AsyncReadHead(int total_len)
 			if (error) {
 				std::cout << "handle read failed, error is: " << error.what() << std::endl;
 				self->Close();
-				self->_server->ClearSession(self->_session_id);
+				self->DealExceptionSession();
 				return;
 			}
 			if (byte_transfered < HEAD_TOTAL_LEN) {
@@ -88,6 +94,12 @@ void Session::AsyncReadHead(int total_len)
 				self->_server->ClearSession(self->_session_id);
 				return;
 			}
+
+			if (!self->_server->CheckVaild(self->_session_id)) {
+				self->Close();
+				return;
+			}
+
 			self->_recv_head_node->Clear();
 			memcpy(self->_recv_head_node->_data, self->_data, byte_transfered);
 			short msg_id = 0;
@@ -126,7 +138,7 @@ void Session::AsyncReadBody(int total_len)
 			if (error) {
 				std::cout << "handle read failed, error is " << error.what() << std::endl;
 				self->Close();
-				self->_server->ClearSession(self->_session_id);
+				self->DealExceptionSession();
 				return;
 			}
 
@@ -137,10 +149,17 @@ void Session::AsyncReadBody(int total_len)
 				return;
 			}
 
+			if (!self->_server->CheckVaild(self->_session_id)) {
+				self->Close();
+				return;
+			}
+
 			memcpy(self->_recv_msg_node->_data, self->_data, bytes_transfered);
 			self->_recv_msg_node->_current_len += bytes_transfered;
 			self->_recv_msg_node->_data[self->_recv_msg_node->_total_len] = '\0';
 			std::cout << "receive data is " << self->_recv_msg_node->_data << std::endl;
+
+			self->UpdateHeartbeat();
 			//此处将消息投递到逻辑队列中
 			LogicSystem::GetInstance()->PustMsg(std::make_shared<LogicNode>(self,self->_recv_msg_node));
 			//继续监听头部接受事件

@@ -8,6 +8,7 @@
 #include <sstream>
 
 std::string decode_base64(const std::string& val) {
+	if (val.empty())	return "";
 	using namespace boost::archive::iterators;
 	using It = transform_width<binary_from_base64<std::string::const_iterator>, 8, 6>;
 
@@ -240,21 +241,26 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	// 插入专辑
 	Album album;
 	album.artist_name = root["artist"].asString();
+	album.title = root["title"].asString();
 	// 将图片数据存储到磁盘中
 	std::string cover_data = decode_base64(root["icon"].asString());
-	std::string cover_url = ConfigManager::GetInstance()["Store"]["CoverPath"] + album.title;
-	std::ofstream file(cover_url, std::ios::out | std::ios::binary);
-	if (!file.is_open()) {
-		std::cerr << "open file failed" << std::endl;
+	std::string cover_url;
+	if (!cover_data.empty()) {
+		cover_url = ConfigManager::GetInstance()["Store"]["CoverPath"] + album.title + ".png";
+		std::ofstream file;
+		file.open(cover_url, std::ios::out | std::ios::binary | std::ios::trunc);
+		std::cout << "cover url is " << cover_url << std::endl;
+		if (!file) {
+			std::cerr << "open file failed" << std::endl;
 
-		return;
+			return;
+		}
+		file.write(cover_data.c_str(), cover_data.size());
+		file.close();
 	}
-	file.write(cover_data.c_str(), cover_data.size());
-	file.close();
     album.cover_url = cover_url;
     album.description = root["description"].asString();
     album.release_date = root["release_date"].asString();
-    album.title = root["title"].asString();
 	MysqlManager::GetInstance()->getOrCreateAlbum(album);
 
 	// 插入歌曲
@@ -264,8 +270,8 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	std::istringstream ss(artists);
 	std::string artist;
 	while (std::getline(ss, artist, '/')) _song.artist_names.push_back(artist);
-	_song.track_number = root["track"].asInt();
-	_song.duration = root["duration"].asInt();
+	_song.track_number = std::stoi(root["track"].asString());
+	_song.duration = std::stoi(root["duration"].asString());
 }
 
 bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo)

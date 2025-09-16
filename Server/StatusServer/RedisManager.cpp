@@ -10,10 +10,12 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+	Defer defer([this, &connect] {
+		_pool->returnConnection(connect);
+	});
 	auto reply = (redisReply*)redisCommand(connect, "GET %s", key.c_str());
 	if (!reply) {
 		std::cout << "[ Get " << key << " ] failed" << std::endl;
-		freeReplyObject(reply);
 		return false;
 	}
 	if (reply->type != REDIS_REPLY_STRING) {
@@ -30,10 +32,10 @@ bool RedisManager::Set(const std::string& key, const std::string& value)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+    Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "SET %s %s", key.c_str(), value.c_str());
 	if (!reply) {
 		std::cout << "[ Set " << key << " ] failed" << std::endl;
-		freeReplyObject(reply);
 		return false;
 	}
 	if (!(reply->type == REDIS_REPLY_STATUS && (strcmp(reply->str, "OK") == 0 || strcmp(reply->str, "ok") == 0))) {
@@ -51,9 +53,7 @@ std::string RedisManager::HGet(const std::string& key, const std::string& hkey)
 	if (connect == nullptr) {
 		return "";
 	}
-	Defer defer([this, &connect] {
-		_pool->returnConnection(connect);
-	});
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	const char* argv[3];
 	size_t argvlen[3];
 	argv[0] = "HGET";
@@ -69,7 +69,7 @@ std::string RedisManager::HGet(const std::string& key, const std::string& hkey)
 		std::cout << "Execut command [ HGet " << key << " " << hkey << "  ] failure ! " << std::endl;
 		return "";
 	}
-	if (reply == nullptr || reply->type == REDIS_REPLY_NIL) {
+	if (reply->type == REDIS_REPLY_NIL) {
 		freeReplyObject(reply);
 		std::cout << "Execut command [ HGet " << key << " " << hkey << "  ] failure ! " << std::endl;
 		return "";
@@ -85,7 +85,13 @@ bool RedisManager::Auth(const std::string& password)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+    Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "AUTH %s", password.c_str());
+    if (!reply) {
+		std::cout << "reply is nullptr" << std::endl;
+		std:: cout << "[ Auth " << password << " ] failed" << std::endl;
+		return false;
+	}
 	if (reply->type == REDIS_REPLY_ERROR) {
 		std::cout << "Redis verify failed!!!" << std::endl;
 		freeReplyObject(reply);

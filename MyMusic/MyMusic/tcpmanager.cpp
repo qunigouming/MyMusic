@@ -161,6 +161,27 @@ void TcpManager::initHandler()
 
         emit sig_switch_mainwindow();
     });
+    _handlers.insert(ID_HEARTBEAT_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Heart Beat Failed, Json Parse error is " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Heart Beat Failed, error is " << err;
+            return;
+        }
+
+        qDebug() << "Heart Beat Success.";
+    });
 }
 
 void TcpManager::handleMsg(ReqID id, int len, QByteArray data)

@@ -13,6 +13,7 @@ class UserManager : public QObject, public Singleton<UserManager>, public std::e
 public:
     ~UserManager();
     void setUserInfo(std::shared_ptr<UserInfo> userInfo);
+    std::shared_ptr<UserInfo> getUserInfo();
     void setMusicList(QList<std::shared_ptr<MusicInfo>> musicList);
     const QList<std::shared_ptr<MusicInfo>> getMusicList() const;
     void setToken(QString token);

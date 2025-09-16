@@ -1,5 +1,6 @@
 #include "RedisManager.h"
 #include "ConfigManager.h"
+#include "DistLock.h"
 
 RedisManager::~RedisManager()
 {
@@ -177,16 +178,18 @@ std::string RedisManager::acquireLock(const std::string& lockName, int lockTimeO
 		return "";
 	}
 
-	Defer defer([this, connect]() {
-		_pool->returnConnection(connect);
-	});
+	Defer defer([this, &connect]() { _pool->returnConnection(connect); });
 
-	
+	return DistLock::GetInstance()->acquireLock(connect, lockName, lockTimeOut, acquireTimeOut);
 }
 
 bool RedisManager::releaseLock(const std::string& lockName, const std::string& identifier)
 {
-	return false;
+	if (identifier.empty())	return true;
+	auto conn = _pool->getConnection();
+	if (!conn)	return false;
+	Defer defer([this, &conn]() { _pool->returnConnection(conn); });
+	return DistLock::GetInstance()->releaseLock(conn, lockName, identifier);
 }
 
 RedisManager::RedisManager()

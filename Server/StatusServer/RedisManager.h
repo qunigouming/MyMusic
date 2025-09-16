@@ -64,6 +64,16 @@ public:
 		return context;
 	}
 
+	redisContext* getConNonBlock() {
+		std::lock_guard<std::mutex> lock(_mutex);
+		if (_b_stop)	return nullptr;
+		if (_connections.empty())	return nullptr;
+
+		auto context = _connections.front();
+		_connections.pop();
+		return context;
+	}
+
 	void returnConnection(redisContext* context) {
 		std::lock_guard<std::mutex> lock(_mutex);
 		if (_b_stop) return;
@@ -78,45 +88,117 @@ public:
 	}
 
 private:
+
 	void checkThread() {
-		std::lock_guard<std::mutex> lock(_mutex);
-		if (_b_stop)	return;
-		auto poolSize = _connections.size();
-		//检查连接
+		size_t poolSize;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			poolSize = _connections.size();
+		}
+
 		for (int i = 0; i < poolSize && !_b_stop; i++) {
-			redisContext* context = _connections.front();
-			_connections.pop();
+			redisContext* context = getConNonBlock();
+			if (!context)	break;
+			redisReply* reply = nullptr;
 			try {
-				auto reply = (redisReply*)redisCommand(context, "PING");
-				if (!reply) {
-					std::cout << "redis ping error" << std::endl;
-					_connections.push(context);
+				reply = (redisReply*)redisCommand(context, "PING");
+				if (context->err) {
+					std::cout << "Connection error:" << context->err << std::endl;
+					if (reply) freeReplyObject(reply);
+
+					redisFree(context);
+					++_fail_count;
 					continue;
 				}
+
+				if (!reply || reply->type == REDIS_REPLY_ERROR) {
+					std::cout << "reply is null,  redis ping failed: " << std::endl;
+					if (reply)	freeReplyObject(reply);
+					redisFree(context);
+					_fail_count++;
+					continue;
+				}
+
+				// 归还连接
+				freeReplyObject(reply);
+				returnConnection(context);
 			}
 			catch (std::exception& exp) {
-				std::cout << "Error keeping connection alive: " << exp.what() << std::endl;
+				if (reply) freeReplyObject(reply);
 				redisFree(context);
-				context = redisConnect(_host, _port);
-				if (context == nullptr || context->err != 0) {
-					if (context != nullptr)	redisFree(context);
-					continue;
-				}
-				auto reply = (redisReply*)redisCommand(context, "AUTH %s", _pwd);
-
-				if (reply->type == REDIS_REPLY_ERROR) {
-					std::cout << "认证失败" << std::endl;
-					freeReplyObject(reply);
-					continue;
-				}
-
-				//认证成功
-				freeReplyObject(reply);
-				std::cout << "认证成功" << std::endl;
-				_connections.push(context);
+				++_fail_count;
 			}
 		}
+
+		// 创建新的连接
+		while (_fail_count > 0) {
+			auto con = reconnect();
+			if (con) _fail_count--;
+			else break;
+		}
 	}
+
+	bool reconnect() {
+		auto context = redisConnect(_host, _port);
+		if (context == nullptr || context->err != 0) {
+			if (context != nullptr)	redisFree(context);
+			return false;
+		}
+
+		auto reply = (redisReply*)redisCommand(context, "AUTH %s", _pwd);
+		if (reply->type == REDIS_REPLY_ERROR) {
+            std::cout << "Redis认证失败" << std::endl;
+            freeReplyObject(reply);
+            redisFree(context);
+			return false;
+		}
+
+        freeReplyObject(reply);
+        std::cout << "Redis 认证成功" << std::endl;
+        returnConnection(context);
+		return true;
+	}
+	//void checkThread() {
+	//	std::lock_guard<std::mutex> lock(_mutex);
+	//	if (_b_stop)	return;
+	//	auto poolSize = _connections.size();
+	//	//检查连接
+	//	for (int i = 0; i < poolSize && !_b_stop; i++) {
+	//		redisContext* context = _connections.front();
+	//		_connections.pop();
+	//		try {
+	//			auto reply = (redisReply*)redisCommand(context, "PING");
+	//			if (!reply) {
+	//				std::cout << "redis ping error" << std::endl;
+	//				_connections.push(context);
+	//				continue;
+	//			}
+	//			freeReplyObject(reply);
+ //               _connections.push(context);
+	//		}
+	//		catch (std::exception& exp) {
+	//			std::cout << "Error keeping connection alive: " << exp.what() << std::endl;
+	//			redisFree(context);
+	//			context = redisConnect(_host, _port);
+	//			if (context == nullptr || context->err != 0) {
+	//				if (context != nullptr)	redisFree(context);
+	//				continue;
+	//			}
+	//			auto reply = (redisReply*)redisCommand(context, "AUTH %s", _pwd);
+
+	//			if (reply->type == REDIS_REPLY_ERROR) {
+	//				std::cout << "认证失败" << std::endl;
+	//				freeReplyObject(reply);
+	//				continue;
+	//			}
+
+	//			//认证成功
+	//			freeReplyObject(reply);
+	//			std::cout << "认证成功" << std::endl;
+	//			_connections.push(context);
+	//		}
+	//	}
+	//}
 
 private:
 	std::atomic_bool _b_stop = false;
@@ -129,6 +211,7 @@ private:
 	std::condition_variable _cond;
 	std::thread _checkThread;
 	int _counter = 0;
+	std::atomic_int _fail_count = 0;
 };
 
 class RedisManager : public Singleton<RedisManager>

@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include "LogicSystem.h"
 #include <thread>
 #include <mutex>
@@ -16,6 +16,7 @@ std::mutex mtx_quit;
 
 int main()
 {
+    system("chcp 65001");
     auto& cfg = ConfigManager::GetInstance();
     auto server_name = cfg["SelfServer"]["Name"];
     try {

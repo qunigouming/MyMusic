@@ -35,21 +35,21 @@ void RunServer() {
 }
 
 int main() {
-	//try {
-	//	RunServer();
-	//	RedisManager::GetInstance()->Close();
-	//} catch (std::exception& e) {
-	//	std::cout << "Exception: " << e.what() << std::endl;
-	//	RedisManager::GetInstance()->Close();
-	//	return EXIT_FAILURE;
-	//}
 	try {
-		Email email;
-		email.sendVerifyCode("3120248848@qq.com", "123456");
-	}
-	catch (std::exception& e) {
+		RunServer();
+		RedisManager::GetInstance()->Close();
+	} catch (std::exception& e) {
 		std::cout << "Exception: " << e.what() << std::endl;
 		RedisManager::GetInstance()->Close();
 		return EXIT_FAILURE;
 	}
+	//try {
+	//	Email email;
+	//	email.sendVerifyCode("3120248848@qq.com", "123456");
+	//}
+	//catch (std::exception& e) {
+	//	std::cout << "Exception: " << e.what() << std::endl;
+	//	RedisManager::GetInstance()->Close();
+	//	return EXIT_FAILURE;
+	//}
 }

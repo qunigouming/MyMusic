@@ -53,6 +53,8 @@ private:
     TableView* _lm_view = nullptr;
 
     int _currentPlayIndex = -1;
+
+    QTimer* _heartbeatTimer = nullptr;      // 心跳定时器，处理服务器心跳包
 };
 
 #endif // MAINWINDOW_H

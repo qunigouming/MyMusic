@@ -20,6 +20,15 @@ void Server::ClearSession(std::string uid)
 	_sessions.erase(uid);
 }
 
+bool Server::CheckVaild(std::string& uid)
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+    if (_sessions.find(uid) != _sessions.end()) {
+        return true;
+    }
+	return false;
+}
+
 void Server::On_Timer(const boost::system::error_code& ec)
 {
 	if (ec) {
@@ -39,25 +48,25 @@ void Server::On_Timer(const boost::system::error_code& ec)
 		auto b_expired = session.second->IsHeartbeatExpired(now);
 		if (b_expired) {
 			session.second->Close();
-			// ÊÕ¼¯¹ıÆÚµÄsession
+			// æ”¶é›†è¿‡æœŸçš„session
             expiredSessions.push_back(session.second);
 			continue;
 		}
 		sessionCount++;
 	}
 
-	// ÉèÖÃsessionÊıÁ¿
+	// è®¾ç½®sessionæ•°é‡
 	auto& cfg = ConfigManager::GetInstance();
 	auto self_name = cfg["SelfServer"]["Name"];
 	auto count_str = std::to_string(sessionCount);
 	RedisManager::GetInstance()->HSet(LOGINCOUNT, self_name, count_str);
 
-	// ´¦Àí¹ıÆÚµÄsession
+	// å¤„ç†è¿‡æœŸçš„session
 	for (auto& session : expiredSessions) {
 		session->DealExceptionSession();
 	}
 
-	// ÔÙ´ÎÉèÖÃ¶¨Ê±Æ÷
+	// å†æ¬¡è®¾ç½®å®šæ—¶å™¨
 	_timer.expires_after(std::chrono::seconds(TIMER_INTERVAL));
 	_timer.async_wait([this](const boost::system::error_code& ec) {
 		On_Timer(ec);

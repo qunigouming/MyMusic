@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include "global.h"
 #include "ConfigManager.h"
 #include "RedisManager.h"
@@ -40,6 +40,7 @@ void RunServer() {
 
 int main()
 {
+    system("chcp 65001");
     try {
         RunServer();
         RedisManager::GetInstance()->Close();

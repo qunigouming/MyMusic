@@ -63,7 +63,6 @@ UploadWidget::UploadWidget(QWidget *parent)
 		}
 		QString file_md5 = hash.result().toHex();
 		QByteArray buffer;
-		int seq = 0;
 		QFileInfo fileInfo(_file_path);
 		QString fileName = fileInfo.fileName();
 		qDebug() << "fileName:" << fileName;
@@ -96,6 +95,7 @@ UploadWidget::UploadWidget(QWidget *parent)
 			last_seq = total_size / MAX_FILE_LEN;
 		}
 		file.seek(originalPos);
+		int seq = 0;
 		while (!file.atEnd()) {
 			buffer = file.read(MAX_FILE_LEN);
 			++seq;

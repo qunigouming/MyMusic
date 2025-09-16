@@ -7,7 +7,7 @@
 #include "MessageNode.h"
 
 
-#define HEARTBEAT_EXPIRE_TIME 20
+#define HEARTBEAT_EXPIRE_TIME 60
 #define TIMER_INTERVAL 60
 
 namespace beast = boost::beast;
@@ -25,6 +25,7 @@ public:
 	~Session();
 	tcp::socket& GetSocket();
 	std::string& GetUid();
+	void SetUserUid(int uid);
 	void Start();
 	void Send(char* msg, short max_len, short msg_id);
 	void Send(std::string msg, short msg_id);

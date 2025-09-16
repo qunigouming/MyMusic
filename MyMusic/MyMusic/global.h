@@ -31,6 +31,8 @@ enum ReqID {
     ID_UPLOAD_META_TYPE_RSP = 1009,
     ID_NOTIFY_OFF_LINE_REQ = 1010,		// 通知用户下线
     ID_NOTIFY_OFF_LINE_RSP = 1011,
+    ID_HEARTBEAT_REQ = 1012,
+    ID_HEARTBEAT_RSP = 1013,
 };
 
 enum Modules {

@@ -14,6 +14,8 @@
 #include "UploadWidget.h"
 #include <QFileDialog>
 #include "UserManager.h"
+#include "tcpmanager.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -53,6 +55,12 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto& music : musicList) {
         _am_view->addSong(SongInfo(music.get()));
     }
+
+    connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, [&](bool status) {
+        if (!status) {
+            QMessageBox::warning(this, "连接服务器", "服务器连接失败");
+        }
+    });
 
     //ui->music_icon->setPixmap(QPixmap(":/source/image/default_album.png"));
     //ui->music_icon->startRotation();
@@ -103,6 +111,18 @@ MainWindow::MainWindow(QWidget *parent)
         UploadWidget* uploadWidget = new UploadWidget(this);
         uploadWidget->show();
     });
+
+    //_heartbeatTimer = new QTimer(this);
+    //connect(_heartbeatTimer, &QTimer::timeout, this, [this]() {
+    //    auto userInfo = UserManager::GetInstance()->getUserInfo();
+    //    QJsonObject jsonObj;
+    //    jsonObj["fromuid"] = userInfo->uid;
+    //    QJsonDocument doc(jsonObj);
+    //    QByteArray data = doc.toJson(QJsonDocument::Compact);
+    //    emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_HEARTBEAT_REQ, data);
+    //});
+
+    //_heartbeatTimer->start(10000);
 }
 
 MainWindow::~MainWindow()

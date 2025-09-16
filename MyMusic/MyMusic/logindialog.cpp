@@ -20,7 +20,7 @@ LoginDialog::LoginDialog(QWidget *parent)
     ui->loginBtn->setVisible(true);
     connect(HttpManager::GetInstance().get(), &HttpManager::sig_login_mod_finish, this, &LoginDialog::slot_login_mod_finish);
     connect(this, &LoginDialog::sig_con_tcpserver, TcpManager::GetInstance().get(), &TcpManager::slot_tcp_connect);
-    connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, [&](bool status){
+    connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, this, [&](bool status){
         if (status) {
             //connect server succeeded
             QJsonObject jsonObj;
@@ -48,6 +48,9 @@ LoginDialog::LoginDialog(QWidget *parent)
 
 LoginDialog::~LoginDialog()
 {
+    qDebug() << "LoginDialog destory";
+    disconnect(HttpManager::GetInstance().get(), &HttpManager::sig_login_mod_finish, this, &LoginDialog::slot_login_mod_finish);
+    disconnect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, this, nullptr);
     delete ui;
 }
 

@@ -13,6 +13,11 @@ void UserManager::setUserInfo(std::shared_ptr<UserInfo> userInfo)
     _userInfo = userInfo;
 }
 
+std::shared_ptr<UserInfo> UserManager::getUserInfo()
+{
+    return _userInfo;
+}
+
 void UserManager::setMusicList(QList<std::shared_ptr<MusicInfo>> musicList)
 {
     _musicList = musicList;
@@ -35,10 +40,14 @@ int UserManager::getUid()
 
 QString UserManager::getName()
 {
+    if (!_userInfo)
+        return "用户名";
     return QString::fromStdString(_userInfo->name);
 }
 
 QString UserManager::getIcon()
 {
+    if (!_userInfo)
+        return "用户头像";
     return QString::fromStdString(_userInfo->icon);
 }

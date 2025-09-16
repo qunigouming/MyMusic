@@ -55,7 +55,7 @@ Status StatusServiceImpl::Login(ServerContext* context, const LoginReq* request,
 	std::string token_key = USERTOKENPREFIX + uid_str;
 	std::string token_value = "";
 	bool success = RedisManager::GetInstance()->Get(token_key, token_value);
-	if (!success) {
+	if (success) {
 		response->set_error(ErrorCodes::UidInvalid);
 		return Status::OK;
 	}

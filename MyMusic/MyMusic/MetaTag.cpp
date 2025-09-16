@@ -10,6 +10,10 @@
 #include <QEventLoop>
 #include <QTimer>
 
+extern "C" {
+#include <libavformat/avformat.h>
+}
+
 MetaTag::MetaTag(QString file_name) : _fileName(file_name), _fileRef(file_name.toStdWString().c_str())
 {
 }
@@ -115,7 +119,7 @@ unsigned int MetaTag::getYear()
 QString MetaTag::getDescription()
 {
     if (!_fileRef.isNull() && _fileRef.tag()) {
-        TagLib::String description = _fileRef.tag()->comment();
+		TagLib::String description = _fileRef.tag()->comment();
 		if (description.isEmpty())	return QString();
 		return QString::fromUtf8(description.toCString(true));
 	}
@@ -125,7 +129,7 @@ QString MetaTag::getDescription()
 QPixmap MetaTag::getCover()
 {
 #ifdef QMEDIA_GET_COVER
-	if (_fileName != "C:/Users/admin/Music/杀死那个石家庄人.mp3")	return QPixmap();
+	if (_fileName != "C:/Users/admin/Music/平凡之路.mp3")	return QPixmap();
 	QMediaPlayer player;
 	QEventLoop loop;
 	QTimer timer;
@@ -151,11 +155,15 @@ QPixmap MetaTag::getCover()
 		return coverVarient.value<QPixmap>();
 	}
 	return QPixmap();
+#elif TAGLIB_GET_COVER
+	//qDebug() << "getCover" << _fileName.toUtf8().data();
+	if (_fileName != "C:/Users/admin/Music/平凡之路.mp3")	return QPixmap();
+#ifdef Q_OS_WIN
+	TagLib::MPEG::File mpegFile(_fileName.toStdWString().c_str());
 #else
-	//qDebug() << "getCover" << _fileName;
-	//if (_fileName != "C:/Users/admin/Music/杀死那个石家庄人.mp3")	return QPixmap();
-	TagLib::MPEG::File mpegFile(_fileName.toUtf8().constData());
-	if (!mpegFile.isOpen()) {
+	TagLib::MPEG::File mpegFile(_fileName.toUtf8().toStdString().c_str());
+#endif
+	if (!mpegFile.isValid()) {
 		qDebug() << "open failed";
 		return QPixmap();
 	}
@@ -165,10 +173,6 @@ QPixmap MetaTag::getCover()
 	//	return QPixmap();
 	//}
 	qDebug() << "MP3 file" << _fileName << mpegFile.hasID3v2Tag() << mpegFile.hasID3v1Tag();
-	if (!mpegFile.isValid()) {
-		qDebug() << "Invalid file";
-		return QPixmap();
-	}
 
 	TagLib::ID3v2::Tag* id3v2Tag = mpegFile.ID3v2Tag();
 	if (!id3v2Tag) {
@@ -210,7 +214,49 @@ QPixmap MetaTag::getCover()
 	}
 
 	qDebug() << "无法获取专辑封面";
-    return QPixmap();
+	return QPixmap();
+
+#else
+	AVFormatContext* formatContext = nullptr;
+	QPixmap coverPixmap;
+
+	// 打开输入文件
+	if (avformat_open_input(&formatContext, _fileName.toUtf8().constData(), nullptr, nullptr) != 0) {
+		qWarning() << "无法打开文件:" << _fileName;
+		return coverPixmap;
+	}
+
+	// 获取流信息
+	if (avformat_find_stream_info(formatContext, nullptr) < 0) {
+		qWarning() << "无法获取流信息";
+		avformat_close_input(&formatContext);
+		return coverPixmap;
+	}
+
+	// 查找附件流（包含封面）
+	for (unsigned int i = 0; i < formatContext->nb_streams; i++) {
+		AVStream* stream = formatContext->streams[i];
+
+		// 检查是否是附件流（通常包含封面）
+		if (stream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
+			AVPacket coverPacket = stream->attached_pic;
+
+			// 直接从内存加载图片到QPixmap
+			coverPixmap.loadFromData(coverPacket.data, coverPacket.size);
+
+			if (!coverPixmap.isNull()) {
+				qDebug() << "成功加载封面图片，尺寸:" << coverPixmap.width() << "x" << coverPixmap.height();
+			}
+			else {
+				qWarning() << "无法从数据加载封面图片";
+			}
+
+			break;
+		}
+	}
+
+	avformat_close_input(&formatContext);
+	return coverPixmap;
 #endif
 }
 
