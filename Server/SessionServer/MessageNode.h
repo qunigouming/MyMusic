@@ -8,7 +8,7 @@ class LogicSystem;
 class MessageNode
 {
 public:
-	MessageNode(short len) : _total_len(len) {
+	MessageNode(unsigned short len) : _total_len(len) {
 		_data = new char[_total_len + 1];
 		_data[_total_len] = '\0';
 	}
@@ -23,15 +23,15 @@ public:
 		_current_len = 0;
 	}
 
-	short _current_len = 0;
-	short _total_len;
+	unsigned short _current_len = 0;
+	unsigned short _total_len;
 	char* _data;
 };
 
 class RecvNode : public MessageNode {
 	friend class LogicSystem;
 public:
-	RecvNode(short max_len, short msg_id) : MessageNode(max_len), _msg_id(msg_id) {}
+	RecvNode(unsigned short max_len, short msg_id) : MessageNode(max_len), _msg_id(msg_id) {}
 private:
 	short _msg_id;
 };

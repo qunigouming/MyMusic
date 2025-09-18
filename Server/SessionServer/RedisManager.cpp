@@ -1,6 +1,6 @@
 #include "RedisManager.h"
 #include "ConfigManager.h"
-#include "DistLock.h"
+#include "DistributeLock.h"
 
 RedisManager::~RedisManager()
 {
@@ -113,16 +113,20 @@ bool RedisManager::HSet(const std::string& key, const std::string& hkey, const s
 	if (connect == nullptr) {
 		return false;
 	}
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "HSET %s %s %s", key.c_str(), hkey.c_str(), value.c_str());
-	if (reply == nullptr || reply->type != REDIS_REPLY_INTEGER) {
+	if (reply == nullptr) {
+		std::cout << "reply is nullptr" << std::endl;
+		std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! " << std::endl;
+		return false;
+	}
+	if (reply->type != REDIS_REPLY_INTEGER) {
 		std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! " << std::endl;
 		freeReplyObject(reply);
-		_pool->returnConnection(connect);
 		return false;
 	}
 	std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] success ! " << std::endl;
 	freeReplyObject(reply);
-	_pool->returnConnection(connect);
 	return true;
 }
 
@@ -180,7 +184,7 @@ std::string RedisManager::acquireLock(const std::string& lockName, int lockTimeO
 
 	Defer defer([this, &connect]() { _pool->returnConnection(connect); });
 
-	return DistLock::GetInstance()->acquireLock(connect, lockName, lockTimeOut, acquireTimeOut);
+	return DistributeLock::GetInstance()->acquireLock(connect, lockName, lockTimeOut, acquireTimeOut);
 }
 
 bool RedisManager::releaseLock(const std::string& lockName, const std::string& identifier)
@@ -189,7 +193,7 @@ bool RedisManager::releaseLock(const std::string& lockName, const std::string& i
 	auto conn = _pool->getConnection();
 	if (!conn)	return false;
 	Defer defer([this, &conn]() { _pool->returnConnection(conn); });
-	return DistLock::GetInstance()->releaseLock(conn, lockName, identifier);
+	return DistributeLock::GetInstance()->releaseLock(conn, lockName, identifier);
 }
 
 RedisManager::RedisManager()

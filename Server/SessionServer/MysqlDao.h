@@ -31,6 +31,8 @@ public:
 				sql::mysql::MySQL_Driver *driver = sql::mysql::get_driver_instance();
 				auto* conn = driver->connect(url, user, pwd);
 				conn->setSchema(schema);
+				std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+				stmt->execute("SET NAMES 'utf8mb4'");
 				// 获取当前时间
 				auto current_time = std::chrono::system_clock::now().time_since_epoch();
 				long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(current_time).count();
@@ -190,6 +192,9 @@ public:
 	// 获取或创建专辑
 	int getOrCreateAlbum(const Album& album);
 
+	// 创建专辑和歌手关联
+	void createAlbumArtistIfNotExists(int album_id, int artist_id);
+
 	// 获取或创建歌曲
 	int getOrCreateSong(const Song& song);
 
@@ -211,9 +216,6 @@ private:
 
 	// 插入记录并返回ID
 	int insertRecord(const std::string& sql, const std::vector<std::string>& params);
-
-	// 验证专辑歌手匹配
-	bool verifyAlbumArtist(int album_id, int artist_id);
 
 private:
 	std::unique_ptr<MySqlPool> _pool;

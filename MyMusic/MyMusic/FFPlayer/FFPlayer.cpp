@@ -177,6 +177,13 @@ void FFPlayer::readFile()
 				av_packet_unref(&pkt);
 			}
 		}
+		else if (ret == AVERROR(EAGAIN) || ret == AVERROR(ETIMEDOUT) || ret == AVERROR(ECONNRESET)) {
+			qDebug() << "Network error occurred, attempting to reconnect...";
+			// 等待避免频繁重连
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+			// TODO: 重连机制
+			continue;
+		}
 		else if (ret == AVERROR_EOF) {
             //setState(PlayerState::STOP);
 			// qDebug() << "read file finished!!!";

@@ -60,9 +60,6 @@
     <ClCompile Include="DistributeLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DistLock.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -114,9 +111,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DistributeLock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DistLock.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

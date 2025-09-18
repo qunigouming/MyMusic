@@ -1,7 +1,6 @@
 CREATE TABLE albums (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '专辑ID',
   title VARCHAR(255) NOT NULL COMMENT '专辑名称',
-  artist_id INT UNSIGNED COMMENT '主歌手ID',
   release_date DATE COMMENT '发行日期',
   cover_url VARCHAR(512) COMMENT '专辑封面URL',
   description TEXT COMMENT '专辑描述',

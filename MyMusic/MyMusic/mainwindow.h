@@ -45,6 +45,8 @@ private:
     void calculateColors(const QColor& showcaseColor, QColor& listColor, QColor& uiColor, QColor& bottomColor);
     void readLocalMusicConfig();
 
+    void bindConntoView(TableView* view);      // 绑定连接到音乐列表视图
+
 private:
     Ui::MainWindow *ui;
     complexionWidget* compWidget = nullptr;

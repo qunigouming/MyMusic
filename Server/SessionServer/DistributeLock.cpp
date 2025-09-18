@@ -2,6 +2,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include "global.h"
 
 static std::string generateUUID() {
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
@@ -29,7 +30,7 @@ std::string DistributeLock::acquireLock(redisContext* context, const std::string
             }
         }
         
-        // ·ÀÖ¹Ã¦µÈ´ý
+        // é˜²æ­¢å¿™ç­‰å¾…
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     return "";
@@ -38,11 +39,15 @@ std::string DistributeLock::acquireLock(redisContext* context, const std::string
 bool DistributeLock::releaseLock(redisContext* context, const std::string& lockName, const std::string& identifier)
 {
     std::string lockKey = "lock:" + lockName;
-    const char* script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+    const char* script = R"(if redis.call('get', KEYS[1]) == ARGV[1] then
+                                return redis.call('del', KEYS[1])
+                            else
+                                return 0
+                            end)";
     redisReply* reply = (redisReply*)redisCommand(context, "EVAL %s 1 %s %s", script, lockKey.c_str(), identifier.c_str());
     bool success = false;
     if (reply != nullptr) {
-        // ³É¹¦É¾³ýËø
+        // æˆåŠŸåˆ é™¤é”
         if (reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {
             success = true;
         }

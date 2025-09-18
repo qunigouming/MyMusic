@@ -55,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto& music : musicList) {
         _am_view->addSong(SongInfo(music.get()));
     }
+    bindConntoView(_am_view);
+    bindConntoView(_lm_view);
 
     connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, [&](bool status) {
         if (!status) {
@@ -64,65 +66,30 @@ MainWindow::MainWindow(QWidget *parent)
 
     //ui->music_icon->setPixmap(QPixmap(":/source/image/default_album.png"));
     //ui->music_icon->startRotation();
-    connect(_lm_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [this](const QModelIndex& current, const QModelIndex& previous) {
-        if (current.isValid()) {
-            qDebug() << "Receive currentRowChanged";
-            _currentPlayIndex = current.row();
-        }
-    });
-    connect(_lm_view, &TableView::rowDoubleClicked, this, [this](const SongInfo& info) {
-        qDebug() << "Receive rowDoubleClicked";
-        ui->bottomWid->play(info);
-        _currentPlayIndex = _lm_view->currentIndex().row();     // 更新播放索引
-    });
-    connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this](PlayModel model) {
-        qDebug() << "Receive playNextSong";
-        if (_lm_view->rowCount() == 0) return;
-        if (_currentPlayIndex == -1) return;
-
-        // 通过不同播放模式获取下一首歌曲索引
-        int nextIndex = 0;
-        if (model == PlayModel::LISTLOOP) {
-            nextIndex = _currentPlayIndex + 1;
-        } else if (model == PlayModel::SINGLELOOP) {
-            nextIndex = _currentPlayIndex;
-        } else if (model == PlayModel::RANDOM) {
-            // 通过随机数去生成下一首歌曲索引
-            // 若当前索引和下一首索引相同，则重新生成下一首索引
-            do {
-                nextIndex = rand() % _lm_view->rowCount();
-                qDebug() << "nextIndex" << nextIndex;
-            } while (nextIndex == _currentPlayIndex); 
-        }
-
-        if (nextIndex >= _lm_view->rowCount()) {
-            nextIndex = 0;
-        }
-
-        _currentPlayIndex = nextIndex;
-        SongInfo info = _lm_view->getSongInfoByProxyRow(nextIndex);
-        ui->bottomWid->play(info);
-        // 更新选中行
-        _lm_view->setCurrentIndex(_lm_view->model()->index(nextIndex, 0));
-    });
+    //connect(_lm_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [this](const QModelIndex& current, const QModelIndex& previous) {
+    //    if (current.isValid()) {
+    //        qDebug() << "Receive currentRowChanged";
+    //        _currentPlayIndex = current.row();
+    //    }
+    //});
 
     connect(ui->upload_Btn, &QPushButton::clicked, this, [this]() {
         qDebug() << "Upload clicked";
-        UploadWidget* uploadWidget = new UploadWidget(this);
+        UploadWidget* uploadWidget = new UploadWidget();
         uploadWidget->show();
     });
 
-    //_heartbeatTimer = new QTimer(this);
-    //connect(_heartbeatTimer, &QTimer::timeout, this, [this]() {
-    //    auto userInfo = UserManager::GetInstance()->getUserInfo();
-    //    QJsonObject jsonObj;
-    //    jsonObj["fromuid"] = userInfo->uid;
-    //    QJsonDocument doc(jsonObj);
-    //    QByteArray data = doc.toJson(QJsonDocument::Compact);
-    //    emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_HEARTBEAT_REQ, data);
-    //});
+    _heartbeatTimer = new QTimer(this);
+    connect(_heartbeatTimer, &QTimer::timeout, this, [this]() {
+        auto userInfo = UserManager::GetInstance()->getUserInfo();
+        QJsonObject jsonObj;
+        jsonObj["fromuid"] = userInfo->uid;
+        QJsonDocument doc(jsonObj);
+        QByteArray data = doc.toJson(QJsonDocument::Compact);
+        emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_HEARTBEAT_REQ, data);
+    });
 
-    //_heartbeatTimer->start(10000);
+    _heartbeatTimer->start(10000);
 }
 
 MainWindow::~MainWindow()
@@ -320,6 +287,47 @@ void MainWindow::readLocalMusicConfig()
         // 扫描文件
         scanFileToTableView(list);
     }
+}
+
+void MainWindow::bindConntoView(TableView* view)
+{
+    connect(view, &TableView::rowDoubleClicked, this, [this, view](const SongInfo& info) {
+        qDebug() << "Receive rowDoubleClicked";
+        ui->bottomWid->play(info);
+        _currentPlayIndex = view->currentIndex().row();     // 更新播放索引
+    });
+    connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this, view](PlayModel model) {
+        qDebug() << "Receive playNextSong";
+        if (view->rowCount() == 0) return;
+        if (_currentPlayIndex == -1) return;
+
+        // 通过不同播放模式获取下一首歌曲索引
+        int nextIndex = 0;
+        if (model == PlayModel::LISTLOOP) {
+            nextIndex = _currentPlayIndex + 1;
+        }
+        else if (model == PlayModel::SINGLELOOP) {
+            nextIndex = _currentPlayIndex;
+        }
+        else if (model == PlayModel::RANDOM) {
+            // 通过随机数去生成下一首歌曲索引
+            // 若当前索引和下一首索引相同，则重新生成下一首索引
+            do {
+                nextIndex = rand() % view->rowCount();
+                qDebug() << "nextIndex" << nextIndex;
+            } while (nextIndex == _currentPlayIndex);
+        }
+
+        if (nextIndex >= view->rowCount()) {
+            nextIndex = 0;
+        }
+
+        _currentPlayIndex = nextIndex;
+        SongInfo info = view->getSongInfoByProxyRow(nextIndex);
+        ui->bottomWid->play(info);
+        // 更新选中行
+        view->setCurrentIndex(view->model()->index(nextIndex, 0));
+    });
 }
 
 void MainWindow::on_complexionBtn_clicked()

@@ -36,6 +36,7 @@ signals:
     void sig_login_failed(ErrorCode error);
     void sig_send_data(ReqID reqId, QByteArray data);
     void sig_switch_mainwindow();
+    void sig_upload_file();
 };
 
 #endif // TCPMANAGER_H

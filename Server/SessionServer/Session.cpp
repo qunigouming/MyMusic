@@ -100,9 +100,11 @@ void Session::AsyncReadHead(int total_len)
 				return;
 			}
 
+			// 拷贝头部数据
 			self->_recv_head_node->Clear();
 			memcpy(self->_recv_head_node->_data, self->_data, byte_transfered);
 			short msg_id = 0;
+			// 拷贝MsgId
 			memcpy(&msg_id, self->_recv_head_node->_data, HEAD_ID_LEN);
 			msg_id = boost::asio::detail::socket_ops::network_to_host_short(msg_id);
 			std::cout << "msg_id is " << msg_id << std::endl;
@@ -111,7 +113,8 @@ void Session::AsyncReadHead(int total_len)
 				self->_server->ClearSession(self->_session_id);
 				return;
 			}
-			short msg_len = 0;
+			// 拷贝消息长度
+			unsigned short msg_len = 0;
 			memcpy(&msg_len, self->_recv_head_node->_data + HEAD_ID_LEN, HEAD_DATA_LEN);
 			msg_len = boost::asio::detail::socket_ops::network_to_host_short(msg_len);
 			std::cout << "msg_len is " << msg_len << std::endl;

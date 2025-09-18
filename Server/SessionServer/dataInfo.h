@@ -17,6 +17,7 @@ struct MusicInfo {
 	std::string album;
 	std::string song_icon;
 	std::string artists;
+	std::string album_artists;
 	std::string file_url;
 	int duration = 0;
 	bool is_like = false;
@@ -29,6 +30,7 @@ struct Artist {
 struct Album {
 	std::string title;
 	std::string artist_name;
+	std::vector<std::string> artist_names;
 	std::string release_date;
 	std::string cover_url;
 	std::string description;
@@ -41,6 +43,15 @@ struct Song {
 	int track_number;
 	std::string file_url;
 	std::vector<std::string> artist_names;
+
+	void Clear() {
+		title.clear();
+		album_title.clear();
+		file_url.clear();
+		artist_names.clear();
+        duration = 0;
+        track_number = 0;
+	}
 };
 
 // 歌单

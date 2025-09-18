@@ -6,6 +6,7 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <fstream>
 #include <sstream>
+#include <codecvt>
 
 std::string decode_base64(const std::string& val) {
 	if (val.empty())	return "";
@@ -200,13 +201,15 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 	auto total_size = root["total_size"].asInt();
 	auto trans_size = root["trans_size"].asInt();
 	auto file_path = ConfigManager::GetInstance()["Store"]["MusicPath"] + name;
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring wide_path = converter.from_bytes(file_path);
 	std::cout << "file path is " << file_path << std::endl;
 	std::ofstream outfile;
 	if (seq == 1) {
-		outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
+		outfile.open(wide_path, std::ios::out | std::ios::binary | std::ios::trunc);
 	}
 	else {
-        outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::app);
+        outfile.open(wide_path, std::ios::out | std::ios::binary | std::ios::app);
 	}
 
 	if (!outfile) {
@@ -226,6 +229,18 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 	retValue["name"] = name;
     retValue["total_size"] = total_size;
 	retValue["trans_size"] = trans_size;
+	std::cout << "file upload progress: " << trans_size << "/" << total_size << std::endl;
+	if (total_size == trans_size) {
+		std::cout << "file upload complete" << std::endl;
+		_song.file_url = ConfigManager::GetInstance()["Store"]["RemotePath"] + name;
+		try {
+			MysqlManager::GetInstance()->getOrCreateSong(_song);
+		}
+		catch (std::exception& e) {
+			std::cerr << "Exception: " << e.what() << std::endl;
+		}
+		_song.Clear();
+	}
 }
 
 void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
@@ -235,24 +250,33 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
     Json::Reader reader;
     reader.parse(msg_data, root);
 
-	// 插入歌手
-	MysqlManager::GetInstance()->getOrCreateArtist(root["artist"].asString());
+	Json::Value retValue;
+    retValue["error"] = ErrorCodes::Success;
+    Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_UPLOAD_META_TYPE_RSP);
+	});
 
 	// 插入专辑
 	Album album;
-	album.artist_name = root["artist"].asString();
-	album.title = root["title"].asString();
+	album.title = root["album"].asString();
+	album.artist_name = root["artists"].asString();
+	std::string title = root["title"].asString();
 	// 将图片数据存储到磁盘中
 	std::string cover_data = decode_base64(root["icon"].asString());
 	std::string cover_url;
-	if (!cover_data.empty()) {
-		cover_url = ConfigManager::GetInstance()["Store"]["CoverPath"] + album.title + ".png";
+	if (!cover_data.empty()) {	
+		cover_url = ConfigManager::GetInstance()["Store"]["CoverPath"] + title + ".png";
+		// 转换为宽字符处理，后续可能考虑用其他库处理
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide_path = converter.from_bytes(cover_url);
 		std::ofstream file;
-		file.open(cover_url, std::ios::out | std::ios::binary | std::ios::trunc);
-		std::cout << "cover url is " << cover_url << std::endl;
+		file.open(wide_path, std::ios::out | std::ios::binary | std::ios::trunc);
+		std::cout << "cover url is " << cover_url << "\t" << title << std::endl;
 		if (!file) {
-			std::cerr << "open file failed" << std::endl;
-
+			int errnum = errno;
+			std::cerr << "open file failed" << errnum << std::endl;
+			retValue["error"] = ErrorCodes::EtherInvalid;
 			return;
 		}
 		file.write(cover_data.c_str(), cover_data.size());
@@ -263,13 +287,15 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
     album.release_date = root["release_date"].asString();
 	MysqlManager::GetInstance()->getOrCreateAlbum(album);
 
-	// 插入歌曲
+	// 保存歌曲相关信息，以备后续插入歌曲
 	_song.title = root["title"].asString();
 	_song.album_title = root["album"].asString();
+
 	std::string artists = root["artists"].asString();
 	std::istringstream ss(artists);
 	std::string artist;
 	while (std::getline(ss, artist, '/')) _song.artist_names.push_back(artist);
+
 	_song.track_number = std::stoi(root["track"].asString());
 	_song.duration = std::stoi(root["duration"].asString());
 }

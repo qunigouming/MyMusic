@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RedisManager.h"
 #include <hiredis.h>
 #include <string>
 #include "Singleton.h"
@@ -13,6 +12,6 @@ public:
 	std::string acquireLock(redisContext* context, const std::string& lockName, int lockTimeOut, int acquireTimeOut);
 	bool releaseLock(redisContext* context, const std::string& lockName, const std::string& identifier);
 private:
-	DistributeLock();
+	DistributeLock() = default;
 };
 

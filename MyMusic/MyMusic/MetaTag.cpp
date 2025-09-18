@@ -24,7 +24,7 @@ QString MetaTag::getTitle()
 		TagLib::String title = _fileRef.tag()->title();
 		if (title.isEmpty()) {
 			QFileInfo fileinfo(_fileName);
-			return fileinfo.fileName().chopped(4);
+			return fileinfo.fileName().chopped(4).toUtf8();
 		}
 		return QString::fromUtf8(title.toCString(true));
 	}

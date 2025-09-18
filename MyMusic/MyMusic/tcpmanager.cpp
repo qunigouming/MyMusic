@@ -141,7 +141,10 @@ void TcpManager::initHandler()
         userInfo.sex = sex;
         userInfo.email = email.toStdString();
 
-        std::vector<std::shared_ptr<MusicInfo>> musicList;
+        UserManager::GetInstance()->setUserInfo(std::make_shared<UserInfo>(userInfo));
+        UserManager::GetInstance()->setToken(token);
+
+        QList<std::shared_ptr<MusicInfo>> musicList;
         QJsonArray jsonArray = jsonObj["music_list"].toArray();
         for (auto music : jsonArray) {
             QJsonObject musicObj = music.toObject();
@@ -156,8 +159,7 @@ void TcpManager::initHandler()
             musicList.push_back(std::make_shared<MusicInfo>(musicInfo));
         }
 
-        UserManager::GetInstance()->setUserInfo(std::make_shared<UserInfo>(userInfo));
-        UserManager::GetInstance()->setToken(token);
+        UserManager::GetInstance()->setMusicList(musicList);
 
         emit sig_switch_mainwindow();
     });
@@ -181,6 +183,54 @@ void TcpManager::initHandler()
         }
 
         qDebug() << "Heart Beat Success.";
+    });
+    _handlers.insert(ID_UPLOAD_META_TYPE_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Upload Meta Type Failed, Json Parse error is " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Upload Meta Type Failed, error is " << err;
+            return;
+        }
+
+        // 通知UploadWidget上传文件
+        emit sig_upload_file();
+    });
+    _handlers.insert(ID_UPLOAD_FILE_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Upload File Failed, Json Parse error is " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Upload File Failed, error is " << err;
+            return;
+        }
+
+        int total_size = jsonObj["total_size"].toInt();
+        int trans_size = jsonObj["trans_size"].toInt();
+
+        qDebug() << jsonObj["total_size"].toInt() << " bytes uploaded." << jsonObj["trans_size"].toInt();
+        if (total_size == trans_size) {
+            qDebug() << "Upload File Success.";
+            //emit sig_upload_success();
+        }
     });
 }
 
