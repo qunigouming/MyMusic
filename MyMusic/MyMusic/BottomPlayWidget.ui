@@ -200,6 +200,7 @@ QSlider::groove:horizontal:hover {
 	border-radius: 25px;
 	background-image: url(:/source/image/default_album.png);
 	background-repeat: no-repeat;
+	border: none;
 }</string>
            </property>
            <property name="text">

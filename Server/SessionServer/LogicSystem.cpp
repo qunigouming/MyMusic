@@ -296,8 +296,8 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	std::string artist;
 	while (std::getline(ss, artist, '/')) _song.artist_names.push_back(artist);
 
-	_song.track_number = std::stoi(root["track"].asString());
-	_song.duration = std::stoi(root["duration"].asString());
+	_song.track_number = root["track"].asInt();
+	_song.duration = root["duration"].asInt();
 }
 
 bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo)

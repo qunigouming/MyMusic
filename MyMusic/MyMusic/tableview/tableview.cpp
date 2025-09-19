@@ -267,6 +267,7 @@ void TableView::paintEvent(QPaintEvent* event)
 
 void TableView::updateVisibleRange()
 {
+    if (!isVisible())   return;
     if (!_proxyModel)   return;
 
     QRect viewportRect = viewport()->rect();
@@ -301,11 +302,11 @@ void TableView::updatePersistentEditors()
         }
     }
 
-    // 添加缓冲行
-    int buffer = 10;
-    for (int row = qMax(0, startRow - buffer); row <= qMin(_proxyModel->rowCount() - 1, endRow + buffer); ++row) {
-        newVisibleRows.insert(row);
-    }
+    //// 添加缓冲行
+    //int buffer = 10;
+    //for (int row = qMax(0, startRow - buffer); row <= qMin(_proxyModel->rowCount() - 1, endRow + buffer); ++row) {
+    //    newVisibleRows.insert(row);
+    //}
 
     // 可视区域真正变化时才处理编辑器
     if (newVisibleRows != _visibleRows) {

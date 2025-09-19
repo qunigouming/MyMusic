@@ -63,8 +63,15 @@ UploadWidget::UploadWidget(QWidget *parent)
         metaJson["title"] = ui->title_LineE->text();
         metaJson["album"] = ui->album_name_LineE->text();
         metaJson["artists"] = ui->artist_LineE->text();
-        metaJson["duration"] = ui->duration_LineE->text();
-        metaJson["track"] = ui->album_track_LineE->text();
+        
+        QTime time = QTime::fromString(ui->duration_LineE->text(), "mm:ss");
+        int totalSeconds = 0;
+        if (time.isValid()) {
+            int minutes = time.minute();
+            totalSeconds = minutes * 60 + time.second();
+        }
+        metaJson["duration"] = totalSeconds;
+        metaJson["track"] = ui->album_track_LineE->text().toInt();
         metaJson["description"] = ui->album_desc->toPlainText();
         metaJson["icon"] = QString(coverData.toBase64());
         metaJson["release_date"] = ui->birthday_LineE->text();

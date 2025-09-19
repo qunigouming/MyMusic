@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QIcon>
 #include "dataInfo.h"
+#include <QTime>
 
 enum class MusicTableViewType {
     NET_MODEL = 1,
@@ -43,7 +44,10 @@ struct SongInfo {
         title = QString::fromStdString(music_info.title);
         album = QString::fromStdString(music_info.album);
         isLiked = music_info.is_like;
-        duration = QString::number(music_info.duration);
+
+        QTime time(0, 0, music_info.duration);
+        duration = time.toString("mm:ss");
+
         isVIP = false;
         author = QString::fromStdString(music_info.artists);
         path = QString::fromStdString(music_info.file_url);
@@ -54,7 +58,10 @@ struct SongInfo {
         title = QString::fromStdString(music_info->title);
         album = QString::fromStdString(music_info->album);
         isLiked = music_info->is_like;
-        duration = QString::number(music_info->duration);
+
+        QTime time(0, 0, music_info->duration);
+        duration = time.toString("mm:ss");
+
         isVIP = false;
         author = QString::fromStdString(music_info->artists);
         path = QString::fromStdString(music_info->file_url);

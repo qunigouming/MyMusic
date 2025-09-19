@@ -15,7 +15,7 @@ public:
 	void setRotationSpeed(double speed);
 	void resetRotation();
 
-protected:
+private:
 	void updateDisplay();
 
 private slots:
@@ -25,7 +25,7 @@ private:
 	QPixmap _pixmap;
 	QTimer* _rotation_timer = nullptr;
 	double _rotation_angle = 0;
-	double _rotation_speed = 2.0;
+	double _rotation_speed = 1.0;
 	bool _is_rotating = false;
 };
 
