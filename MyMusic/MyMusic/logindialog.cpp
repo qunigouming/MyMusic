@@ -6,6 +6,7 @@
 #include "httpmanager.h"
 #include <QMessageBox>
 #include "tcpmanager.h"
+#include "Common/Encrypt/Encrypt.h"
 
 LoginDialog::LoginDialog(QWidget *parent)
     : QDialog(parent)
@@ -141,8 +142,7 @@ void LoginDialog::on_loginBtn_clicked()
 {
     QJsonObject json;
     json["name"] = ui->userLineE->text();
-    json["passwd"] = ui->pwdLineE->text();
-    HttpManager::GetInstance()->PostRequest(gate_url_prefix + "/get_server", json, ReqID::ID_GET_SERVER, Modules::LOGINMOD);
+    HttpManager::GetInstance()->PostRequest(gate_url_prefix + "/get_password_salt", json, ReqID::ID_GET_PWD_SALT, Modules::LOGINMOD);
 }
 
 void LoginDialog::slot_login_mod_finish(ReqID id, QString res, ErrorCode err)
@@ -177,6 +177,22 @@ void LoginDialog::initHttpReqHandler()
         _uid = serverInfo.Id;
         _token = serverInfo.Token;
         emit sig_con_tcpserver(serverInfo);
+    });
+
+    _handlers.insert(ReqID::ID_GET_PWD_SALT, [this](const QJsonObject& json) {
+        if (json["error"].toInt() != ErrorCode::SUCCESS) {
+            QMessageBox::warning(this, "错误", "用户名或密码错误", QMessageBox::Close);
+            return;
+        }
+
+        std::string salt = json["passwd_salt"].toString().toStdString();
+
+        QJsonObject retjson;
+        retjson["name"] = ui->userLineE->text();
+        // 密码加密
+        std::string hash = Encrypt::ComputeHashWithSalt(ui->pwdLineE->text().toStdString(), salt);
+        retjson["passwd_hash"] = QString::fromStdString(hash);
+        HttpManager::GetInstance()->PostRequest(gate_url_prefix + "/get_server", retjson, ReqID::ID_GET_SERVER, Modules::LOGINMOD);
     });
 }
 

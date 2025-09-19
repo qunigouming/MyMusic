@@ -60,14 +60,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>D:\Gitdown\vcpkg\installed\x64-windows\include;D:\ffmpeg-master-latest-win64-gpl-shared\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\ffmpeg-master-latest-win64-gpl-shared\lib;D:\Gitdown\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Gitdown\vcpkg\installed\x64-windows\include;D:\ffmpeg-master-latest-win64-gpl-shared\include;E:\CppProject\MyMusic\vcpkg_installed\x64-windows\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ffmpeg-master-latest-win64-gpl-shared\lib;D:\Gitdown\vcpkg\installed\x64-windows\lib;E:\CppProject\MyMusic\vcpkg_installed\x64-windows\debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;cryptopp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClCompile Include="BottomPlayWidget.cpp" />
     <ClCompile Include="colorblocklabel.cpp" />
+    <ClCompile Include="Common\Encrypt\Encrypt.cpp" />
     <ClCompile Include="complexionwidget.cpp" />
     <ClCompile Include="DragDropLabel.cpp" />
     <ClCompile Include="FFPlayer\AudioDecoder.cpp" />
@@ -168,6 +169,7 @@
     <QtMoc Include="FFPlayer\DecoderThreadManager.h" />
     <QtMoc Include="FFPlayer\FFPlayer.h" />
     <QtMoc Include="DragDropLabel.h" />
+    <ClInclude Include="Common\Encrypt\Encrypt.h" />
     <ClInclude Include="dataInfo.h" />
     <ClInclude Include="FFPlayer\VideoDecoder.h" />
     <ClInclude Include="global.h" />

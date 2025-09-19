@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Encryp">
+      <UniqueIdentifier>{814a56be-2c97-4020-af81-ed1aded1cf81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="StatusGrpcClient.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Encrypt\Encrypt.cpp">
+      <Filter>Encryp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="StatusGrpcClient.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Encrypt\Encrypt.h">
+      <Filter>Encryp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

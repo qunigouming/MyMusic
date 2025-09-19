@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include "global.h"
 #include "httpmanager.h"
+#include "Common/Encrypt/Encrypt.h"
 
 #define VISIBLE 0xe004
 #define INVISIBLE 0xe003
@@ -349,7 +350,12 @@ void RegisterDialog::on_registerBtn_clicked()
     //正常处理
     QJsonObject json;
     json["name"] = ui->userLineE->text();
-    json["passwd"] = ui->pwdLineE->text();
+    
+    // 密码加密
+    Encrypt encrypt(ui->pwdLineE->text().toStdString());
+    json["passwd_hash"] = QString::fromStdString(encrypt.getPasswordHash());
+    json["passwd_salt"] = QString::fromStdString(encrypt.getPasswordSalt());
+
     json["email"] = ui->emailLineE->text();
     json["icon"] = ":/source/image/default_user_head.png";      // 使用默认头像
     json["verifycode"] = ui->verifCodeLineE->text();

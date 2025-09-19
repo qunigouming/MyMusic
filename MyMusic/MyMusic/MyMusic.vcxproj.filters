@@ -51,6 +51,9 @@
     <Filter Include="Tool\Common">
       <UniqueIdentifier>{ab4d2d75-5e4c-433d-b515-37145bfbb14f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tool\Common\Encrypt">
+      <UniqueIdentifier>{7b49e7a8-6395-4dd5-8839-3fcc2f819a97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="UserManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Encrypt\Encrypt.cpp">
+      <Filter>Tool\Common\Encrypt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="dataInfo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Encrypt\Encrypt.h">
+      <Filter>Tool\Common\Encrypt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

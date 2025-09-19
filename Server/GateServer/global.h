@@ -20,17 +20,18 @@ using tcp = boost::asio::ip::tcp;
 
 enum ErrorCodes {
 	Success = 0,
-	Error_Json = 1001,			//Json½âÎö´íÎó
-	RPCFailed = 1002,			//RPCÇëÇó´íÎó
-	VerifyExpired = 1003,		//ÑéÖ¤Âë¹ıÆÚ
-	VerifyCodeErr = 1004,		//ÑéÖ¤Âë´íÎó
-	UserExist = 1005,			//ÓÃ»§ÒÑ¾­´æÔÚ
-	EmailExist = 1006,			//ÓÊÏäÒÑ¾­´æÔÚ
-	PasswdErr = 1007,			//ÃÜÂë´íÎó
-	EmailNotMatch = 1008,		//ÓÊÏä²»Æ¥Åä
-	PasswdUpFailed = 1009,		//¸üĞÂÃÜÂëÊ§°Ü
-	PasswdInvalid = 1010,		//ÃÜÂëÎŞĞ§
-	OtherError					//ÆäËû´íÎó
+	Error_Json = 1001,			//Jsonè§£æé”™è¯¯
+	RPCFailed = 1002,			//RPCè¯·æ±‚é”™è¯¯
+	VerifyExpired = 1003,		//éªŒè¯ç è¿‡æœŸ
+	VerifyCodeErr = 1004,		//éªŒè¯ç é”™è¯¯
+	UserExist = 1005,			//ç”¨æˆ·å·²ç»å­˜åœ¨
+	EmailExist = 1006,			//é‚®ç®±å·²ç»å­˜åœ¨
+	PasswdErr = 1007,			//å¯†ç é”™è¯¯
+	EmailNotMatch = 1008,		//é‚®ç®±ä¸åŒ¹é…
+	PasswdUpFailed = 1009,		//æ›´æ–°å¯†ç å¤±è´¥
+	PasswdInvalid = 1010,		//å¯†ç æ— æ•ˆ
+	UserNameInvalid = 1011,		//ç”¨æˆ·åæ— æ•ˆ
+	OtherError					//å…¶ä»–é”™è¯¯
 };
 
 class Defer {

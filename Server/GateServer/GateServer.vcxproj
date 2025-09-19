@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\Public_Lib\botan\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Public_Lib\botan\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\CppProject\MyMusic\vcpkg_installed\x64-windows\include;E:\Public_Lib\botan\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\CppProject\MyMusic\vcpkg_installed\x64-windows\debug\lib;E:\Public_Lib\botan\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -123,7 +123,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cryptopp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="AsioIOServicePool.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
+    <ClCompile Include="Encrypt\Encrypt.cpp" />
     <ClCompile Include="GateService.cpp" />
     <ClCompile Include="HttpConnection.cpp" />
     <ClCompile Include="LogicSystem.cpp" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="AsioIOServicePool.h" />
     <ClInclude Include="ConfigManager.h" />
+    <ClInclude Include="Encrypt\Encrypt.h" />
     <ClInclude Include="GateService.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="HttpConnection.h" />

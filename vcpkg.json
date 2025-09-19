@@ -10,7 +10,10 @@
 		},
 		{
 			"name": "poco",
-			"features": ["netssl"]
+			"features": [ "netssl" ]
+		},
+		{
+			"name": "cryptopp",
 		}
 	],
 	"overrides": [

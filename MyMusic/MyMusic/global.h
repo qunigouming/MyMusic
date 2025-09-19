@@ -33,6 +33,7 @@ enum ReqID {
     ID_NOTIFY_OFF_LINE_RSP = 1011,
     ID_HEARTBEAT_REQ = 1012,
     ID_HEARTBEAT_RSP = 1013,
+    ID_GET_PWD_SALT = 1014
 };
 
 enum Modules {
@@ -48,6 +49,11 @@ enum ErrorCode {
     VerifyCodeErr = 1004,		//验证码错误
     UserExist = 1005,			//用户已经存在
     EmailExist = 1006,			//邮箱已经存在
+    PasswdErr = 1007,			//密码错误
+    EmailNotMatch = 1008,		//邮箱不匹配
+    PasswdUpFailed = 1009,		//更新密码失败
+    PasswdInvalid = 1010,		//密码无效
+    UserNameInvalid = 1011,		//用户名无效
     EtherInvalid = 0x777        //Ether错误
 };
 

@@ -72,72 +72,107 @@ LogicSystem::LogicSystem()
 		connection->_response.set(http::field::content_type, "text/json");
 		Json::Value value;
 		Json::Reader reader;
-		Json::Value root;
-		Defer defer([&connection, &root] {
-			std::string jsonstr = root.toStyledString();
+		Json::Value retJson;
+		Defer defer([&connection, &retJson] {
+			std::string jsonstr = retJson.toStyledString();
 			beast::ostream(connection->_response.body()) << jsonstr;
 		});
 		//解析Json
-		bool parse_success = reader.parse(body_str, root);
+		bool parse_success = reader.parse(body_str, value);
 		if (!parse_success) {
 			std::cout << "Failed to parse Json data!" << std::endl;
-			root["error"] = ErrorCodes::Error_Json;
+			retJson["error"] = ErrorCodes::Error_Json;
 			return false;
 		}
-		auto name = root["name"].asString();
-		auto email = root["email"].asString();
-		auto pwd = root["passwd"].asString();
+		auto name = value["name"].asString();
+		auto email = value["email"].asString();
+		auto passwd_hash = value["passwd_hash"].asString();
+		auto passwd_salt = value["passwd_salt"].asString();
 
 		//判断验证码的合理性
 		std::string verify_code;
 		bool b_get_success = RedisManager::GetInstance()->Get(CODEPREFIX + email, verify_code);
 		if (!b_get_success) {
 			std::cout << "verify code are expired" << std::endl;
-			root["error"] = ErrorCodes::VerifyCodeErr;
+			retJson["error"] = ErrorCodes::VerifyCodeErr;
 			return false;
 		}
 
-		if (verify_code != root["verifycode"].asString()) {
+		if (verify_code != value["verifycode"].asString()) {
 			std::cout << "verify code error" << verify_code << std::endl;
-			root["error"] = ErrorCodes::VerifyCodeErr;
+			retJson["error"] = ErrorCodes::VerifyCodeErr;
 			return false;
 		}
 
 		//注册用户
-		int ecode = MysqlManager::GetInstance()->RegUser(name, pwd, email);
+		int ecode = MysqlManager::GetInstance()->RegUser(name, passwd_hash, passwd_salt, email);
 		std::cout << "register code is: " << ecode << std::endl;
-		root["error"] = ecode;
-		root["email"] = email;
-		root["user"] = name;
-		root["passwd"] = pwd;
+		retJson["error"] = ecode;
+		retJson["email"] = email;
+		retJson["user"] = name;
 		return true;
 	});
 
+	// in name
+	// out passwd_salt error
+	RegisterPost("/get_password_salt", [](std::shared_ptr<HttpConnection> connection) {
+        auto body_str = beast::buffers_to_string(connection->_request.body().data());
+        std::cout << "receive body is " << body_str << std::endl;
+        connection->_response.set(http::field::content_type, "text/json");
+        Json::Value retJson;
+        Defer defer([&connection, &retJson] {
+            std::string jsonstr = retJson.toStyledString();
+            beast::ostream(connection->_response.body()) << jsonstr;
+        });
+		Json::Value value;
+        Json::Reader reader;
+		bool parse_success = reader.parse(body_str, value);
+        if (!parse_success) {
+            std::cout << "Failed to parse Json data!" << std::endl;
+            retJson["error"] = ErrorCodes::Error_Json;
+            return false;
+        }
+		auto name = value["name"].asString();
+		std::string passwd_salt;
+        bool get_success = MysqlManager::GetInstance()->GetPasswdSalt(name, passwd_salt);
+        if (!get_success) {
+            std::cout << "Failed to get passwd salt" << std::endl;
+			if (passwd_salt.empty()) retJson["error"] = ErrorCodes::UserNameInvalid;
+			else retJson["error"] = ErrorCodes::OtherError;
+            return false;
+        }
+		retJson["error"] = ErrorCodes::Success;
+        retJson["passwd_salt"] = passwd_salt;
+		return true;
+	});
+
+	// in name, passwd_hash
+	// out error
 	RegisterPost("/get_server", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = beast::buffers_to_string(connection->_request.body().data());
 		std::cout << "receive body is " << body_str << std::endl;
 		connection->_response.set(http::field::content_type, "text/json");
 		Json::Value value;
 		Json::Reader reader;
-		Json::Value root;
-		Defer defer([&connection, &root] {
-			std::string jsonstr = root.toStyledString();
+		Json::Value retJson;
+		Defer defer([&connection, &retJson] {
+			std::string jsonstr = retJson.toStyledString();
 			beast::ostream(connection->_response.body()) << jsonstr;
 		});
-		bool parse_success = reader.parse(body_str, root);
+		bool parse_success = reader.parse(body_str, value);
 		if (!parse_success) {
 			std::cout << "Failed to parse Json data!" << std::endl;
-			root["error"] = ErrorCodes::Error_Json;
+			retJson["error"] = ErrorCodes::Error_Json;
 			return false;
 		}
 
 		//验证登录用户的有效性
-		auto name = root["name"].asString();
-		auto passwd = root["passwd"].asString();
+		auto name = value["name"].asString();
+		auto passwd_hash = value["passwd_hash"].asString();
 		int id = 0;
-		bool login_valid = MysqlManager::GetInstance()->LoginValid(name, passwd, id);
+		bool login_valid = MysqlManager::GetInstance()->LoginValid(name, passwd_hash, id);
 		if (!login_valid) {
-			root["error"] = ErrorCodes::PasswdErr;
+			retJson["error"] = ErrorCodes::PasswdErr;
 			return true;
 		}
 
@@ -145,16 +180,16 @@ LogicSystem::LogicSystem()
 		auto reply = StatusGrpcClient::GetInstance()->GetChatServer(id);
 		if (reply.error()) {
 			std::cout << "grpc get chat server failed, error is " << reply.error() << std::endl;
-			root["error"] = ErrorCodes::RPCFailed;
+			retJson["error"] = ErrorCodes::RPCFailed;
 			return true;
 		}
 
 		std::cout << "user login successs, id is: " << id << std::endl;
-		root["error"] = 0;
-		root["id"] = id;
-		root["token"] = reply.token();
-		root["host"] = reply.host();
-		root["port"] = reply.port();
+		retJson["error"] = 0;
+		retJson["id"] = id;
+		retJson["token"] = reply.token();
+		retJson["host"] = reply.host();
+		retJson["port"] = reply.port();
 		return true;
 	});
 }
