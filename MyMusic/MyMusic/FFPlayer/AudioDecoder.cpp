@@ -31,6 +31,7 @@ bool AudioDecoder::init()
     format.setSampleFormat(QAudioFormat::Int16);
 
     _audioSink = new QAudioSink(format);
+    setVolume(60);
     _audioDevice = _audioSink->start();
 
     emit DecoderInterface::initFinished(true);
@@ -212,4 +213,9 @@ void AudioDecoder::start()
     }
     qDebug() << "AudioDecoder::start() end";
     emit DecoderInterface::decodingFinished();
+}
+
+void AudioDecoder::setVolume(int volume)
+{
+    if (_audioSink) _audioSink->setVolume(volume / 100.0);
 }

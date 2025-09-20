@@ -17,6 +17,8 @@ public:
     void stop();        // 停止播放
     void pause();       // 暂停播放
 
+    void setVolume(int volume);
+
     PlayerState getState();
 
     int getDuration();
@@ -32,6 +34,8 @@ signals:
     void PlayFinished();                // 播放完毕信号
 
     void clockChanged(double clock);    // 时钟同步信号
+
+    void volumeChanged(int volume);
 
 private:
     void fateError();

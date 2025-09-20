@@ -161,6 +161,9 @@
     <ClCompile Include="Common\Encrypt\Encrypt.cpp">
       <Filter>Tool\Common\Encrypt</Filter>
     </ClCompile>
+    <ClCompile Include="VolumeWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -256,6 +259,9 @@
     <QtMoc Include="UserManager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="VolumeWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="complexionwidget.ui">
@@ -277,6 +283,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="UploadWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="VolumeWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -313,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="Common\Encrypt\Encrypt.h">
       <Filter>Tool\Common\Encrypt</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

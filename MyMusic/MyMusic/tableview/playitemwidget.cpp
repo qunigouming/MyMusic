@@ -34,7 +34,7 @@ PlayItemWidget::PlayItemWidget(QWidget *parent)
 
     //set vip label
     _songTip = new QLabel(_textContainer);
-    _songTip->setPixmap(QPixmap(":/source/icon/vip.png").scaled(20, 20));
+    //_songTip->setPixmap(QPixmap(":/source/icon/vip.png").scaled(20, 20));
     _songTip->setFixedSize(20, 20);
 
     //set author label

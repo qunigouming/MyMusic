@@ -64,15 +64,6 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    //ui->music_icon->setPixmap(QPixmap(":/source/image/default_album.png"));
-    //ui->music_icon->startRotation();
-    //connect(_lm_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, [this](const QModelIndex& current, const QModelIndex& previous) {
-    //    if (current.isValid()) {
-    //        qDebug() << "Receive currentRowChanged";
-    //        _currentPlayIndex = current.row();
-    //    }
-    //});
-
     connect(ui->upload_Btn, &QPushButton::clicked, this, [this]() {
         qDebug() << "Upload clicked";
         UploadWidget* uploadWidget = new UploadWidget();

@@ -53,6 +53,8 @@ public:
         _pktQueue.clear();
 	}
 
+	virtual void setVolume(int volume) = 0;
+
 signals:
 	void initFinished(bool success);
 	void decodingFinished();

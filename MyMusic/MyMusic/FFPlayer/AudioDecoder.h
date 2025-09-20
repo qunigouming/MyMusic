@@ -24,6 +24,8 @@ public:
 
 	int getStreamIndex() override;
 
+	void setVolume(int volume) override;
+
 public slots:
 	void setDecoderState(PlayerState state) override;
 
@@ -36,6 +38,7 @@ protected:
 	virtual int initSws() override;
 
 	void start() override;
+
 private:
 	SwrContext* _swrCtx = nullptr;
     SwrSpec _inSpec, _outSpec;

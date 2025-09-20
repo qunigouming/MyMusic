@@ -47,11 +47,11 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
     _batchTimer->setInterval(100);
     connect(_batchTimer, &QTimer::timeout, this, &TableView::processPendingSongs);
 
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TableView::updateVisibleRange);
+    //connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TableView::updateVisibleRange);
     //connect(viewport(), &QAbstractScrollArea::, this, &TableView::updateVisibleRange);
 
     _scrollUpdateTimer = new QTimer(this);
-    _scrollUpdateTimer->setInterval(100);
+    _scrollUpdateTimer->setInterval(20);
     _scrollUpdateTimer->setSingleShot(true);
     connect(_scrollUpdateTimer, &QTimer::timeout, this, [this]() {
         updatePersistentEditors();
@@ -227,14 +227,12 @@ void TableView::leaveEvent(QEvent *event)
 void TableView::scrollContentsBy(int dx, int dy)
 {
     QTableView::scrollContentsBy(dx, dy);
-    if (dy != 0 && abs(dy) > 5) {
-        updateVisibleRange();
-        if (_scrollUpdateTimer) {
-            _scrollUpdateTimer->stop();
-            _scrollUpdateTimer->start();
-        }
-        //updatePersistentEditors();
+    updateVisibleRange();
+    if (_scrollUpdateTimer) {
+        _scrollUpdateTimer->stop();
+        _scrollUpdateTimer->start();
     }
+        // updatePersistentEditors();
 }
 
 void TableView::resizeEvent(QResizeEvent* event)
@@ -302,11 +300,11 @@ void TableView::updatePersistentEditors()
         }
     }
 
-    //// 添加缓冲行
-    //int buffer = 10;
-    //for (int row = qMax(0, startRow - buffer); row <= qMin(_proxyModel->rowCount() - 1, endRow + buffer); ++row) {
-    //    newVisibleRows.insert(row);
-    //}
+    // 添加缓冲行
+    int buffer = 10;
+    for (int row = qMax(0, startRow - buffer); row <= qMin(_proxyModel->rowCount() - 1, endRow + buffer); ++row) {
+        newVisibleRows.insert(row);
+    }
 
     // 可视区域真正变化时才处理编辑器
     if (newVisibleRows != _visibleRows) {

@@ -5,6 +5,8 @@
 #include "FFPlayer/FFPlayer.h"
 #include "tableview/tableviewmodel.h"
 #include "global.h"
+#include "VolumeWidget.h"
+#include <QSharedPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class BottomPlayWidgetClass; };
@@ -24,10 +26,14 @@ signals:
 	void playNextSong(PlayModel);
 	void playModelChanged(PlayModel);
 
+protected:
+	bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
-	void informMainWindow();		// 通知主窗口
 	void playSigConnect();
 	void uiSigConnect();
+
+	void setVolumeUI(int volume);
 
 private:
 	Ui::BottomPlayWidgetClass *ui;
@@ -35,5 +41,6 @@ private:
 	int _duration = 0;
 	QString _current_SongPath;
 	PlayModel _playModel = PlayModel::LISTLOOP;
+	QSharedPointer<VolumeWidget> _volumeWidget = nullptr;
 };
 

@@ -1,4 +1,5 @@
 #include "BottomPlayWidget.h"
+#include <QMouseEvent>
 
 BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     : QWidget(parent)
@@ -13,6 +14,24 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     ui->collect_btn->setText(QChar(0xe609));
     ui->volume_btn->setText(QChar(0xe013));
     ui->more_btn->setText(QChar(0xe61c));
+    _volumeWidget = QSharedPointer<VolumeWidget>(new VolumeWidget);
+    ui->volume_btn->installEventFilter(this);
+
+    connect(_volumeWidget.get(), &VolumeWidget::volumeChanged, this, [this](int volume) {
+        _player->setVolume(volume);
+        setVolumeUI(volume);
+    });
+
+    connect(ui->volume_btn, &QPushButton::clicked, [this](bool checked) {
+        if (checked) {
+            _volumeWidget->mute();
+            //setVolumeUI(0);
+        }
+        else {
+            int volume = _volumeWidget->unMute();
+            //setVolumeUI(volume);
+        }
+    });
 
     _player = new FFPlayer(this);
     playSigConnect();
@@ -38,8 +57,26 @@ void BottomPlayWidget::play(const SongInfo& info)
     _player->play(_current_SongPath);
 }
 
-void BottomPlayWidget::informMainWindow()
+bool BottomPlayWidget::eventFilter(QObject* obj, QEvent* event)
 {
+    if (obj == ui->volume_btn) {
+        if (event->type() == QEvent::Enter) {
+            // qDebug() << "Enter volume button";
+            QPoint target = ui->volume_btn->mapToGlobal(QPoint(0, 0));
+            QSize size = _volumeWidget->size();
+            _volumeWidget->move(target.x(), target.y() - size.height() + 15);
+            _volumeWidget->show();
+            return false;
+        }
+
+        if (event->type() == QEvent::Leave) {
+            // qDebug() << "Leave volume button";
+            if (!_volumeWidget->geometry().contains(QCursor::pos()))
+                _volumeWidget->hide();
+            return false;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 void BottomPlayWidget::playSigConnect()
@@ -121,5 +158,13 @@ void BottomPlayWidget::uiSigConnect()
     connect(ui->play_progressbar, &ProgressBar::sliderPressed, _player, [this] {
         _player->seek(ui->play_progressbar->value());
     });
+}
+
+void BottomPlayWidget::setVolumeUI(int volume)
+{
+    if (volume == 0) ui->volume_btn->setText(QChar(0xe011));
+    else if (volume > 0 && volume <= 30) ui->volume_btn->setText(QChar(0xe012));
+    else if (volume > 30 && volume <= 60) ui->volume_btn->setText(QChar(0xe013));
+    else ui->volume_btn->setText(QChar(0xe014));
 }
 

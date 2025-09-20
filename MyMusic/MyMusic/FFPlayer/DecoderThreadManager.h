@@ -20,6 +20,8 @@ public:
 
     bool isRunning() const;
 
+    void setVolume(int volume);
+
 signals:
     void initFinished(bool success);        // 解码器初始化完成信号
     void clockChanged(double clock);

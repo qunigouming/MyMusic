@@ -22,6 +22,8 @@ FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::clockChanged, this, [this](double clock) {
 		emit clockChanged(clock);
 	});
+
+	connect(this, &FFPlayer::volumeChanged, _audioDecoderMgr.get(), &DecoderThreadManager::setVolume);
 }
 
 FFPlayer::~FFPlayer()
@@ -74,6 +76,11 @@ void FFPlayer::pause()
 {
 	if (_state != PlayerState::PLAYING)	return;
 	setState(PlayerState::PAUSE);
+}
+
+void FFPlayer::setVolume(int volume)
+{
+	emit volumeChanged(volume);
 }
 
 PlayerState FFPlayer::getState()

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VolumeWidgetClass</class>
+ <widget class="QWidget" name="VolumeWidgetClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>94</width>
+    <height>120</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>94</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>VolumeWidget</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QSlider" name="volume_slider">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QSlider {
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-left:7px;
+	padding-right:8px;
+	border-radius: 5px;
+}
+ 
+QSlider::add-page:vertical {
+	background-color: rgb(236, 65, 65);	
+	width:3px;
+	border-radius: 2px;
+}
+ 
+QSlider::sub-page:vertical {
+	background-color: rgb(229, 229, 229);
+	width:3px;
+	border-radius: 2px;
+}
+ 
+QSlider::groove:vertical {
+	background:transparent;
+	width:4px;
+}
+ 
+QSlider::handle:vertical {
+	height: 9px;
+	width: 4px;
+	margin: 0px -3px 0px -3px;
+	border-radius: 4px;
+	background-color: rgb(236, 65, 65);
+}</string>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="pageStep">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>60</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="volume_lab">
+     <property name="text">
+      <string>60%</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

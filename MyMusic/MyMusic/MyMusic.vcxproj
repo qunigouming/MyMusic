@@ -136,6 +136,7 @@
     <ClCompile Include="Tool\filescannerworker.cpp" />
     <ClCompile Include="UploadWidget.cpp" />
     <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="VolumeWidget.cpp" />
     <ClCompile Include="windowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,7 @@
     <QtUic Include="registerdialog.ui" />
     <QtUic Include="selectlocmusic_dlg.ui" />
     <QtUic Include="UploadWidget.ui" />
+    <QtUic Include="VolumeWidget.ui" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />
@@ -160,6 +162,7 @@
     <QtMoc Include="funclistwidgetitem.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="VolumeWidget.h" />
     <QtMoc Include="UserManager.h" />
     <QtMoc Include="UploadWidget.h" />
     <QtMoc Include="BottomPlayWidget.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="MetaTag.h" />
     <QtMoc Include="ProgressBar.h" />
     <ClInclude Include="PlayStatePrivate.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RotationLabel.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Tool\FileInfo.h" />
