@@ -122,6 +122,7 @@
     <ClCompile Include="registerdialog.cpp" />
     <ClCompile Include="RotationLabel.cpp" />
     <ClCompile Include="selectlocmusic_dlg.cpp" />
+    <ClCompile Include="SysTray.cpp" />
     <ClCompile Include="tableview\elidedlabel.cpp" />
     <ClCompile Include="tableview\playitemwidget.cpp" />
     <ClCompile Include="tableview\songdelegate.cpp" />
@@ -180,8 +181,10 @@
     <QtMoc Include="ProgressBar.h" />
     <ClInclude Include="PlayStatePrivate.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="RotationLabel.h" />
     <ClInclude Include="Singleton.h" />
+    <QtMoc Include="SysTray.h" />
     <ClInclude Include="Tool\FileInfo.h" />
     <QtMoc Include="Tool\filescannerworker.h" />
     <QtMoc Include="Tool\FileInspectorInterface.h" />
@@ -206,6 +209,12 @@
   <ItemGroup>
     <QtRcc Include="source.qrc" />
     <QtRcc Include="tableview\res.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MyMusic.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="source\image\AppPic.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

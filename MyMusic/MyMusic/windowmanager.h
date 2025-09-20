@@ -15,6 +15,7 @@
 #include "logindialog.h"
 #include "mainwindow.h"
 #include <QSharedPointer>
+#include "SysTray.h"
 
 class WindowManager : public QMainWindow
 {
@@ -29,6 +30,7 @@ private slots:
 private:
     QSharedPointer<LoginDialog> _loginDialog;
     QSharedPointer<MainWindow> _mainWindow;
+    QSharedPointer<SysTray> _sysTray;
 };
 
 #endif // WINDOWMANAGER_H

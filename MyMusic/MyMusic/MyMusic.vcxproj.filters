@@ -164,6 +164,9 @@
     <ClCompile Include="VolumeWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SysTray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -262,6 +265,9 @@
     <QtMoc Include="VolumeWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="SysTray.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="complexionwidget.ui">
@@ -326,6 +332,9 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="source.qrc">
@@ -334,5 +343,15 @@
     <QtRcc Include="tableview\res.qrc">
       <Filter>tableview</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MyMusic.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="source\image\AppPic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

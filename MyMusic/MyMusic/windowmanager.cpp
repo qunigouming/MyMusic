@@ -5,6 +5,8 @@ WindowManager::WindowManager(QWidget *parent)
     : QMainWindow{parent}, _loginDialog(nullptr), _mainWindow(nullptr)
 {
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);          //no frame handle
+    setWindowIcon(QIcon(":/source/image/AppPic.png"));
+    _sysTray = QSharedPointer<SysTray>(new SysTray(this));
     _loginDialog.reset(new LoginDialog(this));
     _loginDialog->show();
     setCentralWidget(_loginDialog.get());
