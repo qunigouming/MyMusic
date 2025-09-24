@@ -23,7 +23,7 @@ tcp::socket& Session::GetSocket()
 	return _socket;
 }
 
-std::string& Session::GetUid()
+std::string& Session::GetSessionId()
 {
 	return _session_id;
 }
@@ -31,6 +31,11 @@ std::string& Session::GetUid()
 void Session::SetUserUid(int uid)
 {
 	_user_uid = uid;
+}
+
+int Session::GetUserUid()
+{
+	return _user_uid;
 }
 
 void Session::Start()
@@ -223,7 +228,7 @@ void Session::DealExceptionSession()
 	}
 
 	RedisManager::GetInstance()->Del(USER_SESSION_PREFIX + uid_str);
-    RedisManager::GetInstance()->Del(USERTOKENPREFIX + uid_str);
+    RedisManager::GetInstance()->Del(USER_IP_PREFIX + uid_str);
 }
 
 void Session::AsyncReadFull(std::size_t maxLength, std::function<void(const boost::system::error_code&, std::size_t)> handler)

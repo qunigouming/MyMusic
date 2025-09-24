@@ -24,7 +24,7 @@ std::string DistributeLock::acquireLock(redisContext* context, const std::string
         if (reply->type == REDIS_REPLY_ERROR) {
             return "";
         }
-        if (reply->type == REDIS_REPLY_STRING) {
+        if (reply->type == REDIS_REPLY_STATUS) {
             if (std::string(reply->str) == "OK") {
                 return identifier;
             }

@@ -2,6 +2,7 @@
 #include "AsioIOServicePool.h"
 #include "ConfigManager.h"
 #include "RedisManager.h"
+#include "UserManager.h"
 
 Server::Server(boost::asio::io_context& ioc, short port) : _ioc(ioc), _port(port), _acceptor(ioc, tcp::endpoint(tcp::v4(), port)), _timer(ioc, std::chrono::seconds(TIMER_INTERVAL))
 {
@@ -14,10 +15,16 @@ Server::~Server()
 	std::cout << "Server are destructed on port:" << _port << std::endl;
 }
 
-void Server::ClearSession(std::string uid)
+void Server::ClearSession(std::string session_uid)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
-	_sessions.erase(uid);
+	if (_sessions.find(session_uid) != _sessions.end()) {
+		auto uid = _sessions[session_uid]->GetUserUid();
+
+		UserManager::GetInstance()->RemoveSession(uid, session_uid);
+	}
+
+	_sessions.erase(session_uid);
 }
 
 bool Server::CheckVaild(std::string& uid)
@@ -91,7 +98,7 @@ void Server::HandleAccept(std::shared_ptr<Session> new_session, const boost::sys
 	if (!error) {
 		new_session->Start();
 		std::lock_guard<std::mutex> lock(_mutex);
-		_sessions.insert(std::make_pair(new_session->GetUid(), new_session));
+		_sessions.insert(std::make_pair(new_session->GetSessionId(), new_session));
 	}
 	else {
 		std::cout << "Server acceptance of handling has failed: " << error.what() << std::endl;

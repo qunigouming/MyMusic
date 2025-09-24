@@ -12,6 +12,7 @@ class LogicSystem : public Singleton<LogicSystem>
 public:
 	~LogicSystem();
 	void PustMsg(std::shared_ptr<LogicNode> msg);
+	void SetServer(std::shared_ptr<Server> server);
 private:
 	LogicSystem();
 	void Run();
@@ -30,6 +31,8 @@ private:
 	std::atomic_bool _b_stop = false;
 	std::queue<std::shared_ptr<LogicNode>> _msg_que;
 	std::map<int, funcCallBack> _handler;
+
+	std::shared_ptr<Server> _server = nullptr;
 
 	Song _song;
 };

@@ -11,6 +11,7 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "GET %s", key.c_str());
 	if (!reply) {
 		std::cout << "[ Get " << key << " ] failed" << std::endl;
@@ -31,6 +32,7 @@ bool RedisManager::Set(const std::string& key, const std::string& value)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "SET %s %s", key.c_str(), value.c_str());
 	if (!reply) {
 		std::cout << "[ Set " << key << " ] failed" << std::endl;
@@ -52,9 +54,7 @@ bool RedisManager::Del(const std::string& key)
 	if (!connection) {
 		return false;
 	}
-	Defer defer([&]() {
-		_pool->returnConnection(connection);
-	});
+	Defer defer([this, &connection] { _pool->returnConnection(connection); });
 	redisReply* reply = (redisReply*)redisCommand(connection, "DEL %s", key.c_str());
 	if (!reply) {
 		std::cout << "[ Del " << key << "] failed" << std::endl;
@@ -77,9 +77,7 @@ std::string RedisManager::HGet(const std::string& key, const std::string& hkey)
 	if (connect == nullptr) {
 		return "";
 	}
-	Defer defer([this, &connect] {
-		_pool->returnConnection(connect);
-	});
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	const char* argv[3];
 	size_t argvlen[3];
 	argv[0] = "HGET";
@@ -137,9 +135,7 @@ bool RedisManager::HDel(const std::string& key, const std::string& field)
         return false;
     }
 
-	Defer defer([this, &connect] {
-		_pool->returnConnection(connect);
-	});
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 
 	redisReply* reply = (redisReply*)redisCommand(connect, "HDEL %s %s", key.c_str(), field.c_str());
     if (reply == nullptr) {
@@ -160,6 +156,7 @@ bool RedisManager::Auth(const std::string& password)
 {
 	auto connect = _pool->getConnection();
 	if (!connect) return false;
+	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "AUTH %s", password.c_str());
 	if (reply->type == REDIS_REPLY_ERROR) {
 		std::cout << "Redis verify failed!!!" << std::endl;
@@ -194,6 +191,56 @@ bool RedisManager::releaseLock(const std::string& lockName, const std::string& i
 	if (!conn)	return false;
 	Defer defer([this, &conn]() { _pool->returnConnection(conn); });
 	return DistributeLock::GetInstance()->releaseLock(conn, lockName, identifier);
+}
+
+void RedisManager::IncreaseCount(std::string server_name)
+{
+	auto lock_key = LOCK_COUNT;
+	auto identifier = acquireLock(lock_key, LOCK_TIME_OUT, ACQUIRE_TIME_OUT);
+	Defer defer([this, identifier, lock_key]() { releaseLock(lock_key, identifier); });
+
+	// 增加当前服务器的登录人数
+	auto res = HGet(LOGINCOUNT, server_name);
+	int count = 0;
+	if (!res.empty()) {
+        count = std::stoi(res);
+    }
+	++count;
+	auto count_str = std::to_string(count);
+    HSet(LOGINCOUNT, server_name, count_str);
+}
+
+void RedisManager::DecreaseCount(std::string server_name)
+{
+	auto lock_key = LOCK_COUNT;
+	auto identifier = acquireLock(lock_key, LOCK_TIME_OUT, ACQUIRE_TIME_OUT);
+	Defer defer([this, identifier, lock_key]() { releaseLock(lock_key, identifier); });
+
+	// 减少当前服务器的登录人数
+	auto res = HGet(LOGINCOUNT, server_name);
+	int count = 0;
+	if (!res.empty()) {
+		count = std::stoi(res);
+		if (count > 0) --count;
+	}
+	auto count_str = std::to_string(count);
+    HSet(LOGINCOUNT, server_name, count_str);
+}
+
+void RedisManager::InitCount(std::string server_name)
+{
+	auto lock_key = LOCK_COUNT;
+    auto identifier = acquireLock(lock_key, LOCK_TIME_OUT, ACQUIRE_TIME_OUT);
+    Defer defer([this, identifier, lock_key]() { releaseLock(lock_key, identifier); });
+    HSet(LOGINCOUNT, server_name, "0");
+}
+
+void RedisManager::DelCount(std::string server_name)
+{
+    auto lock_key = LOCK_COUNT;
+    auto identifier = acquireLock(lock_key, LOCK_TIME_OUT, ACQUIRE_TIME_OUT);
+    Defer defer([this, identifier, lock_key]() { releaseLock(lock_key, identifier); });
+    HDel(LOGINCOUNT, server_name);
 }
 
 RedisManager::RedisManager()

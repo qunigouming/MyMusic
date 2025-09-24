@@ -8,6 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <queue>
 
 //data define length
 #define MAX_LENGTH 1024 * 1024 * 2
@@ -18,6 +19,7 @@
 #define MAX_SEND_QUEUE 1024					//maximum send length
 
 //custom prefix string
+#define USER_IP_PREFIX "uip_"
 #define USERTOKENPREFIX "utoken_"
 #define LOGINCOUNT		"logincount"
 #define USER_BASE_INFO	"ubaseinfo_"

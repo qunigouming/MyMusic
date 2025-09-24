@@ -79,7 +79,6 @@ std::shared_ptr<UserInfo> MySqlDao::GetUserInfo(const int& uid)
 			user_ptr.reset(new UserInfo);
 			user_ptr->uid = uid;
 			user_ptr->name = res->getString("name");
-			user_ptr->pwd = res->getString("password");
 			user_ptr->email = res->getString("email");
 			user_ptr->sex = res->getInt("sex");
 			user_ptr->icon = res->getString("icon");
@@ -111,7 +110,6 @@ std::shared_ptr<UserInfo> MySqlDao::GetUserInfo(const std::string& name)
 			user_ptr.reset(new UserInfo);
 			user_ptr->uid = res->getInt("uid");
 			user_ptr->name = res->getString("name");
-			user_ptr->pwd = res->getString("pwd");
 			user_ptr->email = res->getString("email");
 			user_ptr->sex = res->getInt("sex");
 			user_ptr->icon = res->getString("icon");

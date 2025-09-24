@@ -13,7 +13,10 @@
 			"features": [ "netssl" ]
 		},
 		{
-			"name": "cryptopp",
+			"name": "cryptopp"
+		},
+		{
+			"name": "soundtouch"
 		}
 	],
 	"overrides": [

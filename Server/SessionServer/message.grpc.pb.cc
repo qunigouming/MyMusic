@@ -82,5 +82,66 @@ StatusService::Service::~Service() {
 }
 
 
+static const char* SessionService_method_names[] = {
+  "/message.SessionService/NotifyKickUser",
+};
+
+std::unique_ptr< SessionService::Stub> SessionService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< SessionService::Stub> stub(new SessionService::Stub(channel));
+  return stub;
+}
+
+SessionService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
+  : channel_(channel), rpcmethod_NotifyKickUser_(SessionService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status SessionService::Stub::NotifyKickUser(::grpc::ClientContext* context, const ::message::KickUserReq& request, ::message::KickUserRsp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::message::KickUserReq, ::message::KickUserRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_NotifyKickUser_, context, request, response);
+}
+
+void SessionService::Stub::experimental_async::NotifyKickUser(::grpc::ClientContext* context, const ::message::KickUserReq* request, ::message::KickUserRsp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::message::KickUserReq, ::message::KickUserRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NotifyKickUser_, context, request, response, std::move(f));
+}
+
+void SessionService::Stub::experimental_async::NotifyKickUser(::grpc::ClientContext* context, const ::message::KickUserReq* request, ::message::KickUserRsp* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NotifyKickUser_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::KickUserRsp>* SessionService::Stub::PrepareAsyncNotifyKickUserRaw(::grpc::ClientContext* context, const ::message::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::KickUserRsp, ::message::KickUserReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_NotifyKickUser_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::message::KickUserRsp>* SessionService::Stub::AsyncNotifyKickUserRaw(::grpc::ClientContext* context, const ::message::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncNotifyKickUserRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+SessionService::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      SessionService_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< SessionService::Service, ::message::KickUserReq, ::message::KickUserRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](SessionService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::message::KickUserReq* req,
+             ::message::KickUserRsp* resp) {
+               return service->NotifyKickUser(ctx, req, resp);
+             }, this)));
+}
+
+SessionService::Service::~Service() {
+}
+
+::grpc::Status SessionService::Service::NotifyKickUser(::grpc::ServerContext* context, const ::message::KickUserReq* request, ::message::KickUserRsp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
 }  // namespace message
 

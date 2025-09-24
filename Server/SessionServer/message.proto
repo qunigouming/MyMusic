@@ -14,3 +14,16 @@ message LoginRsp {
 service StatusService {
 	rpc Login (LoginReq) returns (LoginRsp) {}
 }
+
+message KickUserReq {
+	int32 uid = 1;
+}
+
+message KickUserRsp {
+	int32 error = 1;
+	int32 uid = 2;
+}
+
+service SessionService {
+	rpc NotifyKickUser (KickUserReq) returns (KickUserRsp) {}
+}

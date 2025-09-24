@@ -26,6 +26,10 @@ public:
 
 private slots:
     void slotSwitchMainWindow();
+    void slotOffLine();
+
+private:
+    void offLineLogin();
 
 private:
     QSharedPointer<LoginDialog> _loginDialog;

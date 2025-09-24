@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <codecvt>
+#include "UserManager.h"
+#include "Server.h"
+#include "SessionGrpcClient.h"
 
 std::string decode_base64(const std::string& val) {
 	if (val.empty())	return "";
@@ -43,6 +46,11 @@ void LogicSystem::PustMsg(std::shared_ptr<LogicNode> msg)
 		lock.unlock();
 		_cond.notify_one();
 	}
+}
+
+void LogicSystem::SetServer(std::shared_ptr<Server> server)
+{
+	_server = server;
 }
 
 LogicSystem::LogicSystem()
@@ -134,7 +142,6 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 	Json::Value user_self_info;
 	user_self_info["uid"] = user_info->uid;
 	user_self_info["name"] = user_info->name;
-    user_self_info["pwd"] = user_info->pwd;
     user_self_info["sex"] = user_info->sex;
     user_self_info["icon"] = user_info->icon;
     user_self_info["email"] = user_info->email;
@@ -162,11 +169,52 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 
 	//connection add to redis
 	auto server_name = ConfigManager::GetInstance()["SelfServer"]["Name"];
-	int con_count = 0;
-	auto redis_res = RedisManager::GetInstance()->HGet(LOGINCOUNT, server_name);		//check connection count in redis
-	if (!redis_res.empty()) con_count = std::stoi(redis_res);
-	++con_count;
-	RedisManager::GetInstance()->HSet(LOGINCOUNT, server_name, std::to_string(con_count));
+	{
+		// 分布式锁保证原子性
+		auto lock_key = LOCK_PREFIX + uid_str;
+		auto identifier = RedisManager::GetInstance()->acquireLock(lock_key, LOCK_TIME_OUT, ACQUIRE_TIME_OUT);
+		Defer DistLockDefer([this, identifier, lock_key] {
+			RedisManager::GetInstance()->releaseLock(lock_key, identifier);
+		});
+
+		// 检测用户是否在其他或本服务器登录
+		std::string uid_ip_value = "";
+		auto uid_ip_key = USER_IP_PREFIX + uid_str;
+		bool success = RedisManager::GetInstance()->Get(uid_ip_key, uid_ip_value);
+		if (success) {
+			// 用户已经登录，踢出之前的登录
+			auto& config = ConfigManager::GetInstance();
+			auto self_name = config["SelfServer"]["Name"];
+			// 若为本服务器，直接踢出
+			if (uid_ip_value == server_name) {
+				auto old_session = UserManager::GetInstance()->GetSession(uid);
+
+				// 发送踢人信息
+				if (old_session) {
+					old_session->NotifyOffline(uid);
+
+					_server->ClearSession(old_session->GetSessionId());
+				}
+			}
+
+			// 其他服务器在登录，RPC通知其他服务器踢出连接
+			KickUserReq req;
+            req.set_uid(uid);
+			SessionGrpcClient::GetInstance()->NotifyKickUser(uid_ip_value, req);
+		}
+
+		session->SetUserUid(uid);
+		std::string ip_key = USER_IP_PREFIX + uid_str;
+		RedisManager::GetInstance()->Set(ip_key, server_name);
+
+		// 将uid与Session关联
+		UserManager::GetInstance()->AddSession(uid, session);
+		std::string uid_session_key = USER_SESSION_PREFIX + uid_str;
+		RedisManager::GetInstance()->Set(uid_session_key, session->GetSessionId());
+	}
+
+	// 更新连接数
+    RedisManager::GetInstance()->IncreaseCount(server_name);
 	return;
 }
 
@@ -311,11 +359,10 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 		reader.parse(info_str, base_info);
 		userinfo->uid = base_info["uid"].asInt();
 		userinfo->name = base_info["name"].asString();
-		userinfo->pwd = base_info["pwd"].asString();
 		userinfo->email = base_info["email"].asString();
 		userinfo->sex = base_info["sex"].asInt();
 		userinfo->icon = base_info["icon"].asString();
-		std::cout << "user login the uid:" << userinfo->uid << " name:" << userinfo->name << " pwd:" << userinfo->pwd << " email:" << userinfo->email << " sex:" << userinfo->sex << " icon:" << userinfo->icon << std::endl;
+		std::cout << "user login the uid:" << userinfo->uid << " name:" << userinfo->name << " email:" << userinfo->email << " sex:" << userinfo->sex << " icon:" << userinfo->icon << std::endl;
 	}
 	else {
 		std::shared_ptr<UserInfo> user_info = nullptr;
@@ -327,7 +374,6 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 		Json::Value redis_root;
 		redis_root["uid"] = userinfo->uid;
 		redis_root["name"] = userinfo->name;
-		redis_root["pwd"] = userinfo->pwd;
 		redis_root["email"] = userinfo->email;
 		redis_root["sex"] = userinfo->sex;
 		redis_root["icon"] = userinfo->icon;

@@ -12,6 +12,11 @@ void TcpManager::slot_tcp_connect(ServerInfo serverinfo)
     _socket->connectToHost(_host, _port);
 }
 
+void TcpManager::closeConnection()
+{
+    _socket->close();
+}
+
 void TcpManager::slot_send_data(ReqID reqId, QByteArray data)
 {
     uint16_t id = reqId;
@@ -231,6 +236,27 @@ void TcpManager::initHandler()
             qDebug() << "Upload File Success.";
             //emit sig_upload_success();
         }
+    });
+    _handlers.insert(ID_NOTIFY_OFF_LINE_REQ, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Notify Session Msg Failed, err is Json Parse Err " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Notify Session Msg Failed, err is " << err;
+            return;
+        }
+        auto uid = jsonObj["uid"].toInt();
+        qDebug() << "Notify Session Msg Success, uid is " << uid;
+        emit sig_notify_off_line();
     });
 }
 

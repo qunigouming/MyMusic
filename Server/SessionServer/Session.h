@@ -24,8 +24,9 @@ public:
 	Session(boost::asio::io_context& ioc, Server* server);
 	~Session();
 	tcp::socket& GetSocket();
-	std::string& GetUid();
+	std::string& GetSessionId();
 	void SetUserUid(int uid);
+	int GetUserUid();
 	void Start();
 	void Send(char* msg, short max_len, short msg_id);
 	void Send(std::string msg, short msg_id);

@@ -6,7 +6,6 @@ struct UserInfo {
 	int uid;
 	int sex;
 	std::string name;
-	std::string pwd;
 	std::string email;
 	std::string icon;
 	std::string back;

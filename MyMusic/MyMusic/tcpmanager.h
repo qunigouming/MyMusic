@@ -14,6 +14,8 @@ class TcpManager : public QObject, public Singleton<TcpManager>, public std::ena
 public:
     ~TcpManager() = default;
 
+    void closeConnection();
+
 public slots:
     void slot_tcp_connect(ServerInfo serverinfo);
     void slot_send_data(ReqID reqId, QByteArray data);
@@ -37,6 +39,7 @@ signals:
     void sig_send_data(ReqID reqId, QByteArray data);
     void sig_switch_mainwindow();
     void sig_upload_file();
+    void sig_notify_off_line();
 };
 
 #endif // TCPMANAGER_H

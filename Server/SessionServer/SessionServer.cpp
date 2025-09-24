@@ -9,6 +9,7 @@
 #include "AsioIOServicePool.h"
 #include "Server.h"
 #include <grpcpp/grpcpp.h>
+#include "SessionServiceImpl.h"
 
 bool b_stop = false;
 std::condition_variable cond_quit;
@@ -34,14 +35,35 @@ int main()
 
         pointer_server->StartTimer();
 
-        // 处理退出信号
-        boost::asio::signal_set signals(io_context, SIGINT, SIGTERM);
-        signals.async_wait([&io_context, pool](const boost::system::error_code&, int) {
-            io_context.stop();
-            pool->Stop();
+        // 构建Session端联系的GrpcServer
+        std::string server_address(cfg["SelfServer"]["Host"] + ":" + cfg["SelfServer"]["RPCPort"]);
+        SessionServiceImpl service;
+        grpc::ServerBuilder builder;
+        builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+        builder.RegisterService(&service);
+        service.RegisterServer(pointer_server);
+
+        // 启动rpc服务
+        std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+        std::cout << "RPC Server listening on " << server_address << std::endl;
+
+        std::thread grpc_server_thread([&server] {
+            server->Wait();
         });
 
+        // 处理退出信号
+        boost::asio::signal_set signals(io_context, SIGINT, SIGTERM);
+        signals.async_wait([&io_context, pool, &server](const boost::system::error_code&, int) {
+            io_context.stop();
+            pool->Stop();
+            server->Shutdown();
+        });
+
+        // 注册给LogicSystem方便管理连接
+        LogicSystem::GetInstance()->SetServer(pointer_server);
         io_context.run();
+
+        grpc_server_thread.join();
 
         pointer_server->StopTimer();
         return 0;

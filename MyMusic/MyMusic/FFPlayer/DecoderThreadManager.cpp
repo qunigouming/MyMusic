@@ -94,6 +94,7 @@ bool DecoderThreadManager::isRunning() const
 
 void DecoderThreadManager::setVolume(int volume)
 {
+    if (!_decoder)  return;
     _decoder->setVolume(volume);
 }
 
