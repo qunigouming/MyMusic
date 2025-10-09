@@ -9,11 +9,10 @@ class MysqlManager : public Singleton<MysqlManager>
 	friend class Singleton<MysqlManager>;
 public:
 	~MysqlManager() {}
-	bool GetAllMusicInfo(MusicInfoListPtr& music_list_info);
+	bool GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info);
 	std::shared_ptr<UserInfo> GetUserInfo(const int& uid);
 	std::shared_ptr<UserInfo> GetUserInfo(const std::string& name);
 
-	int getUserInfo();
 	// 获取或创建歌手
 	int getOrCreateArtist(const std::string& artist_name);
 
@@ -31,6 +30,16 @@ public:
 
 	// 创建歌单歌曲关联
 	void createPlaylistSong(const PlaylistSong& ps);
+
+	// 获取封面url
+    std::string getCoverUrl(int song_id);
+
+	// 获取歌曲标题
+	std::string getSongTitle(int song_id);
+
+	// 删除歌单中的歌曲
+	bool deletePlaylistSong(int playlist_id, int song_id);
+	bool deletePlaylistSong(int user_id, const std::string& playlist_name, int song_id);
 
 private:
 	MysqlManager() {}

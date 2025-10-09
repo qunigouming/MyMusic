@@ -1,8 +1,8 @@
 #include "MysqlManager.h"
 
-bool MysqlManager::GetAllMusicInfo(MusicInfoListPtr& music_list_info)
+bool MysqlManager::GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info)
 {
-    return _dao.GetAllMusicInfo(music_list_info);
+    return _dao.GetAllMusicInfo(user_id, music_list_info);
 }
 
 std::shared_ptr<UserInfo> MysqlManager::GetUserInfo(const int& uid)
@@ -13,11 +13,6 @@ std::shared_ptr<UserInfo> MysqlManager::GetUserInfo(const int& uid)
 std::shared_ptr<UserInfo> MysqlManager::GetUserInfo(const std::string& name)
 {
     return _dao.GetUserInfo(name);
-}
-
-int MysqlManager::getUserInfo()
-{
-    return _dao.getUserInfo();
 }
 
 int MysqlManager::getOrCreateArtist(const std::string& artist_name)
@@ -48,4 +43,36 @@ int MysqlManager::getOrCreatePlaylist(const Playlist& playlist)
 void MysqlManager::createPlaylistSong(const PlaylistSong& ps)
 {
     _dao.createPlaylistSong(ps);
+}
+
+std::string MysqlManager::getCoverUrl(int song_id)
+{
+    return _dao.getCoverUrl(song_id);
+}
+
+std::string MysqlManager::getSongTitle(int song_id)
+{
+    return _dao.getSongTitle(song_id);
+}
+
+bool MysqlManager::deletePlaylistSong(int playlist_id, int song_id)
+{
+    if (_dao.deletePlaylistSong(playlist_id, song_id)) {
+        return _dao.updatePlaylistSongPosition(playlist_id);
+    }
+    return false;
+}
+
+bool MysqlManager::deletePlaylistSong(int user_id, const std::string& playlist_name, int song_id)
+{
+    // 获取歌单id
+    int playlist_id = _dao.getPlaylistId(user_id, playlist_name);
+
+    // 删除歌单中的歌曲
+    if (playlist_id > 0) {
+        if (_dao.deletePlaylistSong(playlist_id, song_id)) {
+            return _dao.updatePlaylistSongPosition(playlist_id);
+        }
+    }
+    return false;
 }

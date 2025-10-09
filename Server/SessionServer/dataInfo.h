@@ -12,6 +12,7 @@ struct UserInfo {
 };
 
 struct MusicInfo {
+	int id;
 	std::string title;
 	std::string album;
 	std::string song_icon;
@@ -21,6 +22,8 @@ struct MusicInfo {
 	int duration = 0;
 	bool is_like = false;
 };
+
+// 数据库中存储的歌曲信息
 
 struct Artist {
 	std::string name;
@@ -55,17 +58,18 @@ struct Song {
 
 // 歌单
 struct Playlist {
-	std::string user_name;
+	int user_id;
 	std::string name;
 	std::string description;
 	std::string cover_url;
 	bool is_default;
 };
 
+// 歌单歌曲
 struct PlaylistSong {
 	std::string playlist_name;
-	std::string user_name;
-	std::string song_title;
+	int user_id;
+	int song_id;
 	std::string album_title;
 	int position;
 };

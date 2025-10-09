@@ -100,6 +100,7 @@ void LogicSystem::RegisterCallBack()
 	_handler[ID_HEARTBEAT_REQ] = std::bind(&LogicSystem::HeartBeatHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	_handler[ID_UPLOAD_FILE_REQ] = std::bind(&LogicSystem::UploadFileHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	_handler[ID_UPLOAD_META_TYPE_REQ] = std::bind(&LogicSystem::UploadMetaTypeHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_COLLECT_SONG_REQ] = std::bind(&LogicSystem::CollectSongHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
 void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
@@ -149,13 +150,14 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 
 	// 获取所有音乐
 	std::list<std::shared_ptr<MusicInfo>> music_list;
-	success = MysqlManager::GetInstance()->GetAllMusicInfo(music_list);
+	success = MysqlManager::GetInstance()->GetAllMusicInfo(uid, music_list);
 	if (!success) {
 		rspJson["error"] = ErrorCodes::EtherInvalid;
 		return;
 	}
 	for (auto& music_info : music_list) {
 		Json::Value music_info_json;
+		music_info_json["id"] = music_info->id;
         music_info_json["title"] = music_info->title;
 		music_info_json["album"] = music_info->album;
         music_info_json["song_icon"] = music_info->song_icon;
@@ -348,6 +350,50 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	_song.duration = root["duration"].asInt();
 }
 
+void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
+{
+    Json::Value root;
+    Json::Reader reader;
+    reader.parse(msg_data, root);
+
+    Json::Value retValue;
+    retValue["error"] = ErrorCodes::Success;
+    Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_COLLECT_SONG_RSP);
+	});
+
+	if (root["flag"].asBool()) {
+		// 其他类型歌单
+	}
+	
+	// 默认歌单处理
+	if (root["status"].asBool()) {
+		// 添加收藏歌曲		每次用最新添加的歌曲来当作cover
+		Playlist playlist;
+		playlist.name = "喜欢的音乐";
+		playlist.is_default = true;
+		playlist.description = "";
+		playlist.user_id = session->GetUserUid();
+		playlist.cover_url = MysqlManager::GetInstance()->getCoverUrl(root["song_id"].asInt());
+		MysqlManager::GetInstance()->getOrCreatePlaylist(playlist);			// 创建歌单
+
+		// 添加歌曲
+		PlaylistSong playlist_song;
+		playlist_song.playlist_name = "喜欢的音乐";
+		playlist_song.song_id = root["song_id"].asInt();
+        playlist_song.user_id = session->GetUserUid();
+		playlist_song.position = 0;			// 默认添加到最后
+		MysqlManager::GetInstance()->createPlaylistSong(playlist_song);
+		std::cout << "收藏歌曲" << root["song_id"].asInt() << "成功" << std::endl;
+	}
+	else {
+		// 取消收藏歌曲
+        MysqlManager::GetInstance()->deletePlaylistSong(session->GetUserUid(), "喜欢的音乐", root["song_id"].asInt());
+        std::cout << "取消收藏歌曲" << root["song_id"].asInt() << "成功" << std::endl;
+	}
+}
+
 bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo)
 {
 	std::string info_str = "";
@@ -380,9 +426,4 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 		RedisManager::GetInstance()->Set(base_key, redis_root.toStyledString());
 	}
 	return true;
-}
-
-bool LogicSystem::GetAllMusicInfo(std::list<std::shared_ptr<MusicInfo>>& music_list_info)
-{
-	return MysqlManager::GetInstance()->GetAllMusicInfo(music_list_info);
 }

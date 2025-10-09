@@ -60,6 +60,12 @@
     <ClCompile Include="DistributeLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SessionGrpcClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -111,6 +117,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DistributeLock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionGrpcClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

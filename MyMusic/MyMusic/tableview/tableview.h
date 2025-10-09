@@ -20,13 +20,14 @@ public:
     void addSong(const QList<SongInfo>& songs);
     void clearAllSongs();
     int rowCount();
-    void setBatchSize(int size);
+    void setBatchSize(int size);            // 设置分批处理歌曲数量
 
     SongInfo getSongInfoByProxyRow(int proxyRow) const;
 
 signals:
     void allSongsAdded();       // 添加完成信号
     void rowDoubleClicked(const SongInfo& path);
+    void likeChanged(const int id, const bool status);
 
 protected:
     void mouseMoveEvent(QMouseEvent* event) override;

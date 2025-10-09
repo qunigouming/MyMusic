@@ -14,6 +14,7 @@ enum class MusicTableViewType {
 };
 
 struct SongInfo {
+    int id;             // 数据库中的id
     QString icon_url;
     QString title;
     QString album;
@@ -40,6 +41,7 @@ struct SongInfo {
     }
 
     SongInfo(MusicInfo& music_info) {
+        id = music_info.id;
         icon_url = QString::fromStdString(music_info.song_icon);
         title = QString::fromStdString(music_info.title);
         album = QString::fromStdString(music_info.album);
@@ -54,6 +56,7 @@ struct SongInfo {
     }
 
     SongInfo(MusicInfo* music_info) {
+        id = music_info->id;
         icon_url = QString::fromStdString(music_info->song_icon);
         title = QString::fromStdString(music_info->title);
         album = QString::fromStdString(music_info->album);

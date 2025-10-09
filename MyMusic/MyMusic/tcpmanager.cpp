@@ -154,6 +154,7 @@ void TcpManager::initHandler()
         for (auto music : jsonArray) {
             QJsonObject musicObj = music.toObject();
             MusicInfo musicInfo;
+            musicInfo.id = musicObj["id"].toInt();
             musicInfo.title = musicObj["title"].toString().toStdString();
             musicInfo.album = musicObj["album"].toString().toStdString();
             musicInfo.song_icon = musicObj["song_icon"].toString().toStdString();

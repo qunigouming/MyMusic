@@ -8,4 +8,5 @@ CREATE TABLE playlist_songs (
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE,
   INDEX idx_position (position),
   INDEX idx_playlist_position (playlist_id, position)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='歌单歌曲关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='歌单歌曲关联表';

@@ -204,31 +204,7 @@ font-size: 22px;</string>
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="funcListWid">
-              <property name="minimumSize">
-               <size>
-                <width>180</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QListWidget {
-	border: none;
-}</string>
-              </property>
-              <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="currentRow">
-               <number>-1</number>
-              </property>
-             </widget>
+             <widget class="SidebarWidget" name="funcListWid" native="true"/>
             </item>
            </layout>
           </widget>
@@ -1155,6 +1131,12 @@ QPushButton:pressed {
    <class>BottomPlayWidget</class>
    <extends>QWidget</extends>
    <header>bottomplaywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SidebarWidget</class>
+   <extends>QWidget</extends>
+   <header>sidebarwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

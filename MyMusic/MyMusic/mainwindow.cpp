@@ -58,6 +58,16 @@ MainWindow::MainWindow(QWidget *parent)
     bindConntoView(_am_view);
     bindConntoView(_lm_view);
 
+    connect(_am_view, &TableView::likeChanged, this, [this](int id, bool status) {
+        QJsonObject jsonObj;
+        jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
+        jsonObj["song_id"] = id;
+        jsonObj["status"] = status;
+        jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;
+        QJsonDocument doc(jsonObj);
+        emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_COLLECT_SONG_REQ, doc.toJson());
+    });
+
     connect(TcpManager::GetInstance().get(), &TcpManager::sig_con_status, [&](bool status) {
         if (!status) {
             QMessageBox::warning(this, "连接服务器", "服务器连接失败");
@@ -167,31 +177,40 @@ void MainWindow::on_zoomBtn_clicked(bool checked)
 
 void MainWindow::initBaseFuncLWg()
 {
-    // home page item
-    QListWidgetItem* hpageItem = new QListWidgetItem();
-    hpageItem->setSizeHint(QSize(180, 50));
-    ui->funcListWid->addItem(hpageItem);
-
-    FuncListWidgetItem* hpage_wg = new FuncListWidgetItem(QChar(0xe007), "主页(beta)");
-    ui->funcListWid->setItemWidget(hpageItem, hpage_wg);
-
-    // local music item
-    QListWidgetItem* local_music_Item = new QListWidgetItem();
-    local_music_Item->setSizeHint(QSize(180, 50));
-    ui->funcListWid->addItem(local_music_Item);
-
-    FuncListWidgetItem* local_music_Wg = new FuncListWidgetItem(QChar(0xe008), "本地音乐");
-
-    ui->funcListWid->setItemWidget(local_music_Item, local_music_Wg);
-
-    connect(ui->funcListWid, &QListWidget::currentRowChanged, this, [this](int currentRow){
-        if (currentRow == 0) {
+    connect(ui->funcListWid, &SidebarWidget::itemClicked, this, [this](int index) {
+        if (index == 0) {
             ui->stackedWidget->setCurrentIndex(0);
-        } else if (currentRow == 1) {
+        }
+        else if (index == 4) {
             ui->stackedWidget->setCurrentIndex(3);
             readLocalMusicConfig();
         }
     });
+    //// home page item
+    //QListWidgetItem* hpageItem = new QListWidgetItem();
+    //hpageItem->setSizeHint(QSize(180, 50));
+    //ui->funcListWid->addItem(hpageItem);
+
+    //FuncListWidgetItem* hpage_wg = new FuncListWidgetItem(QChar(0xe007), "主页(beta)");
+    //ui->funcListWid->setItemWidget(hpageItem, hpage_wg);
+
+    //// local music item
+    //QListWidgetItem* local_music_Item = new QListWidgetItem();
+    //local_music_Item->setSizeHint(QSize(180, 50));
+    //ui->funcListWid->addItem(local_music_Item);
+
+    //FuncListWidgetItem* local_music_Wg = new FuncListWidgetItem(QChar(0xe008), "本地音乐");
+
+    //ui->funcListWid->setItemWidget(local_music_Item, local_music_Wg);
+
+    //connect(ui->funcListWid, &QListWidget::currentRowChanged, this, [this](int currentRow){
+    //    if (currentRow == 0) {
+    //        ui->stackedWidget->setCurrentIndex(0);
+    //    } else if (currentRow == 1) {
+    //        ui->stackedWidget->setCurrentIndex(3);
+    //        readLocalMusicConfig();
+    //    }
+    //});
 }
 
 void MainWindow::scanFileToTableView(QStringList list)

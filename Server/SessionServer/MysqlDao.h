@@ -33,6 +33,8 @@ public:
 				conn->setSchema(schema);
 				std::unique_ptr<sql::Statement> stmt(conn->createStatement());
 				stmt->execute("SET NAMES 'utf8mb4'");
+				stmt->execute("SET CHARACTER SET utf8mb4");
+				stmt->execute("SET character_set_connection=utf8mb4");
 				// 获取当前时间
 				auto current_time = std::chrono::system_clock::now().time_since_epoch();
 				long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(current_time).count();
@@ -181,11 +183,10 @@ public:
 	MySqlDao();
 	~MySqlDao();
 
-	bool GetAllMusicInfo(MusicInfoListPtr& music_list_info);
+	bool GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info);
 	std::shared_ptr<UserInfo> GetUserInfo(const int& uid);
 	std::shared_ptr<UserInfo> GetUserInfo(const std::string& name);
 
-	int getUserInfo();
 	// 获取或创建歌手
 	int getOrCreateArtist(const std::string& artist_name);
 
@@ -206,6 +207,18 @@ public:
 
 	// 创建歌单歌曲关联
 	void createPlaylistSong(const PlaylistSong& ps);
+
+	std::string getCoverUrl(int song_id);
+
+	std::string getSongTitle(int song_id);
+
+	// 删除歌单中的歌曲
+	bool deletePlaylistSong(int playlist_id, int song_id);
+
+	// 更新歌单歌曲位置
+	bool updatePlaylistSongPosition(int playlist_id);
+
+	int getPlaylistId(int user_id, const std::string& playlist_name);
 
 private:
 	// 通用ID查询

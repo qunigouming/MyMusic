@@ -112,6 +112,7 @@ bool SongDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const Q
         QMouseEvent* me = static_cast<QMouseEvent*>(event);
         if (me->button() == Qt::LeftButton) {
             bool current = model->data(index, Qt::EditRole).toBool();
+            emit likeChanged(index.row(), !current);
             model->setData(index, !current, Qt::EditRole);
             return true;
         }

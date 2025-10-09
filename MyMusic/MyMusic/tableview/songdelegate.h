@@ -29,6 +29,9 @@ protected:
 
     bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index) override;
 
+signals:
+    void likeChanged(const int row, const bool status);
+
 private:
     int _hoveredRow = -1;
 };

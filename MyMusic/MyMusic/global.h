@@ -15,9 +15,13 @@
 #include <QStyle>
 #include <functional>
 
+#define DEFAULT_COLLECT_SONGLIST false
+#define OTHER_COLLECT_SONGLIST true
+
 extern std::function<void(QWidget*)> repolish;
 
 extern QString gate_url_prefix;
+
 
 enum ReqID {
     ID_GET_VARIFY_CODE = 1001,          // 获取验证码         Http
@@ -33,7 +37,9 @@ enum ReqID {
     ID_NOTIFY_OFF_LINE_RSP = 1011,      // 暂存
     ID_HEARTBEAT_REQ = 1012,            // 心跳请求           Tcp
     ID_HEARTBEAT_RSP = 1013,            // 心跳回复           Tcp
-    ID_GET_PWD_SALT = 1014              // 获取密码盐值       Http
+    ID_GET_PWD_SALT = 1014,             // 获取密码盐值       Http
+    ID_COLLECT_SONG_REQ = 1015,         // 收藏歌曲请求       Tcp
+    ID_COLLECT_SONG_RSP = 1016,         // 收藏歌曲回复       Tcp
 };
 
 enum Modules {

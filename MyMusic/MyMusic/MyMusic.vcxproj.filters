@@ -54,6 +54,18 @@
     <Filter Include="Tool\Common\Encrypt">
       <UniqueIdentifier>{7b49e7a8-6395-4dd5-8839-3fcc2f819a97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{d024c70a-44c1-43ec-85dd-f3e94fd5a832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Sidebar">
+      <UniqueIdentifier>{a3fa1c74-2de0-43b2-8c6a-70c55e660dc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Sidebar\Header Files">
+      <UniqueIdentifier>{bb30dff2-3930-4df9-83b1-a9296b0e8cf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Sidebar\Source Files">
+      <UniqueIdentifier>{b6bc60c9-bea5-453d-a1ab-dc0ea2477b13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -167,6 +179,33 @@
     <ClCompile Include="SysTray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SidebarWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SeparatorWidget.cpp">
+      <Filter>UI\Sidebar</Filter>
+    </ClCompile>
+    <ClCompile Include="SeparatorWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleWidget.cpp">
+      <Filter>UI\Sidebar</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavItemWidget.cpp">
+      <Filter>UI\Sidebar</Filter>
+    </ClCompile>
+    <ClCompile Include="NavItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItemWidget.cpp">
+      <Filter>UI\Sidebar</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -267,6 +306,33 @@
     </QtMoc>
     <QtMoc Include="SysTray.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SidebarWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SeparatorWidget.h">
+      <Filter>UI\Sidebar</Filter>
+    </QtMoc>
+    <QtMoc Include="SeparatorWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TitleWidget.h">
+      <Filter>UI\Sidebar</Filter>
+    </QtMoc>
+    <QtMoc Include="TitleWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="NavItemWidget.h">
+      <Filter>UI\Sidebar</Filter>
+    </QtMoc>
+    <QtMoc Include="NavItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlaylistItemWidget.h">
+      <Filter>UI\Sidebar</Filter>
+    </QtMoc>
+    <QtMoc Include="PlaylistItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

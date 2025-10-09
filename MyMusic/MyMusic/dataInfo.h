@@ -15,6 +15,7 @@ struct UserInfo {
 };
 
 struct MusicInfo {
+    int id;
 	std::string title;
 	std::string album;
 	std::string song_icon;

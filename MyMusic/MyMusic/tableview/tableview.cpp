@@ -28,6 +28,9 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
     setHorizontalHeader(_header);
     _header->initSize(this);
 
+    connect(_delegate, &SongDelegate::likeChanged, this, [this](const int row, const bool status) {
+        emit likeChanged(_model->songAt(row).id, status);
+    });
     //addition data
     //for (int i = 1; i <= 1; ++i) {
     //    _model->addSong(SongInfo("aaa", "04:12", "10M", ""));

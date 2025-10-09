@@ -32,6 +32,9 @@
 // 分布式锁的重试时间
 #define ACQUIRE_TIME_OUT 5
 
+#define DEFAULT_COLLECT_SONGLIST false		// 默认收藏歌单
+#define OTHER_COLLECT_SONGLIST true		// 其他收藏歌单
+
 enum ErrorCodes {
 	Success = 0,
 	Error_Json = 1001,  //Json解析错误
@@ -71,4 +74,7 @@ enum MSG_ID {
     ID_NOTIFY_OFF_LINE_RSP = 1011,
 	ID_HEARTBEAT_REQ = 1012,
     ID_HEARTBEAT_RSP = 1013,
+	ID_GET_PWD_SALT = 1014,             // 获取密码盐值       Http
+	ID_COLLECT_SONG_REQ = 1015,         // 收藏歌曲请求       Tcp
+	ID_COLLECT_SONG_RSP = 1016,         // 收藏歌曲回复       Tcp
 };
