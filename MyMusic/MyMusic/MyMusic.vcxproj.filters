@@ -66,6 +66,18 @@
     <Filter Include="UI\Sidebar\Source Files">
       <UniqueIdentifier>{b6bc60c9-bea5-453d-a1ab-dc0ea2477b13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\SongListPage">
+      <UniqueIdentifier>{dc70c2f4-7557-4abb-a35d-15df3493dc89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\SongListPage\Source Files">
+      <UniqueIdentifier>{b6853459-3975-4f84-b858-c7bbdc7e5763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\SongListPage\Header Files">
+      <UniqueIdentifier>{8bd7d884-ea2c-4783-a76a-e84b6b96158a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\SongListPage\Form Files">
+      <UniqueIdentifier>{3131822e-034f-4b0d-bbfd-ebb91f268fd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -183,28 +195,34 @@
       <Filter>UI\Sidebar\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SeparatorWidget.cpp">
-      <Filter>UI\Sidebar</Filter>
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaylistItemWidget.cpp">
+      <Filter>UI\Sidebar\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SeparatorWidget.cpp">
       <Filter>UI\Sidebar\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TitleWidget.cpp">
-      <Filter>UI\Sidebar</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleWidget.cpp">
       <Filter>UI\Sidebar\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NavItemWidget.cpp">
-      <Filter>UI\Sidebar</Filter>
+    <ClCompile Include="SongListPage.cpp">
+      <Filter>UI\SongListPage</Filter>
     </ClCompile>
-    <ClCompile Include="NavItemWidget.cpp">
-      <Filter>UI\Sidebar\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaylistItemWidget.cpp">
-      <Filter>UI\Sidebar</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaylistItemWidget.cpp">
-      <Filter>UI\Sidebar\Source Files</Filter>
+    <ClCompile Include="SongListPage.cpp">
+      <Filter>UI\SongListPage\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,28 +329,34 @@
       <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="SeparatorWidget.h">
-      <Filter>UI\Sidebar</Filter>
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TitleWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="NavItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlaylistItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="NavItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PlaylistItemWidget.h">
+      <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="SeparatorWidget.h">
       <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="TitleWidget.h">
-      <Filter>UI\Sidebar</Filter>
-    </QtMoc>
-    <QtMoc Include="TitleWidget.h">
       <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="NavItemWidget.h">
-      <Filter>UI\Sidebar</Filter>
+    <QtMoc Include="SongListPage.h">
+      <Filter>UI\SongListPage</Filter>
     </QtMoc>
-    <QtMoc Include="NavItemWidget.h">
-      <Filter>UI\Sidebar\Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PlaylistItemWidget.h">
-      <Filter>UI\Sidebar</Filter>
-    </QtMoc>
-    <QtMoc Include="PlaylistItemWidget.h">
-      <Filter>UI\Sidebar\Header Files</Filter>
+    <QtMoc Include="SongListPage.h">
+      <Filter>UI\SongListPage\Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -359,6 +383,9 @@
     </QtUic>
     <QtUic Include="VolumeWidget.ui">
       <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="SongListPage.ui">
+      <Filter>UI\SongListPage</Filter>
     </QtUic>
   </ItemGroup>
   <ItemGroup>

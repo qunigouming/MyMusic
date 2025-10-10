@@ -126,6 +126,7 @@
     <ClCompile Include="selectlocmusic_dlg.cpp" />
     <ClCompile Include="SeparatorWidget.cpp" />
     <ClCompile Include="SidebarWidget.cpp" />
+    <ClCompile Include="SongListPage.cpp" />
     <ClCompile Include="SysTray.cpp" />
     <ClCompile Include="tableview\elidedlabel.cpp" />
     <ClCompile Include="tableview\playitemwidget.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Singleton.h" />
     <QtMoc Include="SysTray.h" />
     <QtMoc Include="TitleWidget.h" />
+    <QtMoc Include="SongListPage.h" />
     <ClInclude Include="Tool\FileInfo.h" />
     <QtMoc Include="Tool\filescannerworker.h" />
     <QtMoc Include="Tool\FileInspectorInterface.h" />

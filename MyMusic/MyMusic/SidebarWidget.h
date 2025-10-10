@@ -22,6 +22,8 @@ private:
     QVBoxLayout *_mainLayout = nullptr;
 
 	int _itemCount = 0;
+	int _currentIndex = -1;
+	QWidget* _currentSelectedItem = nullptr;
 };
 
 class SidebarWidget : public QWidget

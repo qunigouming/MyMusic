@@ -663,7 +663,7 @@ font-size: 22px;</string>
             <string notr="true"/>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="mainPage">
             <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -1074,6 +1074,7 @@ QTabBar::tab::selected {
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="songlistPage"/>
           </widget>
          </item>
         </layout>

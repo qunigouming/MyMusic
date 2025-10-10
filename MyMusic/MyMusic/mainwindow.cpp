@@ -179,9 +179,15 @@ void MainWindow::initBaseFuncLWg()
 {
     connect(ui->funcListWid, &SidebarWidget::itemClicked, this, [this](int index) {
         if (index == 0) {
+            // 主页
             ui->stackedWidget->setCurrentIndex(0);
         }
+        if (index == 1) {
+            // 喜欢的音乐
+            ui->stackedWidget->setCurrentIndex(1);
+        }
         else if (index == 4) {
+            // 本地音乐
             ui->stackedWidget->setCurrentIndex(3);
             readLocalMusicConfig();
         }

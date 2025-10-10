@@ -67,7 +67,22 @@ void SidebarComponent::addNavItem(const QChar& icon, const QString& text)
     NavItemWidget* navItem = new NavItemWidget(icon, text, _itemCount++);
     _mainLayout->addWidget(navItem);
 
-    connect(navItem, &NavItemWidget::clicked, this, &SidebarComponent::itemClicked);
+    connect(navItem, &NavItemWidget::clicked, this, [this, navItem](int index) {
+        // 取消之前选中的
+        if (_currentSelectedItem && _currentIndex != index) {
+            if (NavItemWidget* item = qobject_cast<NavItemWidget*>(_currentSelectedItem)) {
+                item->setSelected(false);
+            }
+            else if (PlaylistItemWidget* item = qobject_cast<PlaylistItemWidget*>(_currentSelectedItem)) {
+                item->setSelected(false);
+            }
+        }
+        navItem->setSelected(true);
+        _currentSelectedItem = navItem;
+        _currentIndex = index;
+
+        itemClicked(index);
+    });
 }
 
 void SidebarComponent::addPlaylistItem(const QString& icon_url, const QString& name)
@@ -75,5 +90,20 @@ void SidebarComponent::addPlaylistItem(const QString& icon_url, const QString& n
     PlaylistItemWidget* playlistItem = new PlaylistItemWidget(icon_url, name, _itemCount++);
     _mainLayout->addWidget(playlistItem);
 
-    connect(playlistItem, &PlaylistItemWidget::clicked, this, &SidebarComponent::itemClicked);
+    connect(playlistItem, &PlaylistItemWidget::clicked, this, [this, playlistItem](int index) {
+        // 取消之前选中的
+        if (_currentSelectedItem && _currentIndex != index) {
+            if (NavItemWidget* item = qobject_cast<NavItemWidget*>(_currentSelectedItem)) {
+                item->setSelected(false);
+            }
+            else if (PlaylistItemWidget* item = qobject_cast<PlaylistItemWidget*>(_currentSelectedItem)) {
+                item->setSelected(false);
+            }
+        }
+        playlistItem->setSelected(true);
+        _currentSelectedItem = playlistItem;
+        _currentIndex = index;
+
+        itemClicked(index);
+    });
 }
