@@ -16,6 +16,7 @@ public:
     std::shared_ptr<UserInfo> getUserInfo();
     void setMusicList(QList<std::shared_ptr<MusicInfo>> musicList);
     const QList<std::shared_ptr<MusicInfo>> getMusicList() const;
+
     void setToken(QString token);
     int getUid();
     QString getName();
@@ -24,6 +25,7 @@ private:
     UserManager();
     std::shared_ptr<UserInfo> _userInfo;
     QList<std::shared_ptr<MusicInfo>> _musicList;
+    std::shared_ptr<SongListPageInfo> _songListPageInfo = nullptr;
     QString _token;
 };
 

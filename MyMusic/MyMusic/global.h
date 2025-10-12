@@ -24,22 +24,26 @@ extern QString gate_url_prefix;
 
 
 enum ReqID {
-    ID_GET_VARIFY_CODE = 1001,          // 获取验证码         Http
-    ID_REGISTER_USER = 1002,            // 注册用户           Http
-    ID_GET_SERVER = 1003,               // 获取服务器参数     Http
-    ID_LOGIN_USER_REQ = 1004,           // 登录用户请求       Tcp
-    ID_LOGIN_USER_RSP = 1005,           // 登录用户回复       Tcp
-    ID_UPLOAD_FILE_REQ = 1006,          // 上传文件请求       Tcp
-    ID_UPLOAD_FILE_RSP = 1007,          // 上传文件回复       Tcp
-    ID_UPLOAD_META_TYPE_REQ = 1008,     // 上传文件元数据请求 Tcp
-    ID_UPLOAD_META_TYPE_RSP = 1009,     // 上传文件元数据回复 Tcp
-    ID_NOTIFY_OFF_LINE_REQ = 1010,		// 通知用户下线       Tcp
-    ID_NOTIFY_OFF_LINE_RSP = 1011,      // 暂存
-    ID_HEARTBEAT_REQ = 1012,            // 心跳请求           Tcp
-    ID_HEARTBEAT_RSP = 1013,            // 心跳回复           Tcp
-    ID_GET_PWD_SALT = 1014,             // 获取密码盐值       Http
-    ID_COLLECT_SONG_REQ = 1015,         // 收藏歌曲请求       Tcp
-    ID_COLLECT_SONG_RSP = 1016,         // 收藏歌曲回复       Tcp
+    ID_GET_VARIFY_CODE = 1001,              // 获取验证码         Http
+    ID_REGISTER_USER = 1002,                // 注册用户           Http
+    ID_GET_SERVER = 1003,                   // 获取服务器参数     Http
+    ID_LOGIN_USER_REQ = 1004,               // 登录用户请求       Tcp
+    ID_LOGIN_USER_RSP = 1005,               // 登录用户回复       Tcp
+    ID_UPLOAD_FILE_REQ = 1006,              // 上传文件请求       Tcp
+    ID_UPLOAD_FILE_RSP = 1007,              // 上传文件回复       Tcp
+    ID_UPLOAD_META_TYPE_REQ = 1008,         // 上传文件元数据请求 Tcp
+    ID_UPLOAD_META_TYPE_RSP = 1009,         // 上传文件元数据回复 Tcp
+    ID_NOTIFY_OFF_LINE_REQ = 1010,		    // 通知用户下线       Tcp
+    ID_NOTIFY_OFF_LINE_RSP = 1011,          // 暂存
+    ID_HEARTBEAT_REQ = 1012,                // 心跳请求           Tcp
+    ID_HEARTBEAT_RSP = 1013,                // 心跳回复           Tcp
+    ID_GET_PWD_SALT = 1014,                 // 获取密码盐值       Http
+    ID_COLLECT_SONG_REQ = 1015,             // 收藏歌曲请求       Tcp
+    ID_COLLECT_SONG_RSP = 1016,             // 收藏歌曲回复       Tcp
+    ID_GET_COLLECT_SONG_LIST_INFO_REQ = 1017,    // 获取收藏歌单信息请求 Tcp
+    ID_GET_COLLECT_SONG_LIST_INFO_RSP = 1018,    // 获取收藏歌单信息回复 Tcp
+    ID_GET_COLLECT_SONG_LIST_REQ = 1019,    // 获取收藏歌单歌曲列表请求 Tcp
+    ID_GET_COLLECT_SONG_LIST_RSP = 1020,    // 获取收藏歌单歌曲列表回复 Tcp
 };
 
 enum Modules {

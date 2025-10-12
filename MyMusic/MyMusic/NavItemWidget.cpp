@@ -67,16 +67,16 @@ bool NavItemWidget::eventFilter(QObject* obj, QEvent* event)
         case QEvent::Enter:
             _isHovered = true;
             updateStyle();
-            break;
+            return true;
         case QEvent::Leave:
             _isHovered = false;
             updateStyle();
-            break;
+            return true;
         case QEvent::MouseButtonPress:
             _isPressed = true;
             updateStyle();
             emit clicked(_index);
-            break;
+            return true;
         default:
             break;
         }

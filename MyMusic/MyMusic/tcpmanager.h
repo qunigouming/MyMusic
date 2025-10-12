@@ -6,6 +6,7 @@
 #include "global.h"
 #include <QTcpSocket>
 #include <QMap>
+#include "dataInfo.h"
 
 class TcpManager : public QObject, public Singleton<TcpManager>, public std::enable_shared_from_this<TcpManager>
 {
@@ -40,6 +41,9 @@ signals:
     void sig_switch_mainwindow();
     void sig_upload_file();
     void sig_notify_off_line();
+
+    void sig_song_list_page_info(std::shared_ptr<SongListPageInfo> pageinfo);
+    void sig_song_list_page_songs(QList<std::shared_ptr<MusicInfo>> musiclist);
 };
 
 #endif // TCPMANAGER_H

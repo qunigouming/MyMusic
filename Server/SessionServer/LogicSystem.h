@@ -22,6 +22,8 @@ private:
 	void UploadFileHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
 	void UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
 	void CollectSongHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
+    void GetCollectSongListHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
+	void GetSongListPageInfoHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
 
 	bool GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo);
 

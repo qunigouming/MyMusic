@@ -219,7 +219,7 @@
       <Filter>UI\Sidebar\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SongListPage.cpp">
-      <Filter>UI\SongListPage</Filter>
+      <Filter>UI\SongListPage\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SongListPage.cpp">
       <Filter>UI\SongListPage\Source Files</Filter>
@@ -353,7 +353,7 @@
       <Filter>UI\Sidebar\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="SongListPage.h">
-      <Filter>UI\SongListPage</Filter>
+      <Filter>UI\SongListPage\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="SongListPage.h">
       <Filter>UI\SongListPage\Header Files</Filter>
@@ -383,9 +383,6 @@
     </QtUic>
     <QtUic Include="VolumeWidget.ui">
       <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="SongListPage.ui">
-      <Filter>UI\SongListPage</Filter>
     </QtUic>
   </ItemGroup>
   <ItemGroup>

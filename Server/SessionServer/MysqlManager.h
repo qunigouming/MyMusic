@@ -40,7 +40,11 @@ public:
 	// 删除歌单中的歌曲
 	bool deletePlaylistSong(int playlist_id, int song_id);
 	bool deletePlaylistSong(int user_id, const std::string& playlist_name, int song_id);
-
+	
+	// 获取歌单信息
+	std::shared_ptr<SongListPageInfo> getSongListPageInfo(int user_id, const std::string& playlist_name);
+	// 获取歌单歌曲
+	MusicInfoListPtr getPlaylistSongs(int user_id, const std::string& playlist_name);
 private:
 	MysqlManager() {}
 	MySqlDao _dao;

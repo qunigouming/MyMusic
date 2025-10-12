@@ -73,3 +73,18 @@ struct PlaylistSong {
 	std::string album_title;
 	int position;
 };
+
+// 该结构体专门用于描述歌单页面信息
+struct SongListPageInfo
+{
+	std::string title;
+	std::string songlist_icon;
+	std::string description;		// 歌单描述
+	std::string author;
+	std::string authorIcon;
+	std::string createTime;
+	int songNumber = 0;			// 歌曲数量
+	int songCount = 0;			// 听过的次数
+	bool isModify = false;		// 歌单信息是否可以修改
+	bool isCollect = false;		// 歌单是否可以被收藏
+};

@@ -259,6 +259,72 @@ void TcpManager::initHandler()
         qDebug() << "Notify Session Msg Success, uid is " << uid;
         emit sig_notify_off_line();
     });
+    _handlers.insert(ID_GET_COLLECT_SONG_LIST_INFO_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Collect Song Failed, Json Parse error is " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Get Collect Song Failed, error is " << err;
+            return;
+        }
+
+        std::shared_ptr<SongListPageInfo> pageinfo = std::make_shared<SongListPageInfo>();
+        pageinfo->title = jsonObj["title"].toString();
+        pageinfo->songlist_icon = jsonObj["cover_url"].toString();
+        pageinfo->description = jsonObj["description"].toString();
+        pageinfo->author = jsonObj["author"].toString();
+        pageinfo->authorIcon = jsonObj["authorIcon"].toString();
+        pageinfo->createTime = jsonObj["createTime"].toString();
+        pageinfo->songCount = 0;
+        pageinfo->songNumber = 0;
+
+        emit sig_song_list_page_info(pageinfo);
+    });
+    _handlers.insert(ID_GET_COLLECT_SONG_LIST_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            qDebug() << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        if (!jsonObj.contains("error")) {
+            int err = ErrorCode::ERR_JSON;
+            qDebug() << "Get Collect Song Failed, Json Parse error is " << err;
+            return;
+        }
+        int err = jsonObj["error"].toInt();
+        if (err != ErrorCode::SUCCESS) {
+            qDebug() << "Get Collect Song Failed, error is " << err;
+            return;
+        }
+
+        QJsonArray jsonArray = jsonObj["music_list"].toArray();
+        QList<std::shared_ptr<MusicInfo>> musicList;
+        for (auto music : jsonArray) {
+            QJsonObject musicObj = music.toObject();
+            MusicInfo musicInfo;
+            musicInfo.id = musicObj["id"].toInt();
+            musicInfo.title = musicObj["title"].toString().toStdString();
+            musicInfo.album = musicObj["album"].toString().toStdString();
+            musicInfo.song_icon = musicObj["song_icon"].toString().toStdString();
+            musicInfo.artists = musicObj["artists"].toString().toStdString();
+            musicInfo.duration = musicObj["duration"].toInt();
+            musicInfo.file_url = musicObj["file_url"].toString().toStdString();
+            musicInfo.is_like = musicObj["is_like"].toBool();
+            musicList.push_back(std::make_shared<MusicInfo>(musicInfo));
+        }
+
+        emit sig_song_list_page_songs(musicList);
+    });
 }
 
 void TcpManager::handleMsg(ReqID id, int len, QByteArray data)

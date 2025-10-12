@@ -62,8 +62,8 @@ MainWindow::MainWindow(QWidget *parent)
         QJsonObject jsonObj;
         jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
         jsonObj["song_id"] = id;
-        jsonObj["status"] = status;
-        jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;
+        jsonObj["status"] = status; // 0:取消收藏 1:收藏
+        jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;     // 默认收藏歌单or其他类型歌单
         QJsonDocument doc(jsonObj);
         emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_COLLECT_SONG_REQ, doc.toJson());
     });
@@ -183,8 +183,14 @@ void MainWindow::initBaseFuncLWg()
             ui->stackedWidget->setCurrentIndex(0);
         }
         if (index == 1) {
+            // 发送获取喜欢的音乐请求
+            QJsonObject jsonObj;
+            jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
+            jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;
+            QJsonDocument doc(jsonObj);
+            TcpManager::GetInstance()->sig_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_INFO_REQ, doc.toJson());
             // 喜欢的音乐
-            ui->stackedWidget->setCurrentIndex(1);
+            ui->stackedWidget->setCurrentIndex(4);
         }
         else if (index == 4) {
             // 本地音乐

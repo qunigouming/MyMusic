@@ -76,3 +76,22 @@ bool MysqlManager::deletePlaylistSong(int user_id, const std::string& playlist_n
     }
     return false;
 }
+
+std::shared_ptr<SongListPageInfo> MysqlManager::getSongListPageInfo(int user_id, const std::string& playlist_name)
+{
+    // 获取歌单id
+    int playlist_id = _dao.getPlaylistId(user_id, playlist_name);
+    if (playlist_id > 0) {
+        return _dao.getSongListPageInfo(playlist_id);
+    }
+    return nullptr;
+}
+
+MusicInfoListPtr MysqlManager::getPlaylistSongs(int user_id, const std::string& playlist_name)
+{
+    int playlist_id = _dao.getPlaylistId(user_id, playlist_name);
+    if (playlist_id > 0) {
+        return _dao.getPlaylistSongs(playlist_id, user_id);
+    }
+    return MusicInfoListPtr();
+}

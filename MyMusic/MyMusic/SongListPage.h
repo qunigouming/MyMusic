@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include "tableview/tableview.h"
 #include <QTabWidget>
+#include "dataInfo.h"
 
 class SongListPage : public QWidget
 {
@@ -16,7 +17,12 @@ public:
 	SongListPage(QWidget *parent = nullptr);
 	~SongListPage();
 
+	void setupUI(std::shared_ptr<SongListPageInfo> info);
+
 private:
+	std::shared_ptr<SongListPageInfo> _pageInfo;
+
+	// 布局相关
 	QVBoxLayout* _mainLayout = nullptr;
 
 	QHBoxLayout* _topLayout = nullptr;
@@ -25,7 +31,10 @@ private:
 	QVBoxLayout* _songlist_info_layout = nullptr;
 	QHBoxLayout* _songlist_info_top_layout = nullptr;
     QLabel* _songlist_name_lab = nullptr;
-	QLabel* _songlist_name_modify_lab = nullptr;
+	QPushButton* _songlist_name_modify_btn = nullptr;
+
+	QHBoxLayout* _songlist_info_desc_layout = nullptr;
+	QLabel* _songlist_desc_lab = nullptr;
 
     QHBoxLayout* _songlist_info_middle_layout = nullptr;
 	QLabel* _songlist_author_icon_lab = nullptr;

@@ -101,6 +101,8 @@ void LogicSystem::RegisterCallBack()
 	_handler[ID_UPLOAD_FILE_REQ] = std::bind(&LogicSystem::UploadFileHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	_handler[ID_UPLOAD_META_TYPE_REQ] = std::bind(&LogicSystem::UploadMetaTypeHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	_handler[ID_COLLECT_SONG_REQ] = std::bind(&LogicSystem::CollectSongHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_GET_COLLECT_SONG_LIST_INFO_REQ] = std::bind(&LogicSystem::GetCollectSongListHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	_handler[ID_GET_COLLECT_SONG_LIST_REQ] = std::bind(&LogicSystem::GetSongListPageInfoHandler, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
 void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
@@ -391,6 +393,73 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
 		// 取消收藏歌曲
         MysqlManager::GetInstance()->deletePlaylistSong(session->GetUserUid(), "喜欢的音乐", root["song_id"].asInt());
         std::cout << "取消收藏歌曲" << root["song_id"].asInt() << "成功" << std::endl;
+	}
+}
+
+void LogicSystem::GetCollectSongListHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
+{
+    Json::Value root;
+    Json::Reader reader;
+    reader.parse(msg_data, root);
+
+    Json::Value retValue;
+    retValue["error"] = ErrorCodes::Success;
+    Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_GET_COLLECT_SONG_LIST_INFO_RSP);
+	});
+
+	if (root["flag"].asBool()) {
+
+	}
+	
+	// 默认歌单处理
+	std::shared_ptr<SongListPageInfo> pageinfo = MysqlManager::GetInstance()->getSongListPageInfo(session->GetUserUid(), "喜欢的音乐");
+	if (pageinfo == nullptr) {
+        retValue["error"] = ErrorCodes::EtherInvalid;
+		std::cerr << "获取歌单信息失败" << std::endl;
+        return;
+	}
+	retValue["title"] = pageinfo->title;
+	retValue["cover_url"] = pageinfo->songlist_icon;
+	retValue["description"] = pageinfo->description;
+	retValue["author"] = pageinfo->author;
+	retValue["authorIcon"] = pageinfo->authorIcon;
+	retValue["createTime"] = pageinfo->createTime;
+}
+
+void LogicSystem::GetSongListPageInfoHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
+{
+    Json::Value root;
+    Json::Reader reader;
+    reader.parse(msg_data, root);
+    Json::Value retValue;
+    retValue["error"] = ErrorCodes::Success;
+    Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_GET_COLLECT_SONG_LIST_RSP);
+	});
+
+	MusicInfoListPtr playlistsongs = MysqlManager::GetInstance()->getPlaylistSongs(session->GetUserUid(), root["playlist_name"].asString());
+	if (playlistsongs.empty()) {
+        retValue["error"] = ErrorCodes::EtherInvalid;
+        std::cerr << "获取歌单歌曲信息失败" << std::endl;
+        return;
+	}
+
+    retValue["total_count"] = static_cast<int>(playlistsongs.size());
+    for (auto& song : playlistsongs) { 
+		Json::Value music_info_json;
+		music_info_json["id"] = song->id;
+		music_info_json["title"] = song->title;
+		music_info_json["album"] = song->album;
+		music_info_json["song_icon"] = song->song_icon;
+		music_info_json["artists"] = song->artists;
+		music_info_json["duration"] = song->duration;
+		music_info_json["file_url"] = song->file_url;
+		music_info_json["is_like"] = song->is_like;
+
+		retValue["music_list"].append(music_info_json);
 	}
 }
 

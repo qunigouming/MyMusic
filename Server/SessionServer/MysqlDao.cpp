@@ -712,3 +712,130 @@ int MySqlDao::getPlaylistId(int user_id, const std::string& playlist_name)
 		return -1;
 	}
 }
+
+std::shared_ptr<SongListPageInfo> MySqlDao::getSongListPageInfo(int playlist_id)
+{
+	auto conn = _pool->GetConnection();
+	if (!conn) return nullptr;
+	Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
+
+	try {
+		// SQL查询，获取歌单基本信息以及创建者信息
+		std::unique_ptr<sql::PreparedStatement> pstmt(
+			conn->_conn->prepareStatement(R"(
+                SELECT 
+                    p.name AS title,
+                    p.cover_url AS songlist_icon,
+                    p.description,
+                    p.created_at AS createTime,
+                    u.name AS author,
+                    u.icon AS authorIcon
+                FROM playlists p
+                JOIN user u ON p.user_id = u.id
+                WHERE p.id = ?
+            )")
+		);
+		pstmt->setInt(1, playlist_id);
+
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		if (res->next()) {
+			auto songListInfo = std::make_shared<SongListPageInfo>();
+
+			// 设置歌单基本信息
+			songListInfo->title = res->getString("title");
+			songListInfo->songlist_icon = res->getString("songlist_icon");
+			songListInfo->description = res->getString("description");
+			songListInfo->createTime = res->getString("createTime");
+
+			// 设置作者信息
+			songListInfo->author = res->getString("author");
+			songListInfo->authorIcon = res->getString("authorIcon");
+
+			std::cout << "获取歌单页面信息成功: " << playlist_id
+				<< ", 歌单名称: " << songListInfo->title
+				<< ", 作者: " << songListInfo->author << std::endl;
+
+			return songListInfo;
+		}
+		else {
+			std::cout << "未找到歌单ID: " << playlist_id << std::endl;
+			return nullptr;
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException in getSongListPageInfo: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return nullptr;
+	}
+}
+
+MusicInfoListPtr MySqlDao::getPlaylistSongs(int playlist_id, int user_id)
+{
+	MusicInfoListPtr songList;
+	auto conn = _pool->GetConnection();
+	if (!conn) return songList;
+	Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
+
+	try {
+		std::unique_ptr<sql::PreparedStatement> pstmt(
+			conn->_conn->prepareStatement(R"(
+                SELECT
+                    s.id AS song_id,
+                    s.title AS song_title,
+                    al.title AS album_title,
+                    s.duration,
+                    al.cover_url AS song_icon,
+                    GROUP_CONCAT(DISTINCT ar.name SEPARATOR '/ ') AS artist_names,
+                    s.file_url,
+                    GROUP_CONCAT(DISTINCT album_ar.name SEPARATOR '/ ') AS album_artists,
+                    CASE WHEN ps_like.song_id IS NOT NULL THEN 1 ELSE 0 END AS is_like,
+                    ps.position
+                FROM playlist_songs ps
+                JOIN songs s ON ps.song_id = s.id
+                JOIN albums al ON s.album_id = al.id
+                LEFT JOIN song_artists sa ON s.id = sa.song_id
+                LEFT JOIN artists ar ON sa.artist_id = ar.id
+                LEFT JOIN album_artists aa ON al.id = aa.album_id
+                LEFT JOIN artists album_ar ON aa.artist_id = album_ar.id
+                LEFT JOIN (
+                    SELECT song_id 
+                    FROM playlist_songs 
+                    WHERE playlist_id = (SELECT id FROM playlists WHERE user_id = ? AND is_default = 1)
+                ) ps_like ON s.id = ps_like.song_id
+                WHERE ps.playlist_id = ?
+                GROUP BY s.id, ps.position
+                ORDER BY ps.position ASC
+            )")
+		);
+		pstmt->setInt(1, user_id);
+		pstmt->setInt(2, playlist_id);
+
+		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+		while (res->next()) {
+			auto music = std::make_shared<MusicInfo>();
+			music->id = res->getInt("song_id");
+			music->title = res->getString("song_title");
+			music->album = res->getString("album_title");
+			music->artists = res->getString("artist_names");
+			music->album_artists = res->getString("album_artists");
+			music->song_icon = res->getString("song_icon");
+			music->file_url = res->getString("file_url");
+			music->duration = res->getInt("duration");
+			music->is_like = res->getInt("is_like");
+
+			songList.push_back(music);
+		}
+
+		std::cout << "获取歌单歌曲列表成功: " << playlist_id
+			<< ", 歌曲数量: " << songList.size() << std::endl;
+
+		return songList;
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException in getPlaylistSongs: " << e.what();
+		std::cerr << " (MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return songList;
+	}
+}
