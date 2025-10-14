@@ -10,13 +10,15 @@
 #include "Server.h"
 #include <grpcpp/grpcpp.h>
 #include "SessionServiceImpl.h"
+#include "LogManager.h"
 
 bool b_stop = false;
 std::condition_variable cond_quit;
 std::mutex mtx_quit;
 
-int main()
+int main(int argc, char* argv[])
 {
+    LogManager::InitGlog(argv[0]);
     system("chcp 65001");
     auto& cfg = ConfigManager::GetInstance();
     auto server_name = cfg["SelfServer"]["Name"];

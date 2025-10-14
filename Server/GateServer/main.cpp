@@ -1,19 +1,9 @@
 #include "ConfigManager.h"
 #include "GateService.h"
-//#include <iostream>
-//#include <botan/botan.h>
-//int main() {
-//    try {
-//        std::cout << Botan::version_string() << std::endl;
-//    }
-//    catch (Botan::Exception& exp) {
-//        std::cout << exp.what() << std::endl;
-//    }
-//
-//    return 0;
-//}
+#include "LogManager.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+    LogManager::InitGlog(argv[0]);
 	auto& cfgMgr = ConfigManager::GetInstance();
 	std::string gate_port = cfgMgr["GateServer"]["Port"];
 	std::cout << gate_port << std::endl;

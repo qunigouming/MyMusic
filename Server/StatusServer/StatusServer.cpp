@@ -3,6 +3,7 @@
 #include "ConfigManager.h"
 #include "RedisManager.h"
 #include "StatusServiceImpl.h"
+#include "LogManager.h"
 
 void RunServer() {
     auto& cfg = ConfigManager::GetInstance();
@@ -40,6 +41,7 @@ void RunServer() {
 
 int main()
 {
+    LogManager::InitGlog("StatusServer");
     system("chcp 65001");
     try {
         RunServer();

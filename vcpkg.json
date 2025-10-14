@@ -17,6 +17,9 @@
 		},
 		{
 			"name": "soundtouch"
+		},
+		{
+			"name": "glog"
 		}
 	],
 	"overrides": [

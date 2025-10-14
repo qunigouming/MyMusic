@@ -78,6 +78,9 @@
     <Filter Include="UI\SongListPage\Form Files">
       <UniqueIdentifier>{3131822e-034f-4b0d-bbfd-ebb91f268fd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tool\Common\Log">
+      <UniqueIdentifier>{7355c4ba-a706-4828-afee-c89b5051facb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -223,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="SongListPage.cpp">
       <Filter>UI\SongListPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>Tool\Common\Log</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager.h">
+      <Filter>Tool\Common\Log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

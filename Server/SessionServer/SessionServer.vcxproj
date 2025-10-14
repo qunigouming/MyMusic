@@ -146,6 +146,7 @@
     <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="DistributeLock.cpp" />
     <ClCompile Include="LogicSystem.cpp" />
+    <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="message.grpc.pb.cc" />
     <ClCompile Include="message.pb.cc" />
     <ClCompile Include="MessageNode.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="DistributeLock.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="LogicSystem.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="message.grpc.pb.h" />
     <ClInclude Include="message.pb.h" />
     <ClInclude Include="MessageNode.h" />

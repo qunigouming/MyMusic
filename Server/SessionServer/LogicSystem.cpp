@@ -447,7 +447,7 @@ void LogicSystem::GetSongListPageInfoHandler(std::shared_ptr<Session> session, c
         return;
 	}
 
-    retValue["total_count"] = static_cast<int>(playlistsongs.size());
+    // retValue["total_count"] = static_cast<int>(playlistsongs.size());
     for (auto& song : playlistsongs) { 
 		Json::Value music_info_json;
 		music_info_json["id"] = song->id;

@@ -36,6 +36,9 @@
     <ClCompile Include="VerifyServiceImpl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigManager.h">
@@ -60,6 +63,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="VerifyServiceImpl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

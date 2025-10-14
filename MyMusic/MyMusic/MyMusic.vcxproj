@@ -67,10 +67,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;cryptopp.lib;SoundTouch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;cryptopp.lib;SoundTouch.lib;glog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -115,6 +116,7 @@
     <ClCompile Include="global.cpp" />
     <ClCompile Include="httpmanager.cpp" />
     <ClCompile Include="logindialog.cpp" />
+    <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="MetaTag.cpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="dataInfo.h" />
     <ClInclude Include="FFPlayer\VideoDecoder.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="MetaTag.h" />
     <QtMoc Include="ProgressBar.h" />
     <QtMoc Include="NavItemWidget.h" />

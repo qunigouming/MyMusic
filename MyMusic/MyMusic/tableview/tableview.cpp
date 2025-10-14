@@ -7,7 +7,8 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
     : QTableView(parent), _type(view_type)
 {
     //view property
-    setFixedSize(900, 600);
+    // setFixedSize(900, 600);
+    setMinimumSize(QSize(900, 600));
     setFrameShape(QFrame::NoFrame);
     setShowGrid(false);     //设置为无网格
     setMouseTracking(true);

@@ -60,6 +60,9 @@
     <ClCompile Include="Encrypt\Encrypt.cpp">
       <Filter>Encryp</Filter>
     </ClCompile>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="Encrypt\Encrypt.h">
       <Filter>Encryp</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -10,12 +10,13 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "complexionwidget.h"
+#include "LogManager.h"
 
 int main(int argc, char *argv[])
 {
+    LogManager::InitGlog(argv[0]);
     qSetMessagePattern("[ %{time [hh:mm:ss:zzz]} %{file}: %{line} %{threadid} ] %{message}");
     QApplication a(argc, argv);
-
     //加载字体文件
     QFontDatabase::addApplicationFont(":/source/font/windowfont.ttf");
     //QFontDatabase::addApplicationFont(":/source/font/iconfont.ttf");

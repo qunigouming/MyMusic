@@ -4,6 +4,7 @@
 #include <thread>
 #include "RedisManager.h"
 #include "Email.h"
+#include "LogManager.h"
 
 void RunServer() {
 	auto& cfg = ConfigManager::GetInstance();
@@ -34,7 +35,8 @@ void RunServer() {
 	server->Wait();
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+	LogManager::InitGlog(argv[0]);
 	try {
 		RunServer();
 		RedisManager::GetInstance()->Close();
@@ -43,13 +45,4 @@ int main() {
 		RedisManager::GetInstance()->Close();
 		return EXIT_FAILURE;
 	}
-	//try {
-	//	Email email;
-	//	email.sendVerifyCode("3120248848@qq.com", "123456");
-	//}
-	//catch (std::exception& e) {
-	//	std::cout << "Exception: " << e.what() << std::endl;
-	//	RedisManager::GetInstance()->Close();
-	//	return EXIT_FAILURE;
-	//}
 }

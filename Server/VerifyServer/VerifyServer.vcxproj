@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="Email.cpp" />
+    <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="message.grpc.pb.cc" />
     <ClCompile Include="message.pb.cc" />
@@ -156,6 +157,7 @@
     <ClInclude Include="ConfigManager.h" />
     <ClInclude Include="Email.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="message.grpc.pb.h" />
     <ClInclude Include="message.pb.h" />
     <ClInclude Include="RedisManager.h" />
