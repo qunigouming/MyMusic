@@ -115,6 +115,7 @@
     <ClCompile Include="funclistwidgetitem.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="httpmanager.cpp" />
+    <ClCompile Include="LocalDataManager.cpp" />
     <ClCompile Include="logindialog.cpp" />
     <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="dataInfo.h" />
     <ClInclude Include="FFPlayer\VideoDecoder.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="LocalDataManager.h" />
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="MetaTag.h" />
     <QtMoc Include="ProgressBar.h" />

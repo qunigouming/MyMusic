@@ -2,12 +2,6 @@
 #include <string>
 #include <iostream>
 
-#include <cryptopp/sha.h>
-#include <cryptopp/osrng.h>
-#include <cryptopp/base64.h>
-#include <cryptopp/pwdbased.h>
-#include <cryptopp/secblock.h>
-
 class Encrypt
 {
 public:
@@ -21,9 +15,14 @@ public:
 
 	// 使用密码和盐值计算密码哈希值
 	static std::string ComputeHashWithSalt(const std::string& password, const std::string& saltBase64);
+
+	std::string AES_Encrypt(const std::string& plainText);
+    std::string AES_Decrypt(const std::string& cipherText);
 private:
 	std::string _password_salt;		// 加密盐值
 	std::string _password_hash;		// 密码哈希值
 	int _iterations = 10;			// 迭代次数
+
+	const std::string KAES_KEY = "qgr&YrAzE!Gv$}R6";
 };
 

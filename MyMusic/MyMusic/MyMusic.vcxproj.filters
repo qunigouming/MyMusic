@@ -75,9 +75,6 @@
     <Filter Include="UI\SongListPage\Header Files">
       <UniqueIdentifier>{8bd7d884-ea2c-4783-a76a-e84b6b96158a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\SongListPage\Form Files">
-      <UniqueIdentifier>{3131822e-034f-4b0d-bbfd-ebb91f268fd7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tool\Common\Log">
       <UniqueIdentifier>{7355c4ba-a706-4828-afee-c89b5051facb}</UniqueIdentifier>
     </Filter>
@@ -229,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="LogManager.cpp">
       <Filter>Tool\Common\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalDataManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="LogManager.h">
       <Filter>Tool\Common\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalDataManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

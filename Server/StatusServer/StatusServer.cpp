@@ -39,9 +39,9 @@ void RunServer() {
     server->Wait();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    LogManager::InitGlog("StatusServer");
+    LogManager::InitGlog(argv[0]);
     system("chcp 65001");
     try {
         RunServer();

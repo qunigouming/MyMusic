@@ -30,16 +30,10 @@ private slots:
     void on_showMenu(const QPoint &pos);
 
 private:
-    void createDefaultConfig();         // 创建默认配置
-    bool readConfigJson();              // 读取配置文件到配置信息中
-    void saveToFile();                  // 保存配置信息到配置文件中
-    const QStringList getFilePaths();  // 获取文件路径
-    void changeStatus();
     void initSelectLocalMusicDlg();     // 初始化选择目录控件
 
 private:
     Ui::SelectLocMusic_Dlg *ui;
-    QJsonObject _config;
 };
 
 #endif // SELECTLOCMUSIC_DLG_H

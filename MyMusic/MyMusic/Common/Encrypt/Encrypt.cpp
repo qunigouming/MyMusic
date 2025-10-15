@@ -1,4 +1,12 @@
 #include "Encrypt.h"
+#include <cryptopp/aes.h>
+#include <cryptopp/filters.h>
+#include <cryptopp/modes.h>
+#include <cryptopp/sha.h>
+#include <cryptopp/osrng.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/pwdbased.h>
+#include <cryptopp/secblock.h>
 
 using namespace CryptoPP;
 
@@ -97,4 +105,67 @@ std::string Encrypt::ComputeHashWithSalt(const std::string& password, const std:
 		std::cerr << "ComputeHashWithSalt failed: " << e.what() << std::endl;
 		return "";
 	}
+}
+
+std::string Encrypt::AES_Encrypt(const std::string& plainText)
+{
+	using namespace CryptoPP;
+	// 生成随机IV
+	AutoSeededRandomPool rng;
+	byte iv[AES::BLOCKSIZE];
+    rng.GenerateBlock(iv, sizeof(iv));
+
+	// 加密
+	std::string cipherText;
+	CBC_Mode<AES>::Encryption enc;
+    enc.SetKeyWithIV(reinterpret_cast<const byte*>(KAES_KEY.data()), KAES_KEY.size(), iv);
+	StringSource ss(plainText, true, new StreamTransformationFilter(enc, new StringSink(cipherText)));
+
+	std::string combined = std::string((char*)iv, sizeof(iv)) + cipherText;
+
+	std::string encoded;
+	StringSource base64_ss(
+		combined,
+		true,
+		new Base64Encoder(
+			new StringSink(encoded),
+			false // 不添加换行
+		)
+	);
+
+	return encoded;
+}
+
+std::string Encrypt::AES_Decrypt(const std::string& cipherText)
+{
+	// Base64 解码
+	std::string combined;
+	StringSource(
+		cipherText,
+		true,
+		new Base64Decoder(
+			new StringSink(combined)
+		)
+	);
+
+	// 分离 IV 和密文
+	byte iv[AES::BLOCKSIZE];
+	memcpy(iv, combined.data(), sizeof(iv));
+	std::string encrypted = combined.substr(sizeof(iv));
+
+	// 解密
+	std::string plaintext;
+	CBC_Mode<AES>::Decryption dec;
+	dec.SetKeyWithIV((const byte*)KAES_KEY.data(), KAES_KEY.size(), iv);
+
+	StringSource ss(
+		encrypted,
+		true,
+		new StreamTransformationFilter(
+			dec,
+			new StringSink(plaintext)
+		)
+	);
+
+	return plaintext;
 }

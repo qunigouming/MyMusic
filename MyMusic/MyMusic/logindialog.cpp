@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include "tcpmanager.h"
 #include "Common/Encrypt/Encrypt.h"
+#include "LocalDataManager.h"
 
 LoginDialog::LoginDialog(QWidget *parent)
     : QDialog(parent)
@@ -43,6 +44,15 @@ LoginDialog::LoginDialog(QWidget *parent)
         //inform transform-window that change to mainwindow
         emit sig_switchMainWindow();
     });
+    connect(ui->savePwdCB, &QCheckBox::clicked, this, [](bool checked) {
+        LocalDataManager::GetInstance()->setAutoFillIn(checked);
+    });
+
+    if (LocalDataManager::GetInstance()->isAutoFillIn()) {
+        ui->userLineE->setText(LocalDataManager::GetInstance()->getUserName());
+        ui->pwdLineE->setText(LocalDataManager::GetInstance()->getPasswd());
+        ui->savePwdCB->setChecked(true);
+    }
 
     initHttpReqHandler();
 }
@@ -140,6 +150,11 @@ void LoginDialog::on_pwdLineE_textChanged(const QString &arg1)
 
 void LoginDialog::on_loginBtn_clicked()
 {
+    // 将用户名密码存储到本地
+    if (LocalDataManager::GetInstance()->isAutoFillIn()) {
+        LocalDataManager::GetInstance()->setUserPwd(ui->userLineE->text(), ui->pwdLineE->text());
+    }
+    
     QJsonObject json;
     json["name"] = ui->userLineE->text();
     HttpManager::GetInstance()->PostRequest(gate_url_prefix + "/get_password_salt", json, ReqID::ID_GET_PWD_SALT, Modules::LOGINMOD);

@@ -3,9 +3,8 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QFileDialog>
-#include <QStandardPaths>
-#include <QJsonDocument>
 #include <QMenu>
+#include "LocalDataManager.h"
 
 SelectLocMusic_Dlg::SelectLocMusic_Dlg(QWidget *parent)
     : QDialog(parent)
@@ -67,8 +66,8 @@ bool SelectLocMusic_Dlg::eventFilter(QObject *obj, QEvent *event)
 void SelectLocMusic_Dlg::on_close_Btn_clicked()
 {
     // 保存配置到文件
-    saveToFile();
-    emit sig_selectDir(getFilePaths());
+    LocalDataManager::GetInstance()->saveConfig();
+    emit sig_selectDir(LocalDataManager::GetInstance()->getFilePaths());
     deleteLater();
 }
 
@@ -78,7 +77,7 @@ void SelectLocMusic_Dlg::on_add_file_Btn_clicked()
     QCheckBox* new_CheckBox = new QCheckBox(file_path, this);
     ui->pathWidget->layout()->addWidget(new_CheckBox);
 
-    _config[file_path] = false;
+    LocalDataManager::GetInstance()->setPathStatus(file_path, false);
 }
 
 void SelectLocMusic_Dlg::on_showMenu(const QPoint &pos)
@@ -89,7 +88,7 @@ void SelectLocMusic_Dlg::on_showMenu(const QPoint &pos)
     QAction* deleteAction = new QAction(tr("删除"), this);
     connect(deleteAction, &QAction::triggered, this, [this, checkbox]{
         // 修改配置
-        _config.remove(checkbox->text());
+        LocalDataManager::GetInstance()->delPath(checkbox->text());
 
         checkbox->deleteLater();
     });
@@ -98,69 +97,17 @@ void SelectLocMusic_Dlg::on_showMenu(const QPoint &pos)
     contextMenu.exec(checkbox->mapToGlobal(pos));
 }
 
-void SelectLocMusic_Dlg::createDefaultConfig()
-{
-    _config = QJsonObject();
-    _config.insert(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation), true);
-    _config.insert(QStandardPaths::writableLocation(QStandardPaths::MusicLocation), true);
-}
-
-bool SelectLocMusic_Dlg::readConfigJson()
-{
-    QFile file(QDir::currentPath() + "/config.json");
-    // 存在文件则读取配置，否则创建文件并写入默认配置
-    if (!file.exists()) {
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
-        createDefaultConfig();
-        QJsonDocument doc(_config);
-        file.write(doc.toJson());
-        file.close();
-    } else {
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return false;
-        QByteArray data = file.readAll();
-        file.close();
-
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        if (!doc.isNull()) {
-            if (doc.isObject()) {
-                _config = doc.object();
-            } else return false;
-        } else return false;
-    }
-    return true;
-}
-
-void SelectLocMusic_Dlg::saveToFile()
-{
-    QFile file(QDir::currentPath() + "/config.json");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
-    QJsonDocument doc(_config);
-    file.write(doc.toJson());
-    file.close();
-}
-
-const QStringList SelectLocMusic_Dlg::getFilePaths()
-{
-    QStringList paths;
-    for (auto& key : _config.keys()) {
-        if (_config[key].toBool()) {
-            paths.append(key);
-        }
-    }
-    return paths;
-}
-
 void SelectLocMusic_Dlg::initSelectLocalMusicDlg()
 {
-    readConfigJson();
+    QStringList paths = LocalDataManager::GetInstance()->getFilePaths();
     // 将json中的配置生成为QCheckBox
-    for (const QString& key : _config.keys()) {
-        QCheckBox* check_box = new QCheckBox(key, this);
-        check_box->setChecked(_config.value(key).toBool());
+    for (const QString& path : paths) {
+        QCheckBox* check_box = new QCheckBox(path, this);
+        check_box->setChecked(LocalDataManager::GetInstance()->getPathStatus(path));
         check_box->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(check_box, &QCheckBox::customContextMenuRequested, this, &SelectLocMusic_Dlg::on_showMenu);
-        connect(check_box, &QCheckBox::clicked, this, [this, key](bool status){
-            _config[key] = status;
+        connect(check_box, &QCheckBox::clicked, this, [this, path](bool status){
+            LocalDataManager::GetInstance()->setPathStatus(path, status);
         });
         ui->pathWidget->layout()->addWidget(check_box);
     }
