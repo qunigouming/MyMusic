@@ -12,6 +12,7 @@ SysTray::SysTray(QWidget*parent) : QSystemTrayIcon(parent), _parent(parent)
 
 SysTray::~SysTray()
 {
+	hide();
 }
 
 void SysTray::initSysTray()

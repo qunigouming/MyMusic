@@ -11,4 +11,6 @@ Client/
 
 *.mdj
 
+MyMusic/MyMusic/config.json
+
 vcpkg_installed/

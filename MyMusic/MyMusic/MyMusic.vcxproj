@@ -194,7 +194,6 @@
     <QtMoc Include="PlaylistItemWidget.h" />
     <ClInclude Include="PlayStatePrivate.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="RotationLabel.h" />
     <QtMoc Include="SidebarWidget.h" />
     <QtMoc Include="SeparatorWidget.h" />

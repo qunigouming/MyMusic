@@ -53,8 +53,9 @@ private:
     SelectLocMusic_Dlg* selectlocmusic_dlg = nullptr;
     TableView* _am_view = nullptr;
     TableView* _lm_view = nullptr;
+    TableView* _activeView = nullptr;           // 当前播放的视图
 
-    int _currentPlayIndex = -1;
+    int _currentPlayIndex = -1;                 // 当前播放的索引，根据当前播放的视图来获取
 
     QTimer* _heartbeatTimer = nullptr;      // 心跳定时器，处理服务器心跳包
 };

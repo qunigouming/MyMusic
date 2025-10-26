@@ -428,9 +428,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LogManager.h">
       <Filter>Tool\Common\Log</Filter>
     </ClInclude>

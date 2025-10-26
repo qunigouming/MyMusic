@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>header_custom</Title>
+      <Shortcut>header_custom</Shortcut>
+      <Description>自定义文件头注释</Description>
+      <Author>qunigouming</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>FileName</ID>
+          <ToolTip>文件名</ToolTip>
+          <Default>FileName</Default>
+        </Literal>
+        <Literal>
+          <ID>BriefDescription</ID>
+          <ToolTip>功能描述</ToolTip>
+          <Default>XXXX Function</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="cpp">
+        <![CDATA[/******************************************************************************
+ *
+ * @file       $FileName$
+ * @brief      $BriefDescription$
+ *
+ * @author     qunigouming
+ * @date       $end$
+ * @history    
+ *****************************************************************************/]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -191,38 +191,15 @@ void MainWindow::initBaseFuncLWg()
             TcpManager::GetInstance()->sig_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_INFO_REQ, doc.toJson());
             // 喜欢的音乐
             ui->stackedWidget->setCurrentIndex(4);
+            _activeView = _am_view;
         }
         else if (index == 4) {
             // 本地音乐
             ui->stackedWidget->setCurrentIndex(3);
+            _activeView = _lm_view;
             readLocalMusicConfig();
         }
     });
-    //// home page item
-    //QListWidgetItem* hpageItem = new QListWidgetItem();
-    //hpageItem->setSizeHint(QSize(180, 50));
-    //ui->funcListWid->addItem(hpageItem);
-
-    //FuncListWidgetItem* hpage_wg = new FuncListWidgetItem(QChar(0xe007), "主页(beta)");
-    //ui->funcListWid->setItemWidget(hpageItem, hpage_wg);
-
-    //// local music item
-    //QListWidgetItem* local_music_Item = new QListWidgetItem();
-    //local_music_Item->setSizeHint(QSize(180, 50));
-    //ui->funcListWid->addItem(local_music_Item);
-
-    //FuncListWidgetItem* local_music_Wg = new FuncListWidgetItem(QChar(0xe008), "本地音乐");
-
-    //ui->funcListWid->setItemWidget(local_music_Item, local_music_Wg);
-
-    //connect(ui->funcListWid, &QListWidget::currentRowChanged, this, [this](int currentRow){
-    //    if (currentRow == 0) {
-    //        ui->stackedWidget->setCurrentIndex(0);
-    //    } else if (currentRow == 1) {
-    //        ui->stackedWidget->setCurrentIndex(3);
-    //        readLocalMusicConfig();
-    //    }
-    //});
 }
 
 void MainWindow::scanFileToTableView(QStringList list)
@@ -320,6 +297,7 @@ void MainWindow::bindConntoView(TableView* view)
     });
     connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this, view](PlayModel model) {
         qDebug() << "Receive playNextSong";
+        if (_activeView != view)    return;     // 只处理当前视图
         if (view->rowCount() == 0) return;
         if (_currentPlayIndex == -1) return;
 
