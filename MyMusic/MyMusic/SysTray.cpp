@@ -1,5 +1,4 @@
 #include "SysTray.h"
-#include <QMenu>
 #include <QApplication>
 
 SysTray::SysTray(QWidget*parent) : QSystemTrayIcon(parent), _parent(parent)
@@ -13,6 +12,11 @@ SysTray::SysTray(QWidget*parent) : QSystemTrayIcon(parent), _parent(parent)
 SysTray::~SysTray()
 {
 	hide();
+	if (_menu) {
+		_menu->deleteLater();
+        _menu = nullptr;
+	}
+	setContextMenu(nullptr);
 }
 
 void SysTray::initSysTray()
@@ -30,11 +34,16 @@ void SysTray::initSysTray()
 
 void SysTray::initMenu()
 {
-	QMenu* menu = new QMenu(_parent);
-    menu->addAction("退出", [this]() {
+	_menu = new QMenu(_parent);
+    _menu->addAction("退出", [this]() {
+		hide();
+		if (_menu) {
+			_menu->deleteLater();
+            _menu = nullptr;
+		}
         QApplication::quit();
     });
 
-    setContextMenu(menu);
+    setContextMenu(_menu);
 }
 

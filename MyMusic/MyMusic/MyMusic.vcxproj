@@ -126,6 +126,7 @@
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="registerdialog.cpp" />
     <ClCompile Include="RotationLabel.cpp" />
+    <ClCompile Include="SearchLine.cpp" />
     <ClCompile Include="selectlocmusic_dlg.cpp" />
     <ClCompile Include="SeparatorWidget.cpp" />
     <ClCompile Include="SidebarWidget.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="RotationLabel.h" />
     <QtMoc Include="SidebarWidget.h" />
     <QtMoc Include="SeparatorWidget.h" />
+    <QtMoc Include="SearchLine.h" />
     <ClInclude Include="Singleton.h" />
     <QtMoc Include="SysTray.h" />
     <QtMoc Include="TitleWidget.h" />

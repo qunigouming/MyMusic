@@ -23,9 +23,8 @@ public:
 	void setAutoFillIn(bool status);		// 设置下次是否自动填充用户名密码
 	bool isAutoFillIn();
 
-	// future interface
-	[[deprecated("暂时不可用")]]
 	void setVolume(int volume);
+	int getVolume();
 
 private:
     LocalDataManager();

@@ -1,0 +1,82 @@
+#ifndef STORAGE_GRPC_CLIENT_H
+#define STORAGE_GRPC_CLIENT_H
+
+#include <grpcpp/grpcpp.h>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include "../Common/Singleton.h"
+
+#include "message.grpc.pb.h"
+#include "message.pb.h"
+
+using grpc::Channel;
+using grpc::Status;
+using grpc::ClientContext;
+
+using message::UploadImageRequest;
+using message::UploadImageResponse;
+using message::Metadata;
+using message::StorageService;
+
+class StorageConPool {
+public:
+	StorageConPool(std::size_t poolsize, std::string host, std::string port) : _poolSize(poolsize), _host(host), _port(port) {
+		for (size_t i = 0; i < poolsize; i++) {
+			std::shared_ptr<Channel> channel = grpc::CreateChannel(host + ":" + port, grpc::InsecureChannelCredentials());
+            _pool.push(StorageService::NewStub(channel));
+		}
+	}
+
+	~StorageConPool() {
+		std::lock_guard<std::mutex> lock(_mutex);
+		Close();
+		while (!_pool.empty()) _pool.pop();
+	}
+
+	std::unique_ptr<StorageService::Stub> GetConnection() {
+		std::unique_lock<std::mutex> lock(_mutex);
+		_cond.wait(lock, [this] {
+			if (_b_stop)	return true;
+			return !_pool.empty();
+		});
+		if (_b_stop)	return nullptr;
+		auto con = std::move(_pool.front());
+		_pool.pop();
+		return con;
+	}
+
+	void returnConnection(std::unique_ptr<StorageService::Stub> con) {
+		std::lock_guard<std::mutex> lock(_mutex);
+		if (_b_stop)	return;
+		_pool.push(std::move(con));
+		_cond.notify_one();
+	}
+
+	void Close() {
+        _b_stop = true;
+        _cond.notify_all();
+	}
+
+private:
+	std::atomic_bool _b_stop = false;
+	std::size_t _poolSize = 0;
+	std::string _host;
+	std::string _port;
+	std::queue<std::unique_ptr<StorageService::Stub>> _pool;
+	std::condition_variable _cond;
+	std::mutex _mutex;
+};
+
+class StorageGrpcClient : public Singleton<StorageGrpcClient>
+{
+	friend class Singleton<StorageGrpcClient>;
+public:
+	~StorageGrpcClient() = default;
+	UploadImageResponse UploadImage();
+private:
+	StorageGrpcClient();
+	std::unique_ptr<StorageConPool> _pool;
+};
+
+#endif

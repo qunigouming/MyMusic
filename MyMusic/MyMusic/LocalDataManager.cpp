@@ -92,6 +92,17 @@ bool LocalDataManager::isAutoFillIn()
 
 void LocalDataManager::setVolume(int volume)
 {
+    QJsonObject userDataObj = _config[KUSER_USE_CONFIG_KEY].toObject();
+    userDataObj["volume"] = volume;
+    _config[KUSER_USE_CONFIG_KEY] = userDataObj;
+    saveConfig();           // TODO: 该值不应该频繁保存，此处只是为了测试，后续可能会添加定时保存功能
+}
+
+int LocalDataManager::getVolume()
+{
+    QJsonObject userDataObj = _config[KUSER_USE_CONFIG_KEY].toObject();
+    if (userDataObj.isEmpty())  return 60;
+    return userDataObj["volume"].toInt();
 }
 
 LocalDataManager::LocalDataManager()

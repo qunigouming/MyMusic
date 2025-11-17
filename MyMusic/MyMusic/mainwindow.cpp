@@ -161,16 +161,16 @@ void MainWindow::on_closeBtn_clicked()
 
 void MainWindow::on_minimizeBtn_clicked()
 {
-    showMinimized();
+    parentWidget()->showMinimized();
 }
 
 void MainWindow::on_zoomBtn_clicked(bool checked)
 {
     if (checked) {
-        showMaximized();
+        parentWidget()->showMaximized();
         ui->zoomBtn->setText(QChar(0xe692));
     } else {
-        showNormal();
+        parentWidget()->showNormal();
         ui->zoomBtn->setText(QChar(0xe65d));
     }
 }

@@ -2,6 +2,7 @@
 
 #include <QSystemTrayIcon>
 #include <QWidget>
+#include <QMenu>
 
 class SysTray : public QSystemTrayIcon
 {
@@ -17,5 +18,6 @@ private:
 
 private:
     QWidget* _parent;
+	QMenu* _menu = nullptr;
 };
 

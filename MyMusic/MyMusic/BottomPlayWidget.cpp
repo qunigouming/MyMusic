@@ -1,5 +1,6 @@
 #include "BottomPlayWidget.h"
 #include <QMouseEvent>
+#include "LocalDataManager.h"
 
 BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     : QWidget(parent)
@@ -19,6 +20,7 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
 
     connect(_volumeWidget.get(), &VolumeWidget::volumeChanged, this, [this](int volume) {
         _player->setVolume(volume);
+        LocalDataManager::GetInstance()->setVolume(volume);
         setVolumeUI(volume);
     });
 
@@ -32,10 +34,10 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
             //setVolumeUI(volume);
         }
     });
-
     _player = new FFPlayer(this);
     playSigConnect();
     uiSigConnect();
+    _volumeWidget->setVolume(LocalDataManager::GetInstance()->getVolume());
 }
 
 BottomPlayWidget::~BottomPlayWidget()

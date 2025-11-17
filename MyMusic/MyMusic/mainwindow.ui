@@ -663,7 +663,7 @@ font-size: 22px;</string>
             <string notr="true"/>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="mainPage">
             <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -1044,11 +1044,7 @@ QTabBar::tab::selected {
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_5">
-                     <property name="text">
-                      <string>搜索</string>
-                     </property>
-                    </widget>
+                    <widget class="SearchLine" name="local_searchBtn" native="true"/>
                    </item>
                    <item>
                     <spacer name="horizontalSpacer_6">
@@ -1144,6 +1140,12 @@ QPushButton:pressed {
    <class>SongListPage</class>
    <extends>QWidget</extends>
    <header>songlistpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SearchLine</class>
+   <extends>QWidget</extends>
+   <header>searchline.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

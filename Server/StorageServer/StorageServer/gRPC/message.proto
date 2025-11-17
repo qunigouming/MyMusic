@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package message;
+
+message UploadImageRequest {
+	oneof data {
+		Metadata metadata = 1;
+		bytes chunk_data = 2;
+	}
+}
+
+message Metadata {
+	string filename = 1;
+	string mime_type = 2;
+	int64 file_size = 3;
+}
+
+message UploadImageResponse {
+	string file_id = 1;
+	string storage_url = 2;
+	string fastdfs_group = 3;
+	string fastdfs_path = 4;
+	int64 file_size = 5;
+}
+
+service StorageService {
+	rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {};
+}

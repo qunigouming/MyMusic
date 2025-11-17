@@ -230,6 +230,9 @@
     <ClCompile Include="LocalDataManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SearchLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -363,6 +366,9 @@
     </QtMoc>
     <QtMoc Include="SongListPage.h">
       <Filter>UI\SongListPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SearchLine.h">
+      <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
