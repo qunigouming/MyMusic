@@ -1,5 +1,6 @@
 #include "MysqlDao.h"
 #include "ConfigManager.h"
+#include "LogManager.h"
 
 MySqlDao::MySqlDao()
 {
@@ -767,6 +768,37 @@ std::shared_ptr<SongListPageInfo> MySqlDao::getSongListPageInfo(int playlist_id)
 		std::cerr << " (MySQL error code: " << e.getErrorCode();
 		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		return nullptr;
+	}
+}
+
+void MySqlDao::createFileMap(FileMapInfo file_info)
+{
+	auto conn = _pool->GetConnection();
+	if (!conn) return;
+	Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
+
+	try {
+		// 创建文件映射信息
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+			conn->_conn->prepareStatement(
+				"INSERT INTO file_map (file_id, storage_path, mime_type, created_by) VALUES (?, ?, ?, ?)"
+			)
+		);
+        pstmt->setString(1, file_info.file_id);
+        pstmt->setString(2, file_info.storage_path);
+        pstmt->setString(3, file_info.mime_type);
+        pstmt->setInt(4, file_info.create_id);
+
+        pstmt->executeUpdate();
+		LOG(INFO) << "创建文件映射信息成功: " << file_info.file_id
+			<< ", 存储路径: " << file_info.storage_path
+			<< ", MIME类型: " << file_info.mime_type << ", 创作者: " << file_info.create_id;
+	}
+	catch (sql::SQLException& e) {
+		LOG(ERROR) << "SQLException in getSongListPageInfo: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
+		return;
 	}
 }
 

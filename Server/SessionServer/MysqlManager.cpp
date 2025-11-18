@@ -95,3 +95,8 @@ MusicInfoListPtr MysqlManager::getPlaylistSongs(int user_id, const std::string& 
     }
     return MusicInfoListPtr();
 }
+
+void MysqlManager::createFileMap(FileMapInfo file_info)
+{
+    _dao.createFileMap(file_info);
+}

@@ -25,11 +25,13 @@ class HttpManager : public QObject, public Singleton<HttpManager>, public std::e
 public:
     ~HttpManager() = default;
     void PostRequest(QUrl url, QJsonObject json, ReqID req_id, Modules mod);
+    void UploadFile(QUrl url, QString filepath, QJsonObject extraFields = QJsonObject(), ReqID req_id = ReqID::ID_UPLOAD_FILE, Modules mod = Modules::FILETRANSMOD);
 
 signals:
     void sig_http_finish(ReqID id, QString res, ErrorCode err, Modules mod);            //private
     void sig_reg_mod_finish(ReqID id, QString res, ErrorCode err);
     void sig_login_mod_finish(ReqID id, QString res, ErrorCode err);
+    void sig_file_trans_mod_finish(ReqID id, QString res, ErrorCode err);
 
 private slots:
     void slot_http_finish(ReqID id, QString res, ErrorCode err, Modules mod);

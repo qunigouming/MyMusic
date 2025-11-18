@@ -10,6 +10,10 @@
 #include "UserManager.h"
 #include "Server.h"
 #include "SessionGrpcClient.h"
+#include "StorageGrpcClient.h"
+#include "LogManager.h"
+
+#define DEBUG_TEST_UPLOAD_FILE_FUNCTION
 
 std::string decode_base64(const std::string& val) {
 	if (val.empty())	return "";
@@ -297,6 +301,7 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 
 void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)
 {
+#ifndef DEBUG_TEST_UPLOAD_FILE_FUNCTION
 	// 将数据转存到数据库中
 	Json::Value root;
     Json::Reader reader;
@@ -350,6 +355,59 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 
 	_song.track_number = root["track"].asInt();
 	_song.duration = root["duration"].asInt();
+
+#else
+    Json::Value root;
+	Json::Reader reader;
+	reader.parse(msg_data, root);
+
+	Json::Value retValue;
+	retValue["error"] = ErrorCodes::Success;
+	Defer defer([this, &retValue, session] {
+		std::string str = retValue.toStyledString();
+		session->Send(str, ID_UPLOAD_META_TYPE_RSP);
+	});
+
+	// 将专辑信息存储到数据库中
+	// 插入专辑
+	Album album;
+	album.title = root["album"].asString();
+	album.artist_name = root["artists"].asString();
+	std::string title = root["title"].asString();
+	std::string cover_data = decode_base64(root["icon"].asString());
+	if (!cover_data.empty()) {
+		// 图片映射地址存储到数据库中
+		UploadImageResponse response = StorageGrpcClient::GetInstance()->UploadImage(cover_data);
+		if (response.error() != ErrorCodes::Success) {
+			LOG(INFO) << "Unknow Error: Upload Image Failed!!!";
+            retValue["error"] = ErrorCodes::EtherInvalid;
+			return;
+		}
+		std::string filename = album.title + "_" + album.artist_name + "_" + title;
+		FileMapInfo file_map_info;
+        file_map_info.file_id = response.file_id();
+		file_map_info.storage_path = response.storage_url();
+		file_map_info.mime_type = "image/png";
+		file_map_info.create_id = session->GetUserUid();
+		MysqlManager::GetInstance()->createFileMap(file_map_info);
+		album.cover_url = response.file_id();
+	}
+	album.description = root["description"].asString();
+	album.release_date = root["release_date"].asString();
+	MysqlManager::GetInstance()->getOrCreateAlbum(album);
+
+	// 保存歌曲相关信息，以备后续插入歌曲
+	_song.title = root["title"].asString();
+	_song.album_title = root["album"].asString();
+
+	std::string artists = root["artists"].asString();
+	std::istringstream ss(artists);
+	std::string artist;
+	while (std::getline(ss, artist, '/')) _song.artist_names.push_back(artist);
+
+	_song.track_number = root["track"].asInt();
+	_song.duration = root["duration"].asInt();
+#endif
 }
 
 void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data)

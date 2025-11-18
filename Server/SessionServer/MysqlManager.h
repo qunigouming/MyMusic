@@ -45,6 +45,8 @@ public:
 	std::shared_ptr<SongListPageInfo> getSongListPageInfo(int user_id, const std::string& playlist_name);
 	// 获取歌单歌曲
 	MusicInfoListPtr getPlaylistSongs(int user_id, const std::string& playlist_name);
+
+	void createFileMap(FileMapInfo file_info);
 private:
 	MysqlManager() {}
 	MySqlDao _dao;

@@ -143,5 +143,59 @@ SessionService::Service::~Service() {
 }
 
 
+static const char* StorageService_method_names[] = {
+  "/message.StorageService/UploadImage",
+};
+
+std::unique_ptr< StorageService::Stub> StorageService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< StorageService::Stub> stub(new StorageService::Stub(channel));
+  return stub;
+}
+
+StorageService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
+  : channel_(channel), rpcmethod_UploadImage_(StorageService_method_names[0], ::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
+  {}
+
+::grpc::ClientWriter< ::message::UploadImageRequest>* StorageService::Stub::UploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response) {
+  return ::grpc::internal::ClientWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), rpcmethod_UploadImage_, context, response);
+}
+
+void StorageService::Stub::experimental_async::UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::experimental::ClientWriteReactor< ::message::UploadImageRequest>* reactor) {
+  ::grpc::internal::ClientCallbackWriterFactory< ::message::UploadImageRequest>::Create(stub_->channel_.get(), stub_->rpcmethod_UploadImage_, context, response, reactor);
+}
+
+::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* StorageService::Stub::AsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), cq, rpcmethod_UploadImage_, context, response, true, tag);
+}
+
+::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* StorageService::Stub::PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), cq, rpcmethod_UploadImage_, context, response, false, nullptr);
+}
+
+StorageService::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      StorageService_method_names[0],
+      ::grpc::internal::RpcMethod::CLIENT_STREAMING,
+      new ::grpc::internal::ClientStreamingHandler< StorageService::Service, ::message::UploadImageRequest, ::message::UploadImageResponse>(
+          [](StorageService::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReader<::message::UploadImageRequest>* reader,
+             ::message::UploadImageResponse* resp) {
+               return service->UploadImage(ctx, reader, resp);
+             }, this)));
+}
+
+StorageService::Service::~Service() {
+}
+
+::grpc::Status StorageService::Service::UploadImage(::grpc::ServerContext* context, ::grpc::ServerReader< ::message::UploadImageRequest>* reader, ::message::UploadImageResponse* response) {
+  (void) context;
+  (void) reader;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
 }  // namespace message
 

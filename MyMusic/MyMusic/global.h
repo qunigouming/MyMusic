@@ -44,11 +44,13 @@ enum ReqID {
     ID_GET_COLLECT_SONG_LIST_INFO_RSP = 1018,    // 获取收藏歌单信息回复 Tcp
     ID_GET_COLLECT_SONG_LIST_REQ = 1019,    // 获取收藏歌单歌曲列表请求 Tcp
     ID_GET_COLLECT_SONG_LIST_RSP = 1020,    // 获取收藏歌单歌曲列表回复 Tcp
+    ID_UPLOAD_FILE = 1021,                  // 上传文件           Http
 };
 
 enum Modules {
     REGISTERMOD = 0,
     LOGINMOD = 1,
+    FILETRANSMOD = 2,
 };
 
 enum ErrorCode {
@@ -64,6 +66,7 @@ enum ErrorCode {
     PasswdUpFailed = 1009,		//更新密码失败
     PasswdInvalid = 1010,		//密码无效
     UserNameInvalid = 1011,		//用户名无效
+    ERR_UPLOAD_FAILED = 1012,  //文件上传失败
     EtherInvalid = 0x777        //Ether错误
 };
 

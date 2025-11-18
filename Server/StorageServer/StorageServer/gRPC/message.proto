@@ -4,12 +4,12 @@ package message;
 
 message UploadImageRequest {
 	oneof data {
-		Metadata metadata = 1;
+		FileMetadata metadata = 1;
 		bytes chunk_data = 2;
 	}
 }
 
-message Metadata {
+message FileMetadata {
 	string filename = 1;
 	string mime_type = 2;
 	int64 file_size = 3;

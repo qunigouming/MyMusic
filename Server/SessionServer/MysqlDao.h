@@ -224,6 +224,8 @@ public:
 
 	MusicInfoListPtr getPlaylistSongs(int playlist_id, int user_id);
 
+	void createFileMap(FileMapInfo file_info);
+
 private:
 	// 通用ID查询
 	int getIDFromTable(const std::string& table, const std::string& column, const std::string& value);

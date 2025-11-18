@@ -27,3 +27,29 @@ message KickUserRsp {
 service SessionService {
 	rpc NotifyKickUser (KickUserReq) returns (KickUserRsp) {}
 }
+
+message UploadImageRequest {
+	oneof data {
+		FileMetadata metadata = 1;
+		bytes chunk_data = 2;
+	}
+}
+
+message FileMetadata {
+	string filename = 1;
+	string mime_type = 2;
+	int64 file_size = 3;
+}
+
+message UploadImageResponse {
+	int32 error = 1;
+	string file_id = 2;
+	string storage_url = 3;
+	string fastdfs_group = 4;
+	string fastdfs_path = 5;
+	int64 file_size = 6;
+}
+
+service StorageService {
+	rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse) {};
+}

@@ -88,3 +88,12 @@ struct SongListPageInfo
 	bool isModify = false;		// 歌单信息是否可以修改
 	bool isCollect = false;		// 歌单是否可以被收藏
 };
+
+// 该结构体描述文件映射信息
+struct FileMapInfo
+{
+	std::string file_id;
+	std::string storage_path;
+	std::string mime_type;
+	unsigned int create_id;
+};

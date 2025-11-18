@@ -47,7 +47,7 @@ struct TableStruct_message_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -55,6 +55,9 @@ struct TableStruct_message_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_message_2eproto;
 namespace message {
+class FileMetadata;
+class FileMetadataDefaultTypeInternal;
+extern FileMetadataDefaultTypeInternal _FileMetadata_default_instance_;
 class KickUserReq;
 class KickUserReqDefaultTypeInternal;
 extern KickUserReqDefaultTypeInternal _KickUserReq_default_instance_;
@@ -67,12 +70,21 @@ extern LoginReqDefaultTypeInternal _LoginReq_default_instance_;
 class LoginRsp;
 class LoginRspDefaultTypeInternal;
 extern LoginRspDefaultTypeInternal _LoginRsp_default_instance_;
+class UploadImageRequest;
+class UploadImageRequestDefaultTypeInternal;
+extern UploadImageRequestDefaultTypeInternal _UploadImageRequest_default_instance_;
+class UploadImageResponse;
+class UploadImageResponseDefaultTypeInternal;
+extern UploadImageResponseDefaultTypeInternal _UploadImageResponse_default_instance_;
 }  // namespace message
 PROTOBUF_NAMESPACE_OPEN
+template<> ::message::FileMetadata* Arena::CreateMaybeMessage<::message::FileMetadata>(Arena*);
 template<> ::message::KickUserReq* Arena::CreateMaybeMessage<::message::KickUserReq>(Arena*);
 template<> ::message::KickUserRsp* Arena::CreateMaybeMessage<::message::KickUserRsp>(Arena*);
 template<> ::message::LoginReq* Arena::CreateMaybeMessage<::message::LoginReq>(Arena*);
 template<> ::message::LoginRsp* Arena::CreateMaybeMessage<::message::LoginRsp>(Arena*);
+template<> ::message::UploadImageRequest* Arena::CreateMaybeMessage<::message::UploadImageRequest>(Arena*);
+template<> ::message::UploadImageResponse* Arena::CreateMaybeMessage<::message::UploadImageResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace message {
 
@@ -653,6 +665,584 @@ class KickUserRsp PROTOBUF_FINAL :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_message_2eproto;
 };
+// -------------------------------------------------------------------
+
+class UploadImageRequest PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.UploadImageRequest) */ {
+ public:
+  inline UploadImageRequest() : UploadImageRequest(nullptr) {}
+  virtual ~UploadImageRequest();
+
+  UploadImageRequest(const UploadImageRequest& from);
+  UploadImageRequest(UploadImageRequest&& from) noexcept
+    : UploadImageRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline UploadImageRequest& operator=(const UploadImageRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UploadImageRequest& operator=(UploadImageRequest&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const UploadImageRequest& default_instance();
+
+  enum DataCase {
+    kMetadata = 1,
+    kChunkData = 2,
+    DATA_NOT_SET = 0,
+  };
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const UploadImageRequest* internal_default_instance() {
+    return reinterpret_cast<const UploadImageRequest*>(
+               &_UploadImageRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(UploadImageRequest& a, UploadImageRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UploadImageRequest* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UploadImageRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline UploadImageRequest* New() const final {
+    return CreateMaybeMessage<UploadImageRequest>(nullptr);
+  }
+
+  UploadImageRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<UploadImageRequest>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const UploadImageRequest& from);
+  void MergeFrom(const UploadImageRequest& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UploadImageRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.UploadImageRequest";
+  }
+  protected:
+  explicit UploadImageRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_message_2eproto);
+    return ::descriptor_table_message_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMetadataFieldNumber = 1,
+    kChunkDataFieldNumber = 2,
+  };
+  // .message.FileMetadata metadata = 1;
+  bool has_metadata() const;
+  private:
+  bool _internal_has_metadata() const;
+  public:
+  void clear_metadata();
+  const ::message::FileMetadata& metadata() const;
+  ::message::FileMetadata* release_metadata();
+  ::message::FileMetadata* mutable_metadata();
+  void set_allocated_metadata(::message::FileMetadata* metadata);
+  private:
+  const ::message::FileMetadata& _internal_metadata() const;
+  ::message::FileMetadata* _internal_mutable_metadata();
+  public:
+  void unsafe_arena_set_allocated_metadata(
+      ::message::FileMetadata* metadata);
+  ::message::FileMetadata* unsafe_arena_release_metadata();
+
+  // bytes chunk_data = 2;
+  private:
+  bool _internal_has_chunk_data() const;
+  public:
+  void clear_chunk_data();
+  const std::string& chunk_data() const;
+  void set_chunk_data(const std::string& value);
+  void set_chunk_data(std::string&& value);
+  void set_chunk_data(const char* value);
+  void set_chunk_data(const void* value, size_t size);
+  std::string* mutable_chunk_data();
+  std::string* release_chunk_data();
+  void set_allocated_chunk_data(std::string* chunk_data);
+  private:
+  const std::string& _internal_chunk_data() const;
+  void _internal_set_chunk_data(const std::string& value);
+  std::string* _internal_mutable_chunk_data();
+  public:
+
+  void clear_data();
+  DataCase data_case() const;
+  // @@protoc_insertion_point(class_scope:message.UploadImageRequest)
+ private:
+  class _Internal;
+  void set_has_metadata();
+  void set_has_chunk_data();
+
+  inline bool has_data() const;
+  inline void clear_has_data();
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  union DataUnion {
+    DataUnion() {}
+    ::message::FileMetadata* metadata_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr chunk_data_;
+  } data_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
+
+  friend struct ::TableStruct_message_2eproto;
+};
+// -------------------------------------------------------------------
+
+class FileMetadata PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.FileMetadata) */ {
+ public:
+  inline FileMetadata() : FileMetadata(nullptr) {}
+  virtual ~FileMetadata();
+
+  FileMetadata(const FileMetadata& from);
+  FileMetadata(FileMetadata&& from) noexcept
+    : FileMetadata() {
+    *this = ::std::move(from);
+  }
+
+  inline FileMetadata& operator=(const FileMetadata& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline FileMetadata& operator=(FileMetadata&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const FileMetadata& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const FileMetadata* internal_default_instance() {
+    return reinterpret_cast<const FileMetadata*>(
+               &_FileMetadata_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(FileMetadata& a, FileMetadata& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(FileMetadata* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(FileMetadata* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline FileMetadata* New() const final {
+    return CreateMaybeMessage<FileMetadata>(nullptr);
+  }
+
+  FileMetadata* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<FileMetadata>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const FileMetadata& from);
+  void MergeFrom(const FileMetadata& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(FileMetadata* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.FileMetadata";
+  }
+  protected:
+  explicit FileMetadata(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_message_2eproto);
+    return ::descriptor_table_message_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kFilenameFieldNumber = 1,
+    kMimeTypeFieldNumber = 2,
+    kFileSizeFieldNumber = 3,
+  };
+  // string filename = 1;
+  void clear_filename();
+  const std::string& filename() const;
+  void set_filename(const std::string& value);
+  void set_filename(std::string&& value);
+  void set_filename(const char* value);
+  void set_filename(const char* value, size_t size);
+  std::string* mutable_filename();
+  std::string* release_filename();
+  void set_allocated_filename(std::string* filename);
+  private:
+  const std::string& _internal_filename() const;
+  void _internal_set_filename(const std::string& value);
+  std::string* _internal_mutable_filename();
+  public:
+
+  // string mime_type = 2;
+  void clear_mime_type();
+  const std::string& mime_type() const;
+  void set_mime_type(const std::string& value);
+  void set_mime_type(std::string&& value);
+  void set_mime_type(const char* value);
+  void set_mime_type(const char* value, size_t size);
+  std::string* mutable_mime_type();
+  std::string* release_mime_type();
+  void set_allocated_mime_type(std::string* mime_type);
+  private:
+  const std::string& _internal_mime_type() const;
+  void _internal_set_mime_type(const std::string& value);
+  std::string* _internal_mutable_mime_type();
+  public:
+
+  // int64 file_size = 3;
+  void clear_file_size();
+  ::PROTOBUF_NAMESPACE_ID::int64 file_size() const;
+  void set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_file_size() const;
+  void _internal_set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:message.FileMetadata)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr filename_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr mime_type_;
+  ::PROTOBUF_NAMESPACE_ID::int64 file_size_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_message_2eproto;
+};
+// -------------------------------------------------------------------
+
+class UploadImageResponse PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:message.UploadImageResponse) */ {
+ public:
+  inline UploadImageResponse() : UploadImageResponse(nullptr) {}
+  virtual ~UploadImageResponse();
+
+  UploadImageResponse(const UploadImageResponse& from);
+  UploadImageResponse(UploadImageResponse&& from) noexcept
+    : UploadImageResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline UploadImageResponse& operator=(const UploadImageResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UploadImageResponse& operator=(UploadImageResponse&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const UploadImageResponse& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const UploadImageResponse* internal_default_instance() {
+    return reinterpret_cast<const UploadImageResponse*>(
+               &_UploadImageResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(UploadImageResponse& a, UploadImageResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UploadImageResponse* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UploadImageResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline UploadImageResponse* New() const final {
+    return CreateMaybeMessage<UploadImageResponse>(nullptr);
+  }
+
+  UploadImageResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<UploadImageResponse>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const UploadImageResponse& from);
+  void MergeFrom(const UploadImageResponse& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UploadImageResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "message.UploadImageResponse";
+  }
+  protected:
+  explicit UploadImageResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_message_2eproto);
+    return ::descriptor_table_message_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kFileIdFieldNumber = 2,
+    kStorageUrlFieldNumber = 3,
+    kFastdfsGroupFieldNumber = 4,
+    kFastdfsPathFieldNumber = 5,
+    kFileSizeFieldNumber = 6,
+    kErrorFieldNumber = 1,
+  };
+  // string file_id = 2;
+  void clear_file_id();
+  const std::string& file_id() const;
+  void set_file_id(const std::string& value);
+  void set_file_id(std::string&& value);
+  void set_file_id(const char* value);
+  void set_file_id(const char* value, size_t size);
+  std::string* mutable_file_id();
+  std::string* release_file_id();
+  void set_allocated_file_id(std::string* file_id);
+  private:
+  const std::string& _internal_file_id() const;
+  void _internal_set_file_id(const std::string& value);
+  std::string* _internal_mutable_file_id();
+  public:
+
+  // string storage_url = 3;
+  void clear_storage_url();
+  const std::string& storage_url() const;
+  void set_storage_url(const std::string& value);
+  void set_storage_url(std::string&& value);
+  void set_storage_url(const char* value);
+  void set_storage_url(const char* value, size_t size);
+  std::string* mutable_storage_url();
+  std::string* release_storage_url();
+  void set_allocated_storage_url(std::string* storage_url);
+  private:
+  const std::string& _internal_storage_url() const;
+  void _internal_set_storage_url(const std::string& value);
+  std::string* _internal_mutable_storage_url();
+  public:
+
+  // string fastdfs_group = 4;
+  void clear_fastdfs_group();
+  const std::string& fastdfs_group() const;
+  void set_fastdfs_group(const std::string& value);
+  void set_fastdfs_group(std::string&& value);
+  void set_fastdfs_group(const char* value);
+  void set_fastdfs_group(const char* value, size_t size);
+  std::string* mutable_fastdfs_group();
+  std::string* release_fastdfs_group();
+  void set_allocated_fastdfs_group(std::string* fastdfs_group);
+  private:
+  const std::string& _internal_fastdfs_group() const;
+  void _internal_set_fastdfs_group(const std::string& value);
+  std::string* _internal_mutable_fastdfs_group();
+  public:
+
+  // string fastdfs_path = 5;
+  void clear_fastdfs_path();
+  const std::string& fastdfs_path() const;
+  void set_fastdfs_path(const std::string& value);
+  void set_fastdfs_path(std::string&& value);
+  void set_fastdfs_path(const char* value);
+  void set_fastdfs_path(const char* value, size_t size);
+  std::string* mutable_fastdfs_path();
+  std::string* release_fastdfs_path();
+  void set_allocated_fastdfs_path(std::string* fastdfs_path);
+  private:
+  const std::string& _internal_fastdfs_path() const;
+  void _internal_set_fastdfs_path(const std::string& value);
+  std::string* _internal_mutable_fastdfs_path();
+  public:
+
+  // int64 file_size = 6;
+  void clear_file_size();
+  ::PROTOBUF_NAMESPACE_ID::int64 file_size() const;
+  void set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_file_size() const;
+  void _internal_set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int32 error = 1;
+  void clear_error();
+  ::PROTOBUF_NAMESPACE_ID::int32 error() const;
+  void set_error(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_error() const;
+  void _internal_set_error(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:message.UploadImageResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr storage_url_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fastdfs_group_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fastdfs_path_;
+  ::PROTOBUF_NAMESPACE_ID::int64 file_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 error_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_message_2eproto;
+};
 // ===================================================================
 
 
@@ -838,9 +1428,647 @@ inline void KickUserRsp::set_uid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:message.KickUserRsp.uid)
 }
 
+// -------------------------------------------------------------------
+
+// UploadImageRequest
+
+// .message.FileMetadata metadata = 1;
+inline bool UploadImageRequest::_internal_has_metadata() const {
+  return data_case() == kMetadata;
+}
+inline bool UploadImageRequest::has_metadata() const {
+  return _internal_has_metadata();
+}
+inline void UploadImageRequest::set_has_metadata() {
+  _oneof_case_[0] = kMetadata;
+}
+inline void UploadImageRequest::clear_metadata() {
+  if (_internal_has_metadata()) {
+    if (GetArena() == nullptr) {
+      delete data_.metadata_;
+    }
+    clear_has_data();
+  }
+}
+inline ::message::FileMetadata* UploadImageRequest::release_metadata() {
+  // @@protoc_insertion_point(field_release:message.UploadImageRequest.metadata)
+  if (_internal_has_metadata()) {
+    clear_has_data();
+      ::message::FileMetadata* temp = data_.metadata_;
+    if (GetArena() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    data_.metadata_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::message::FileMetadata& UploadImageRequest::_internal_metadata() const {
+  return _internal_has_metadata()
+      ? *data_.metadata_
+      : *reinterpret_cast< ::message::FileMetadata*>(&::message::_FileMetadata_default_instance_);
+}
+inline const ::message::FileMetadata& UploadImageRequest::metadata() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageRequest.metadata)
+  return _internal_metadata();
+}
+inline ::message::FileMetadata* UploadImageRequest::unsafe_arena_release_metadata() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:message.UploadImageRequest.metadata)
+  if (_internal_has_metadata()) {
+    clear_has_data();
+    ::message::FileMetadata* temp = data_.metadata_;
+    data_.metadata_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void UploadImageRequest::unsafe_arena_set_allocated_metadata(::message::FileMetadata* metadata) {
+  clear_data();
+  if (metadata) {
+    set_has_metadata();
+    data_.metadata_ = metadata;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:message.UploadImageRequest.metadata)
+}
+inline ::message::FileMetadata* UploadImageRequest::_internal_mutable_metadata() {
+  if (!_internal_has_metadata()) {
+    clear_data();
+    set_has_metadata();
+    data_.metadata_ = CreateMaybeMessage< ::message::FileMetadata >(GetArena());
+  }
+  return data_.metadata_;
+}
+inline ::message::FileMetadata* UploadImageRequest::mutable_metadata() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageRequest.metadata)
+  return _internal_mutable_metadata();
+}
+
+// bytes chunk_data = 2;
+inline bool UploadImageRequest::_internal_has_chunk_data() const {
+  return data_case() == kChunkData;
+}
+inline void UploadImageRequest::set_has_chunk_data() {
+  _oneof_case_[0] = kChunkData;
+}
+inline void UploadImageRequest::clear_chunk_data() {
+  if (_internal_has_chunk_data()) {
+    data_.chunk_data_.Destroy(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+    clear_has_data();
+  }
+}
+inline const std::string& UploadImageRequest::chunk_data() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageRequest.chunk_data)
+  return _internal_chunk_data();
+}
+inline void UploadImageRequest::set_chunk_data(const std::string& value) {
+  _internal_set_chunk_data(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageRequest.chunk_data)
+}
+inline std::string* UploadImageRequest::mutable_chunk_data() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageRequest.chunk_data)
+  return _internal_mutable_chunk_data();
+}
+inline const std::string& UploadImageRequest::_internal_chunk_data() const {
+  if (_internal_has_chunk_data()) {
+    return data_.chunk_data_.Get();
+  }
+  return *&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void UploadImageRequest::_internal_set_chunk_data(const std::string& value) {
+  if (!_internal_has_chunk_data()) {
+    clear_data();
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  data_.chunk_data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void UploadImageRequest::set_chunk_data(std::string&& value) {
+  // @@protoc_insertion_point(field_set:message.UploadImageRequest.chunk_data)
+  if (!_internal_has_chunk_data()) {
+    clear_data();
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  data_.chunk_data_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageRequest.chunk_data)
+}
+inline void UploadImageRequest::set_chunk_data(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  if (!_internal_has_chunk_data()) {
+    clear_data();
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  data_.chunk_data_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(value), GetArena());
+  // @@protoc_insertion_point(field_set_char:message.UploadImageRequest.chunk_data)
+}
+inline void UploadImageRequest::set_chunk_data(const void* value,
+                             size_t size) {
+  if (!_internal_has_chunk_data()) {
+    clear_data();
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  data_.chunk_data_.Set(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size),
+      GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.UploadImageRequest.chunk_data)
+}
+inline std::string* UploadImageRequest::_internal_mutable_chunk_data() {
+  if (!_internal_has_chunk_data()) {
+    clear_data();
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return data_.chunk_data_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* UploadImageRequest::release_chunk_data() {
+  // @@protoc_insertion_point(field_release:message.UploadImageRequest.chunk_data)
+  if (_internal_has_chunk_data()) {
+    clear_has_data();
+    return data_.chunk_data_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  } else {
+    return nullptr;
+  }
+}
+inline void UploadImageRequest::set_allocated_chunk_data(std::string* chunk_data) {
+  if (has_data()) {
+    clear_data();
+  }
+  if (chunk_data != nullptr) {
+    set_has_chunk_data();
+    data_.chunk_data_.UnsafeSetDefault(chunk_data);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena();
+    if (arena != nullptr) {
+      arena->Own(chunk_data);
+    }
+  }
+  // @@protoc_insertion_point(field_set_allocated:message.UploadImageRequest.chunk_data)
+}
+
+inline bool UploadImageRequest::has_data() const {
+  return data_case() != DATA_NOT_SET;
+}
+inline void UploadImageRequest::clear_has_data() {
+  _oneof_case_[0] = DATA_NOT_SET;
+}
+inline UploadImageRequest::DataCase UploadImageRequest::data_case() const {
+  return UploadImageRequest::DataCase(_oneof_case_[0]);
+}
+// -------------------------------------------------------------------
+
+// FileMetadata
+
+// string filename = 1;
+inline void FileMetadata::clear_filename() {
+  filename_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& FileMetadata::filename() const {
+  // @@protoc_insertion_point(field_get:message.FileMetadata.filename)
+  return _internal_filename();
+}
+inline void FileMetadata::set_filename(const std::string& value) {
+  _internal_set_filename(value);
+  // @@protoc_insertion_point(field_set:message.FileMetadata.filename)
+}
+inline std::string* FileMetadata::mutable_filename() {
+  // @@protoc_insertion_point(field_mutable:message.FileMetadata.filename)
+  return _internal_mutable_filename();
+}
+inline const std::string& FileMetadata::_internal_filename() const {
+  return filename_.Get();
+}
+inline void FileMetadata::_internal_set_filename(const std::string& value) {
+  
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void FileMetadata::set_filename(std::string&& value) {
+  
+  filename_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.FileMetadata.filename)
+}
+inline void FileMetadata::set_filename(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.FileMetadata.filename)
+}
+inline void FileMetadata::set_filename(const char* value,
+    size_t size) {
+  
+  filename_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.FileMetadata.filename)
+}
+inline std::string* FileMetadata::_internal_mutable_filename() {
+  
+  return filename_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* FileMetadata::release_filename() {
+  // @@protoc_insertion_point(field_release:message.FileMetadata.filename)
+  return filename_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void FileMetadata::set_allocated_filename(std::string* filename) {
+  if (filename != nullptr) {
+    
+  } else {
+    
+  }
+  filename_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), filename,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.FileMetadata.filename)
+}
+
+// string mime_type = 2;
+inline void FileMetadata::clear_mime_type() {
+  mime_type_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& FileMetadata::mime_type() const {
+  // @@protoc_insertion_point(field_get:message.FileMetadata.mime_type)
+  return _internal_mime_type();
+}
+inline void FileMetadata::set_mime_type(const std::string& value) {
+  _internal_set_mime_type(value);
+  // @@protoc_insertion_point(field_set:message.FileMetadata.mime_type)
+}
+inline std::string* FileMetadata::mutable_mime_type() {
+  // @@protoc_insertion_point(field_mutable:message.FileMetadata.mime_type)
+  return _internal_mutable_mime_type();
+}
+inline const std::string& FileMetadata::_internal_mime_type() const {
+  return mime_type_.Get();
+}
+inline void FileMetadata::_internal_set_mime_type(const std::string& value) {
+  
+  mime_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void FileMetadata::set_mime_type(std::string&& value) {
+  
+  mime_type_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.FileMetadata.mime_type)
+}
+inline void FileMetadata::set_mime_type(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  mime_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.FileMetadata.mime_type)
+}
+inline void FileMetadata::set_mime_type(const char* value,
+    size_t size) {
+  
+  mime_type_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.FileMetadata.mime_type)
+}
+inline std::string* FileMetadata::_internal_mutable_mime_type() {
+  
+  return mime_type_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* FileMetadata::release_mime_type() {
+  // @@protoc_insertion_point(field_release:message.FileMetadata.mime_type)
+  return mime_type_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void FileMetadata::set_allocated_mime_type(std::string* mime_type) {
+  if (mime_type != nullptr) {
+    
+  } else {
+    
+  }
+  mime_type_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), mime_type,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.FileMetadata.mime_type)
+}
+
+// int64 file_size = 3;
+inline void FileMetadata::clear_file_size() {
+  file_size_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 FileMetadata::_internal_file_size() const {
+  return file_size_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 FileMetadata::file_size() const {
+  // @@protoc_insertion_point(field_get:message.FileMetadata.file_size)
+  return _internal_file_size();
+}
+inline void FileMetadata::_internal_set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  file_size_ = value;
+}
+inline void FileMetadata::set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_file_size(value);
+  // @@protoc_insertion_point(field_set:message.FileMetadata.file_size)
+}
+
+// -------------------------------------------------------------------
+
+// UploadImageResponse
+
+// int32 error = 1;
+inline void UploadImageResponse::clear_error() {
+  error_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageResponse::_internal_error() const {
+  return error_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageResponse::error() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.error)
+  return _internal_error();
+}
+inline void UploadImageResponse::_internal_set_error(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  error_ = value;
+}
+inline void UploadImageResponse::set_error(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_error(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.error)
+}
+
+// string file_id = 2;
+inline void UploadImageResponse::clear_file_id() {
+  file_id_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& UploadImageResponse::file_id() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.file_id)
+  return _internal_file_id();
+}
+inline void UploadImageResponse::set_file_id(const std::string& value) {
+  _internal_set_file_id(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.file_id)
+}
+inline std::string* UploadImageResponse::mutable_file_id() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageResponse.file_id)
+  return _internal_mutable_file_id();
+}
+inline const std::string& UploadImageResponse::_internal_file_id() const {
+  return file_id_.Get();
+}
+inline void UploadImageResponse::_internal_set_file_id(const std::string& value) {
+  
+  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void UploadImageResponse::set_file_id(std::string&& value) {
+  
+  file_id_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageResponse.file_id)
+}
+inline void UploadImageResponse::set_file_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.UploadImageResponse.file_id)
+}
+inline void UploadImageResponse::set_file_id(const char* value,
+    size_t size) {
+  
+  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.UploadImageResponse.file_id)
+}
+inline std::string* UploadImageResponse::_internal_mutable_file_id() {
+  
+  return file_id_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* UploadImageResponse::release_file_id() {
+  // @@protoc_insertion_point(field_release:message.UploadImageResponse.file_id)
+  return file_id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void UploadImageResponse::set_allocated_file_id(std::string* file_id) {
+  if (file_id != nullptr) {
+    
+  } else {
+    
+  }
+  file_id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), file_id,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.file_id)
+}
+
+// string storage_url = 3;
+inline void UploadImageResponse::clear_storage_url() {
+  storage_url_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& UploadImageResponse::storage_url() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.storage_url)
+  return _internal_storage_url();
+}
+inline void UploadImageResponse::set_storage_url(const std::string& value) {
+  _internal_set_storage_url(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.storage_url)
+}
+inline std::string* UploadImageResponse::mutable_storage_url() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageResponse.storage_url)
+  return _internal_mutable_storage_url();
+}
+inline const std::string& UploadImageResponse::_internal_storage_url() const {
+  return storage_url_.Get();
+}
+inline void UploadImageResponse::_internal_set_storage_url(const std::string& value) {
+  
+  storage_url_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void UploadImageResponse::set_storage_url(std::string&& value) {
+  
+  storage_url_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageResponse.storage_url)
+}
+inline void UploadImageResponse::set_storage_url(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  storage_url_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.UploadImageResponse.storage_url)
+}
+inline void UploadImageResponse::set_storage_url(const char* value,
+    size_t size) {
+  
+  storage_url_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.UploadImageResponse.storage_url)
+}
+inline std::string* UploadImageResponse::_internal_mutable_storage_url() {
+  
+  return storage_url_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* UploadImageResponse::release_storage_url() {
+  // @@protoc_insertion_point(field_release:message.UploadImageResponse.storage_url)
+  return storage_url_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void UploadImageResponse::set_allocated_storage_url(std::string* storage_url) {
+  if (storage_url != nullptr) {
+    
+  } else {
+    
+  }
+  storage_url_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), storage_url,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.storage_url)
+}
+
+// string fastdfs_group = 4;
+inline void UploadImageResponse::clear_fastdfs_group() {
+  fastdfs_group_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& UploadImageResponse::fastdfs_group() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.fastdfs_group)
+  return _internal_fastdfs_group();
+}
+inline void UploadImageResponse::set_fastdfs_group(const std::string& value) {
+  _internal_set_fastdfs_group(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.fastdfs_group)
+}
+inline std::string* UploadImageResponse::mutable_fastdfs_group() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageResponse.fastdfs_group)
+  return _internal_mutable_fastdfs_group();
+}
+inline const std::string& UploadImageResponse::_internal_fastdfs_group() const {
+  return fastdfs_group_.Get();
+}
+inline void UploadImageResponse::_internal_set_fastdfs_group(const std::string& value) {
+  
+  fastdfs_group_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void UploadImageResponse::set_fastdfs_group(std::string&& value) {
+  
+  fastdfs_group_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageResponse.fastdfs_group)
+}
+inline void UploadImageResponse::set_fastdfs_group(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  fastdfs_group_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.UploadImageResponse.fastdfs_group)
+}
+inline void UploadImageResponse::set_fastdfs_group(const char* value,
+    size_t size) {
+  
+  fastdfs_group_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.UploadImageResponse.fastdfs_group)
+}
+inline std::string* UploadImageResponse::_internal_mutable_fastdfs_group() {
+  
+  return fastdfs_group_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* UploadImageResponse::release_fastdfs_group() {
+  // @@protoc_insertion_point(field_release:message.UploadImageResponse.fastdfs_group)
+  return fastdfs_group_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void UploadImageResponse::set_allocated_fastdfs_group(std::string* fastdfs_group) {
+  if (fastdfs_group != nullptr) {
+    
+  } else {
+    
+  }
+  fastdfs_group_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), fastdfs_group,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.fastdfs_group)
+}
+
+// string fastdfs_path = 5;
+inline void UploadImageResponse::clear_fastdfs_path() {
+  fastdfs_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& UploadImageResponse::fastdfs_path() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.fastdfs_path)
+  return _internal_fastdfs_path();
+}
+inline void UploadImageResponse::set_fastdfs_path(const std::string& value) {
+  _internal_set_fastdfs_path(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.fastdfs_path)
+}
+inline std::string* UploadImageResponse::mutable_fastdfs_path() {
+  // @@protoc_insertion_point(field_mutable:message.UploadImageResponse.fastdfs_path)
+  return _internal_mutable_fastdfs_path();
+}
+inline const std::string& UploadImageResponse::_internal_fastdfs_path() const {
+  return fastdfs_path_.Get();
+}
+inline void UploadImageResponse::_internal_set_fastdfs_path(const std::string& value) {
+  
+  fastdfs_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void UploadImageResponse::set_fastdfs_path(std::string&& value) {
+  
+  fastdfs_path_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageResponse.fastdfs_path)
+}
+inline void UploadImageResponse::set_fastdfs_path(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  fastdfs_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:message.UploadImageResponse.fastdfs_path)
+}
+inline void UploadImageResponse::set_fastdfs_path(const char* value,
+    size_t size) {
+  
+  fastdfs_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:message.UploadImageResponse.fastdfs_path)
+}
+inline std::string* UploadImageResponse::_internal_mutable_fastdfs_path() {
+  
+  return fastdfs_path_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* UploadImageResponse::release_fastdfs_path() {
+  // @@protoc_insertion_point(field_release:message.UploadImageResponse.fastdfs_path)
+  return fastdfs_path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void UploadImageResponse::set_allocated_fastdfs_path(std::string* fastdfs_path) {
+  if (fastdfs_path != nullptr) {
+    
+  } else {
+    
+  }
+  fastdfs_path_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), fastdfs_path,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.fastdfs_path)
+}
+
+// int64 file_size = 6;
+inline void UploadImageResponse::clear_file_size() {
+  file_size_ = PROTOBUF_LONGLONG(0);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UploadImageResponse::_internal_file_size() const {
+  return file_size_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UploadImageResponse::file_size() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageResponse.file_size)
+  return _internal_file_size();
+}
+inline void UploadImageResponse::_internal_set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  file_size_ = value;
+}
+inline void UploadImageResponse::set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_file_size(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageResponse.file_size)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

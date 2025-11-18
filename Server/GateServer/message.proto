@@ -30,5 +30,3 @@ message GetChatServerRsp {
 service StatusService {
 	rpc GetChatServer (GetChatServerReq) returns (GetChatServerRsp) {}
 }
-
-// Image Storage service
