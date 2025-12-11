@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
         // 启动rpc服务
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-        std::cout << "RPC Server listening on " << server_address << std::endl;
+        LOG(INFO) << "RPC Server listening on " << server_address;
 
         std::thread grpc_server_thread([&server] {
             server->Wait();
@@ -71,6 +71,6 @@ int main(int argc, char* argv[])
         return 0;
     }
     catch (std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        LOG(ERROR) << "Exception: " << e.what();
     }
 }

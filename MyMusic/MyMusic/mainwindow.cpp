@@ -16,6 +16,7 @@
 #include "UserManager.h"
 #include "tcpmanager.h"
 #include <QMessageBox>
+#include "LocalDataManager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -272,20 +273,21 @@ void MainWindow::calculateColors(const QColor& showcaseColor, QColor &listColor,
 
 void MainWindow::readLocalMusicConfig()
 {
-    // 读取配置文件
-    QFile file(QDir::currentPath() + "/config.json");
-    if (file.open(QIODevice::ReadOnly)) {
-        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-        QJsonObject obj = doc.object();
-        QStringList list;
-        for (auto& key : obj.keys()) {
-            if (obj[key].toBool()) {
-                list.append(key);
-            }
-        }
-        // 扫描文件
-        scanFileToTableView(list);
-    }
+    scanFileToTableView(LocalDataManager::GetInstance()->getFilePaths());
+    //// 读取配置文件
+    //QFile file(QDir::currentPath() + "/config.json");
+    //if (file.open(QIODevice::ReadOnly)) {
+    //    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    //    QJsonObject obj = doc.object();
+    //    QStringList list;
+    //    for (auto& key : obj.keys()) {
+    //        if (obj[key].toBool()) {
+    //            list.append(key);
+    //        }
+    //    }
+    //    // 扫描文件
+    //    scanFileToTableView(list);
+    //}
 }
 
 void MainWindow::bindConntoView(TableView* view)

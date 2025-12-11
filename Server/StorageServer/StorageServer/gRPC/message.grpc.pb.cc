@@ -32,51 +32,44 @@ std::unique_ptr< StorageService::Stub> StorageService::NewStub(const std::shared
 }
 
 StorageService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_UploadImage_(StorageService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_UploadImage_(StorageService_method_names[0], ::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
   {}
 
-::grpc::Status StorageService::Stub::UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::message::UploadImageResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::message::UploadImageRequest, ::message::UploadImageResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UploadImage_, context, request, response);
+::grpc::ClientWriter< ::message::UploadImageRequest>* StorageService::Stub::UploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response) {
+  return ::grpc::internal::ClientWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), rpcmethod_UploadImage_, context, response);
 }
 
-void StorageService::Stub::experimental_async::UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::message::UploadImageRequest, ::message::UploadImageResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UploadImage_, context, request, response, std::move(f));
+void StorageService::Stub::experimental_async::UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::experimental::ClientWriteReactor< ::message::UploadImageRequest>* reactor) {
+  ::grpc::internal::ClientCallbackWriterFactory< ::message::UploadImageRequest>::Create(stub_->channel_.get(), stub_->rpcmethod_UploadImage_, context, response, reactor);
 }
 
-void StorageService::Stub::experimental_async::UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UploadImage_, context, request, response, reactor);
+::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* StorageService::Stub::AsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), cq, rpcmethod_UploadImage_, context, response, true, tag);
 }
 
-::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>* StorageService::Stub::PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::message::UploadImageResponse, ::message::UploadImageRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UploadImage_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>* StorageService::Stub::AsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncUploadImageRaw(context, request, cq);
-  result->StartCall();
-  return result;
+::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* StorageService::Stub::PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), cq, rpcmethod_UploadImage_, context, response, false, nullptr);
 }
 
 StorageService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       StorageService_method_names[0],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< StorageService::Service, ::message::UploadImageRequest, ::message::UploadImageResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      ::grpc::internal::RpcMethod::CLIENT_STREAMING,
+      new ::grpc::internal::ClientStreamingHandler< StorageService::Service, ::message::UploadImageRequest, ::message::UploadImageResponse>(
           [](StorageService::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::message::UploadImageRequest* req,
+             ::grpc::ServerReader<::message::UploadImageRequest>* reader,
              ::message::UploadImageResponse* resp) {
-               return service->UploadImage(ctx, req, resp);
+               return service->UploadImage(ctx, reader, resp);
              }, this)));
 }
 
 StorageService::Service::~Service() {
 }
 
-::grpc::Status StorageService::Service::UploadImage(::grpc::ServerContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response) {
+::grpc::Status StorageService::Service::UploadImage(::grpc::ServerContext* context, ::grpc::ServerReader< ::message::UploadImageRequest>* reader, ::message::UploadImageResponse* response) {
   (void) context;
-  (void) request;
+  (void) reader;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }

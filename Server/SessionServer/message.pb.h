@@ -786,9 +786,29 @@ class UploadImageRequest PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kChunkIndexFieldNumber = 3,
+    kTotalChunksFieldNumber = 4,
     kMetadataFieldNumber = 1,
     kChunkDataFieldNumber = 2,
   };
+  // int32 chunk_index = 3;
+  void clear_chunk_index();
+  ::PROTOBUF_NAMESPACE_ID::int32 chunk_index() const;
+  void set_chunk_index(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_chunk_index() const;
+  void _internal_set_chunk_index(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 total_chunks = 4;
+  void clear_total_chunks();
+  ::PROTOBUF_NAMESPACE_ID::int32 total_chunks() const;
+  void set_total_chunks(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_total_chunks() const;
+  void _internal_set_total_chunks(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // .message.FileMetadata metadata = 1;
   bool has_metadata() const;
   private:
@@ -840,6 +860,8 @@ class UploadImageRequest PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::int32 chunk_index_;
+  ::PROTOBUF_NAMESPACE_ID::int32 total_chunks_;
   union DataUnion {
     DataUnion() {}
     ::message::FileMetadata* metadata_;
@@ -1138,30 +1160,13 @@ class UploadImageResponse PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFileIdFieldNumber = 2,
-    kStorageUrlFieldNumber = 3,
-    kFastdfsGroupFieldNumber = 4,
-    kFastdfsPathFieldNumber = 5,
-    kFileSizeFieldNumber = 6,
+    kStorageUrlFieldNumber = 2,
+    kFastdfsGroupFieldNumber = 3,
+    kFastdfsPathFieldNumber = 4,
+    kFileSizeFieldNumber = 5,
     kErrorFieldNumber = 1,
   };
-  // string file_id = 2;
-  void clear_file_id();
-  const std::string& file_id() const;
-  void set_file_id(const std::string& value);
-  void set_file_id(std::string&& value);
-  void set_file_id(const char* value);
-  void set_file_id(const char* value, size_t size);
-  std::string* mutable_file_id();
-  std::string* release_file_id();
-  void set_allocated_file_id(std::string* file_id);
-  private:
-  const std::string& _internal_file_id() const;
-  void _internal_set_file_id(const std::string& value);
-  std::string* _internal_mutable_file_id();
-  public:
-
-  // string storage_url = 3;
+  // string storage_url = 2;
   void clear_storage_url();
   const std::string& storage_url() const;
   void set_storage_url(const std::string& value);
@@ -1177,7 +1182,7 @@ class UploadImageResponse PROTOBUF_FINAL :
   std::string* _internal_mutable_storage_url();
   public:
 
-  // string fastdfs_group = 4;
+  // string fastdfs_group = 3;
   void clear_fastdfs_group();
   const std::string& fastdfs_group() const;
   void set_fastdfs_group(const std::string& value);
@@ -1193,7 +1198,7 @@ class UploadImageResponse PROTOBUF_FINAL :
   std::string* _internal_mutable_fastdfs_group();
   public:
 
-  // string fastdfs_path = 5;
+  // string fastdfs_path = 4;
   void clear_fastdfs_path();
   const std::string& fastdfs_path() const;
   void set_fastdfs_path(const std::string& value);
@@ -1209,7 +1214,7 @@ class UploadImageResponse PROTOBUF_FINAL :
   std::string* _internal_mutable_fastdfs_path();
   public:
 
-  // int64 file_size = 6;
+  // int64 file_size = 5;
   void clear_file_size();
   ::PROTOBUF_NAMESPACE_ID::int64 file_size() const;
   void set_file_size(::PROTOBUF_NAMESPACE_ID::int64 value);
@@ -1234,7 +1239,6 @@ class UploadImageResponse PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr storage_url_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fastdfs_group_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fastdfs_path_;
@@ -1611,6 +1615,46 @@ inline void UploadImageRequest::set_allocated_chunk_data(std::string* chunk_data
   // @@protoc_insertion_point(field_set_allocated:message.UploadImageRequest.chunk_data)
 }
 
+// int32 chunk_index = 3;
+inline void UploadImageRequest::clear_chunk_index() {
+  chunk_index_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageRequest::_internal_chunk_index() const {
+  return chunk_index_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageRequest::chunk_index() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageRequest.chunk_index)
+  return _internal_chunk_index();
+}
+inline void UploadImageRequest::_internal_set_chunk_index(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  chunk_index_ = value;
+}
+inline void UploadImageRequest::set_chunk_index(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_chunk_index(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageRequest.chunk_index)
+}
+
+// int32 total_chunks = 4;
+inline void UploadImageRequest::clear_total_chunks() {
+  total_chunks_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageRequest::_internal_total_chunks() const {
+  return total_chunks_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UploadImageRequest::total_chunks() const {
+  // @@protoc_insertion_point(field_get:message.UploadImageRequest.total_chunks)
+  return _internal_total_chunks();
+}
+inline void UploadImageRequest::_internal_set_total_chunks(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  total_chunks_ = value;
+}
+inline void UploadImageRequest::set_total_chunks(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_total_chunks(value);
+  // @@protoc_insertion_point(field_set:message.UploadImageRequest.total_chunks)
+}
+
 inline bool UploadImageRequest::has_data() const {
   return data_case() != DATA_NOT_SET;
 }
@@ -1792,69 +1836,7 @@ inline void UploadImageResponse::set_error(::PROTOBUF_NAMESPACE_ID::int32 value)
   // @@protoc_insertion_point(field_set:message.UploadImageResponse.error)
 }
 
-// string file_id = 2;
-inline void UploadImageResponse::clear_file_id() {
-  file_id_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline const std::string& UploadImageResponse::file_id() const {
-  // @@protoc_insertion_point(field_get:message.UploadImageResponse.file_id)
-  return _internal_file_id();
-}
-inline void UploadImageResponse::set_file_id(const std::string& value) {
-  _internal_set_file_id(value);
-  // @@protoc_insertion_point(field_set:message.UploadImageResponse.file_id)
-}
-inline std::string* UploadImageResponse::mutable_file_id() {
-  // @@protoc_insertion_point(field_mutable:message.UploadImageResponse.file_id)
-  return _internal_mutable_file_id();
-}
-inline const std::string& UploadImageResponse::_internal_file_id() const {
-  return file_id_.Get();
-}
-inline void UploadImageResponse::_internal_set_file_id(const std::string& value) {
-  
-  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
-}
-inline void UploadImageResponse::set_file_id(std::string&& value) {
-  
-  file_id_.Set(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:message.UploadImageResponse.file_id)
-}
-inline void UploadImageResponse::set_file_id(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArena());
-  // @@protoc_insertion_point(field_set_char:message.UploadImageResponse.file_id)
-}
-inline void UploadImageResponse::set_file_id(const char* value,
-    size_t size) {
-  
-  file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:message.UploadImageResponse.file_id)
-}
-inline std::string* UploadImageResponse::_internal_mutable_file_id() {
-  
-  return file_id_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline std::string* UploadImageResponse::release_file_id() {
-  // @@protoc_insertion_point(field_release:message.UploadImageResponse.file_id)
-  return file_id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline void UploadImageResponse::set_allocated_file_id(std::string* file_id) {
-  if (file_id != nullptr) {
-    
-  } else {
-    
-  }
-  file_id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), file_id,
-      GetArena());
-  // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.file_id)
-}
-
-// string storage_url = 3;
+// string storage_url = 2;
 inline void UploadImageResponse::clear_storage_url() {
   storage_url_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -1916,7 +1898,7 @@ inline void UploadImageResponse::set_allocated_storage_url(std::string* storage_
   // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.storage_url)
 }
 
-// string fastdfs_group = 4;
+// string fastdfs_group = 3;
 inline void UploadImageResponse::clear_fastdfs_group() {
   fastdfs_group_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -1978,7 +1960,7 @@ inline void UploadImageResponse::set_allocated_fastdfs_group(std::string* fastdf
   // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.fastdfs_group)
 }
 
-// string fastdfs_path = 5;
+// string fastdfs_path = 4;
 inline void UploadImageResponse::clear_fastdfs_path() {
   fastdfs_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -2040,7 +2022,7 @@ inline void UploadImageResponse::set_allocated_fastdfs_path(std::string* fastdfs
   // @@protoc_insertion_point(field_set_allocated:message.UploadImageResponse.fastdfs_path)
 }
 
-// int64 file_size = 6;
+// int64 file_size = 5;
 inline void UploadImageResponse::clear_file_size() {
   file_size_ = PROTOBUF_LONGLONG(0);
 }

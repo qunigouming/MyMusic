@@ -1,5 +1,6 @@
 #include "AsioIOServicePool.h"
 #include <iostream>
+#include "LogManager.h"
 
 boost::asio::io_context& AsioIOServicePool::GetIOService()
 {
@@ -10,7 +11,7 @@ boost::asio::io_context& AsioIOServicePool::GetIOService()
 
 AsioIOServicePool::~AsioIOServicePool()
 {
-	std::cout << "AsioServicePool destruct!!!" << std::endl;
+	LOG(INFO) << "AsioServicePool destruct!!!";
 	Stop();
 }
 
@@ -27,7 +28,7 @@ void AsioIOServicePool::Stop()
 
 AsioIOServicePool::AsioIOServicePool(std::size_t size) : _ioServices(size), _works(size)
 {
-	// 创建io_service线程
+	// 鍒涘缓io_service绾跨▼
 	for (std::size_t i = 0; i < size; ++i) {
 		_works[i] = std::unique_ptr<Work>(new Work(_ioServices[i]));
 	}

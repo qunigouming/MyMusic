@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{54f35199-f356-4259-8082-b7a23b5a39c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Tools">
+      <UniqueIdentifier>{23c6a9ad-e6b6-444c-8378-1f5deb56400d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Tools\ImgFmtInspector">
+      <UniqueIdentifier>{0f612a01-0349-4046-bc39-ae0d822540ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SessionServer.cpp">
@@ -68,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="StorageGrpcClient.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Tools\ImgFmtInspector\ImgFmtInspector.cpp">
+      <Filter>Common\Tools\ImgFmtInspector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="StorageGrpcClient.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Tools\ImgFmtInspector\ImgFmtInspector.h">
+      <Filter>Common\Tools\ImgFmtInspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

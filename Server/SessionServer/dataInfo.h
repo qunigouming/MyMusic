@@ -34,7 +34,7 @@ struct Album {
 	std::string artist_name;
 	std::vector<std::string> artist_names;
 	std::string release_date;
-	std::string cover_url;
+	int cover_url_id;
 	std::string description;
 };
 
@@ -61,7 +61,7 @@ struct Playlist {
 	int user_id;
 	std::string name;
 	std::string description;
-	std::string cover_url;
+	int cover_url_id;
 	bool is_default;
 };
 
@@ -92,7 +92,6 @@ struct SongListPageInfo
 // 该结构体描述文件映射信息
 struct FileMapInfo
 {
-	std::string file_id;
 	std::string storage_path;
 	std::string mime_type;
 	unsigned int create_id;

@@ -30,13 +30,14 @@ bool MySqlDao::GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info)
             s.title AS song_title,
             al.title AS album_title,
             s.duration,
-            al.cover_url AS song_icon,
+            fm.storage_path AS song_icon,
             GROUP_CONCAT(DISTINCT ar.name SEPARATOR '/ ') AS artist_names,
             s.file_url,
             GROUP_CONCAT(DISTINCT album_ar.name SEPARATOR '/ ') AS album_artists,
             CASE WHEN ps.song_id IS NOT NULL THEN 1 ELSE 0 END AS is_like
         FROM songs s
         JOIN albums al ON s.album_id = al.id
+		LEFT JOIN file_map fm ON al.cover_url_id = fm.id
         LEFT JOIN song_artists sa ON s.id = sa.song_id
         LEFT JOIN artists ar ON sa.artist_id = ar.id
         LEFT JOIN album_artists aa ON al.id = aa.album_id
@@ -46,7 +47,7 @@ bool MySqlDao::GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info)
             FROM playlist_songs 
             WHERE playlist_id = (SELECT id FROM playlists WHERE user_id = ? AND is_default = 1)
         ) ps ON s.id = ps.song_id
-        GROUP BY s.id;)"));
+        GROUP BY s.id, fm.storage_path;)"));
 
 		pstmt->setInt(1, user_id);  // 设置用户ID参数
 
@@ -68,9 +69,9 @@ bool MySqlDao::GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info)
 		return true;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return false;
 	}
 }
@@ -99,9 +100,9 @@ std::shared_ptr<UserInfo> MySqlDao::GetUserInfo(const int& uid)
 		return user_ptr;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return nullptr;
 	}
 }
@@ -130,9 +131,9 @@ std::shared_ptr<UserInfo> MySqlDao::GetUserInfo(const std::string& name)
 		return user_ptr;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return nullptr;
 	}
 }
@@ -142,19 +143,19 @@ int MySqlDao::getOrCreateArtist(const std::string& artist_name)
 	// 检查歌手是否已存在
 	int artist_id = getIDFromTable("artists", "name", artist_name);
 	if (artist_id != -1) {
-		std::cout << "歌手已存在: " << artist_name << " (ID: " << artist_id << ")" << std::endl;
+		LOG(INFO) << "歌手已存在: " << artist_name << " (ID: " << artist_id << ")";
 		return artist_id;
 	}
 
 	// 插入新歌手
-	std::vector<std::string> params = { artist_name };
+	Params params = { artist_name };
 	artist_id = insertRecord(
 		"INSERT INTO artists (name) VALUES (?)",
 		params
 	);
 
 	if (artist_id != -1) {
-		std::cout << "创建歌手: " << artist_name << " (ID: " << artist_id << ")" << std::endl;
+		LOG(INFO) << "创建歌手: " << artist_name << " (ID: " << artist_id << ")";
 	}
 	return artist_id;
 }
@@ -164,26 +165,26 @@ int MySqlDao::getOrCreateAlbum(const Album& album)
 	// 检查专辑是否已存在
 	int album_id = getIDFromTable("albums", "title", album.title);
 	if (album_id != -1) {
-		std::cout << "专辑已存在: " << album.title << " (ID: " << album_id << ")" << std::endl;
+		LOG(INFO) << "专辑已存在: " << album.title << " (ID: " << album_id << ")";
 		return album_id;
 	}
 
 	// 插入新专辑
-	std::vector<std::string> params = {
+	Params params = {
 		album.title,
 		album.release_date,
-		album.cover_url,
+		album.cover_url_id,
 		album.description
 	};
 
 	album_id = insertRecord(
-		"INSERT INTO albums (title, release_date, cover_url, description) "
+		"INSERT INTO albums (title, release_date, cover_url_id, description) "
 		"VALUES (?, ?, ?, ?)",
 		params
 	);
 
 	if (album_id != -1) {
-		std::cout << "创建专辑: " << album.title << " (ID: " << album_id << ")" << std::endl;
+		LOG(INFO) << "创建专辑: " << album.title << " (ID: " << album_id << ")";
 
 		// 创建artist关联
 		if (!album.artist_name.empty()) {
@@ -214,8 +215,8 @@ void MySqlDao::createAlbumArtistIfNotExists(int album_id, int artist_id)
 		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 
 		if (res->next() && res->getInt(1) > 0) {
-			std::cout << "专辑-艺术家关联已存在: album_id=" << album_id
-				<< ", artist_id=" << artist_id << std::endl;
+			LOG(INFO) << "专辑-艺术家关联已存在: album_id=" << album_id
+				<< ", artist_id=" << artist_id;
 			return;
 		}
 
@@ -229,20 +230,20 @@ void MySqlDao::createAlbumArtistIfNotExists(int album_id, int artist_id)
 		insertStmt->setInt(2, artist_id);
 		insertStmt->executeUpdate();
 
-		std::cout << "创建专辑-艺术家关联: album_id=" << album_id
-			<< ", artist_id=" << artist_id << std::endl;
+		LOG(INFO) << "创建专辑-艺术家关联: album_id=" << album_id
+			<< ", artist_id=" << artist_id;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 	}
 }
 
 int MySqlDao::getOrCreateSong(const Song& song)
 {
 	// 获取或创建专辑
-	int album_id = getOrCreateAlbum({ song.album_title, "", std::vector<std::string>(), "", "", ""});
+	int album_id = getOrCreateAlbum({ song.album_title, "", std::vector<std::string>(), "", 1, ""});		// 防止专辑未创建(正常情况只会获取id)
 	if (album_id == -1) {
 		throw std::runtime_error("无法创建或获取专辑: " + song.album_title);
 	}
@@ -257,15 +258,15 @@ int MySqlDao::getOrCreateSong(const Song& song)
 		std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 		if (res->next()) {
 			int song_id = res->getInt(1);
-			std::cout << "歌曲已存在: " << song.title << " (专辑: " << song.album_title
-				<< ", ID: " << song_id << ")" << std::endl;
+			LOG(INFO) << "歌曲已存在: " << song.title << " (专辑: " << song.album_title
+				<< ", ID: " << song_id << ")";
 			return song_id;
 		}
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 	}
 
 	try { 
@@ -283,8 +284,8 @@ int MySqlDao::getOrCreateSong(const Song& song)
 		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 		if (res->next()) {
 			int song_id = res->getInt(1);
-			std::cout << "创建歌曲: " << song.title << " (专辑: " << song.album_title
-				<< ", ID: " << song_id << ")" << std::endl;
+			LOG(INFO) << "创建歌曲: " << song.title << " (专辑: " << song.album_title
+				<< ", ID: " << song_id << ")";
 			// 添加歌手关联
 			for (const auto& artist_name : song.artist_names) {
 				int artist_id = getOrCreateArtist(artist_name);
@@ -297,9 +298,9 @@ int MySqlDao::getOrCreateSong(const Song& song)
 		return -1;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return -1;
 	}
 }
@@ -315,8 +316,8 @@ void MySqlDao::createSongArtistIfNotExists(int song_id, int artist_id)
         pstmt->setInt(2, artist_id);
         std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 		if (res->next() && res->getInt(1) > 0) {
-			std::cout << "歌曲-歌手关联已存在: song_id=" << song_id
-				<< ", artist_id=" << artist_id << std::endl;
+			LOG(INFO) << "歌曲-歌手关联已存在: song_id=" << song_id
+				<< ", artist_id=" << artist_id;
 			return;
 		}
 
@@ -327,13 +328,13 @@ void MySqlDao::createSongArtistIfNotExists(int song_id, int artist_id)
         stmt->setInt(2, artist_id);
         stmt->executeUpdate();
 
-        std::cout << "歌曲-歌手关联已创建: song_id=" << song_id
-			<< ", artist_id=" << artist_id << std::endl;
+        LOG(INFO) << "歌曲-歌手关联已创建: song_id=" << song_id
+			<< ", artist_id=" << artist_id;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 	}
 }
 
@@ -350,50 +351,39 @@ int MySqlDao::getOrCreatePlaylist(const Playlist& playlist)
         std::unique_ptr<sql::ResultSet> res(ps->executeQuery());
         if (res->next()) {
 			int playlist_id = res->getInt(1);
-			std::cout << "歌单已存在: " << playlist.name << " (用户: " << playlist.user_id
-				<< ", ID: " << playlist_id << ")" << std::endl;
-			return playlist_id;
-		}
-	}
-	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-	}
-
-	// 插入新歌单
-	try {
-		std::unique_ptr<sql::PreparedStatement> ps(conn->_conn->prepareStatement(R"(INSERT INTO playlists
-					(user_id, name, description, cover_url, is_default)
-					VALUES (?, ?, ?, ?, ?))"));
-        ps->setInt(1, playlist.user_id);
-        ps->setString(2, playlist.name);
-        ps->setString(3, playlist.description);
-        ps->setString(4, playlist.cover_url);
-        ps->setInt(5, playlist.is_default);
-        ps->executeUpdate();
-
-		std::unique_ptr<sql::Statement> stmt(conn->_conn->createStatement());
-		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
-		if (res->next()) {
-			int playlist_id = res->getInt(1);
-			std::cout << "创建歌单: " << playlist.name << " (用户: " << playlist.user_id
-				<< ", ID: " << playlist_id << ")" << std::endl;
+			LOG(INFO) << "歌单已存在: " << playlist.name << " (用户: " << playlist.user_id
+				<< ", ID: " << playlist_id << ")";
 			return playlist_id;
 		}
 		return -1;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
+	}
+
+	// 插入新歌单
+	try {
+		Params params = { playlist.user_id, playlist.name, playlist.description, playlist.cover_url_id, playlist.is_default };
+		int playlist_id = insertRecord(R"(INSERT INTO playlists
+					(user_id, name, description, cover_url_id, is_default)
+					VALUES (?, ?, ?, ?, ?))", params);
+        LOG(INFO) << "创建歌单: " << playlist.name << " (用户: " << playlist.user_id
+			<< ", ID: " << playlist_id << ")";
+		return playlist_id;
+	}
+	catch (sql::SQLException& e) {
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 	}
 }
 
 void MySqlDao::createPlaylistSong(const PlaylistSong& ps)
 {
 	// 获取歌单ID
-	int playlist_id = getOrCreatePlaylist({ ps.user_id, ps.playlist_name, "", "", false });
+	int playlist_id = getOrCreatePlaylist({ ps.user_id, ps.playlist_name, "", 1, false });
 	if (playlist_id == -1) {
 		throw std::runtime_error("无法创建或获取歌单: " + ps.playlist_name);
 	}
@@ -418,8 +408,8 @@ void MySqlDao::createPlaylistSong(const PlaylistSong& ps)
 		std::unique_ptr<sql::ResultSet> res(checkStmt->executeQuery());
 
 		if (res->next() && res->getInt(1) > 0) {
-			std::cout << "歌单歌曲关联已存在: playlist_id=" << playlist_id
-				<< ", song_id=" << song_id << std::endl;
+			LOG(INFO) << "歌单歌曲关联已存在: playlist_id=" << playlist_id
+				<< ", song_id=" << song_id;
 			return;
 		}
 
@@ -451,15 +441,15 @@ void MySqlDao::createPlaylistSong(const PlaylistSong& ps)
 		insertStmt->setInt(3, position);
 		insertStmt->executeUpdate();
 
-		std::cout << "创建歌单歌曲关联: playlist_id=" << playlist_id
-			<< ", song_id=" << song_id << ", position=" << position << std::endl;
+		LOG(INFO) << "创建歌单歌曲关联: playlist_id=" << playlist_id
+			<< ", song_id=" << song_id << ", position=" << position;
 	}
 	catch (sql::SQLException& e) {
 		// 忽略重复键错误
 		if (e.getErrorCode() != 1062) {
-			std::cerr << "SQLException: " << e.what();
-			std::cerr << " (MySQL error code: " << e.getErrorCode();
-			std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+			LOG(ERROR) << "SQLException: " << e.what();
+			LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+			LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		}
 	}
 }
@@ -472,10 +462,12 @@ std::string MySqlDao::getCoverUrl(int song_id)
 	try {
 		std::unique_ptr<sql::PreparedStatement> pstmt(
 			conn->_conn->prepareStatement(
-				"SELECT al.cover_url "
-				"FROM songs s "
-				"JOIN albums al ON s.album_id = al.id "
-				"WHERE s.id = ?"
+				R"(SELECT
+						fm.storage_path AS cover_url
+				   FROM songs s
+				   INNER JOIN albums a ON s.album_id = a.id
+				   LEFT JOIN file_map fm ON a.cover_url_id = fm.id
+				   WHERE s.id = ?)"
 			)
 		);
 
@@ -490,15 +482,44 @@ std::string MySqlDao::getCoverUrl(int song_id)
 			return res->getString("cover_url");
 		}
 		else {
-			std::cerr << "No song found with ID: " << song_id << std::endl;
+			LOG(ERROR) << "No song found with ID: " << song_id;
 			return "";
 		}
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return "";
+	}
+}
+
+int MySqlDao::getCoverUrlId(int song_id)
+{
+	auto conn = _pool->GetConnection();
+    if (!conn)	return -1;
+    Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
+    try {
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+			conn->_conn->prepareStatement(
+				R"(SELECT a.cover_url_id AS cover_url_id
+				   FROM songs s
+				   LEFT JOIN albums a ON s.album_id = a.id
+				   WHERE id = ?)"
+			)
+		);
+        pstmt->setInt(1, song_id);
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+        if (res->next()) {
+			return res->getInt("cover_url_id");
+		}
+        return -1;
+	}
+	catch (sql::SQLException& e) {
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
+		return -1;
 	}
 }
 
@@ -518,14 +539,14 @@ std::string MySqlDao::getSongTitle(int song_id)
         if (res->next()) { 
 			return res->getString("title");
         } else {
-            std::cerr << "No song found with ID: " << song_id << std::endl;
+            LOG(ERROR) << "No song found with ID: " << song_id;
             return "";
         }
 	}
     catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return "";
 	}
 }
@@ -546,20 +567,20 @@ bool MySqlDao::deletePlaylistSong(int playlist_id, int song_id)
 
         int result = pstmt->executeUpdate();
         if (result > 0) {
-            std::cout << "删除成功: playlist_id=" << playlist_id
-				<< ", song_id=" << song_id << std::endl;
+            LOG(INFO) << "删除成功: playlist_id=" << playlist_id
+				<< ", song_id=" << song_id;
 			return true;
         }
         else {
-            std::cout << "删除失败: playlist_id=" << playlist_id
-				<< ", song_id=" << song_id << std::endl;
+            LOG(INFO) << "删除失败: playlist_id=" << playlist_id
+				<< ", song_id=" << song_id;
 			return false;
         }
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
         return false;
 	}
 }
@@ -583,9 +604,9 @@ int MySqlDao::getIDFromTable(const std::string& table, const std::string& column
         return -1;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return -1;
 	}	
 }
@@ -595,15 +616,22 @@ bool MySqlDao::recordExists(const std::string& table, const std::string& column,
 	return getIDFromTable(table, column, value) != -1;
 }
 
-int MySqlDao::insertRecord(const std::string& sql, const std::vector<std::string>& params)
+int MySqlDao::insertRecord(const std::string& sql, const Params& params)
 {
 	auto conn = _pool->GetConnection();
 	if (!conn) return -1;
 	Defer defer([this, &conn] { _pool->ReturnConnection(std::move(conn)); });
 	try {
 		std::unique_ptr<sql::PreparedStatement> pstmt(conn->_conn->prepareStatement(sql));
-		for (int i = 0; i < params.size(); i++) {
-			pstmt->setString(i + 1, params[i]);
+		for (std::size_t i = 0; i < params.size(); ++i) {
+			const auto& param = params[i];
+			std::visit([&pstmt, i](auto&& arg) {
+				using T = std::decay_t<decltype(arg)>;
+				if constexpr (std::is_same_v<T, std::string>)
+					pstmt->setString(i + 1, arg);
+				else if constexpr (std::is_same_v<T, int>)
+					pstmt->setInt(i + 1, arg);
+			}, param);
 		}
 		pstmt->executeUpdate();
 		std::unique_ptr<sql::Statement> stmt(conn->_conn->createStatement());
@@ -614,13 +642,13 @@ int MySqlDao::insertRecord(const std::string& sql, const std::vector<std::string
         return -1;
 	}
     catch (sql::SQLException &e) {
-		// 重复键错误，返回现有id
-		if (e.getErrorCode() == 1062) { // ER_DUP_ENTRY
-			return getIDFromTable(sql.substr(12, sql.find(' ') - 12), "name", params[0]);
-		}
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		// 重复键错误，返回现有id(暂不处理)
+		//if (e.getErrorCode() == 1062) { // ER_DUP_ENTRY
+		//	return getIDFromTable(sql.substr(12, sql.find(' ') - 12), "name", params[0]);
+		//}
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return -1;
 	}
 }
@@ -670,11 +698,11 @@ bool MySqlDao::updatePlaylistSongPosition(int playlist_id)
             conn->_conn->setAutoCommit(true);
 		}
 		catch (sql::SQLException& e) {
-			std::cerr << "rollback failed: " << e.what() << std::endl;
+			LOG(ERROR) << "rollback failed: " << e.what();
 		}
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
         return false;
 	}
 }
@@ -701,15 +729,15 @@ int MySqlDao::getPlaylistId(int user_id, const std::string& playlist_name)
 			return playlist_id;
 		}
 		else {
-			std::cout << "歌单不存在: user_id=" << user_id
-				<< ", playlist_name=" << playlist_name << std::endl;
+			LOG(INFO) << "歌单不存在: user_id=" << user_id
+				<< ", playlist_name=" << playlist_name;
 			return -1;
 		}
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return -1;
 	}
 }
@@ -726,13 +754,14 @@ std::shared_ptr<SongListPageInfo> MySqlDao::getSongListPageInfo(int playlist_id)
 			conn->_conn->prepareStatement(R"(
                 SELECT 
                     p.name AS title,
-                    p.cover_url AS songlist_icon,
+                    fm.storage_path AS songlist_icon,
                     p.description,
                     p.created_at AS createTime,
                     u.name AS author,
                     u.icon AS authorIcon
                 FROM playlists p
                 JOIN user u ON p.user_id = u.id
+				LEFT JOIN file_map fm ON p.cover_url_id = fm.id
                 WHERE p.id = ?
             )")
 		);
@@ -752,53 +781,46 @@ std::shared_ptr<SongListPageInfo> MySqlDao::getSongListPageInfo(int playlist_id)
 			songListInfo->author = res->getString("author");
 			songListInfo->authorIcon = res->getString("authorIcon");
 
-			std::cout << "获取歌单页面信息成功: " << playlist_id
+			LOG(INFO) << "获取歌单页面信息成功: " << playlist_id
 				<< ", 歌单名称: " << songListInfo->title
-				<< ", 作者: " << songListInfo->author << std::endl;
+				<< ", 作者: " << songListInfo->author;
 
 			return songListInfo;
 		}
 		else {
-			std::cout << "未找到歌单ID: " << playlist_id << std::endl;
+			LOG(INFO) << "未找到歌单ID: " << playlist_id;
 			return nullptr;
 		}
-	}
-	catch (sql::SQLException& e) {
-		std::cerr << "SQLException in getSongListPageInfo: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-		return nullptr;
-	}
-}
-
-void MySqlDao::createFileMap(FileMapInfo file_info)
-{
-	auto conn = _pool->GetConnection();
-	if (!conn) return;
-	Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
-
-	try {
-		// 创建文件映射信息
-        std::unique_ptr<sql::PreparedStatement> pstmt(
-			conn->_conn->prepareStatement(
-				"INSERT INTO file_map (file_id, storage_path, mime_type, created_by) VALUES (?, ?, ?, ?)"
-			)
-		);
-        pstmt->setString(1, file_info.file_id);
-        pstmt->setString(2, file_info.storage_path);
-        pstmt->setString(3, file_info.mime_type);
-        pstmt->setInt(4, file_info.create_id);
-
-        pstmt->executeUpdate();
-		LOG(INFO) << "创建文件映射信息成功: " << file_info.file_id
-			<< ", 存储路径: " << file_info.storage_path
-			<< ", MIME类型: " << file_info.mime_type << ", 创作者: " << file_info.create_id;
 	}
 	catch (sql::SQLException& e) {
 		LOG(ERROR) << "SQLException in getSongListPageInfo: " << e.what();
 		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
 		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
-		return;
+		return nullptr;
+	}
+}
+
+int MySqlDao::createFileMap(FileMapInfo file_info)
+{
+	auto conn = _pool->GetConnection();
+	if (!conn) return -1;
+	Defer defer{ [this, &conn]() { _pool->ReturnConnection(std::move(conn)); } };
+
+	try {
+		// 创建文件映射信息
+		Params params = { file_info.storage_path, file_info.mime_type, file_info.create_id };
+		int file_id = insertRecord("INSERT INTO file_map (storage_path, mime_type, created_by) VALUES (?, ?, ?)", params);
+
+		if (file_id != -1) {
+			LOG(INFO) << "创建文件映射信息成功: " << "存储路径: " << file_info.storage_path << ", MIME类型: " << file_info.mime_type << ", 创建者ID: " << file_info.create_id;
+		}
+		return file_id;
+	}
+	catch (sql::SQLException& e) {
+		LOG(ERROR) << "SQLException in getSongListPageInfo: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
+		return -1;
 	}
 }
 
@@ -817,7 +839,7 @@ MusicInfoListPtr MySqlDao::getPlaylistSongs(int playlist_id, int user_id)
                     s.title AS song_title,
                     al.title AS album_title,
                     s.duration,
-                    al.cover_url AS song_icon,
+                    fm.storage_path AS song_icon,
                     GROUP_CONCAT(DISTINCT ar.name SEPARATOR '/ ') AS artist_names,
                     s.file_url,
                     GROUP_CONCAT(DISTINCT album_ar.name SEPARATOR '/ ') AS album_artists,
@@ -826,6 +848,7 @@ MusicInfoListPtr MySqlDao::getPlaylistSongs(int playlist_id, int user_id)
                 FROM playlist_songs ps
                 JOIN songs s ON ps.song_id = s.id
                 JOIN albums al ON s.album_id = al.id
+				LEFT JOIN file_map fm ON al.cover_url_id = fm.id
                 LEFT JOIN song_artists sa ON s.id = sa.song_id
                 LEFT JOIN artists ar ON sa.artist_id = ar.id
                 LEFT JOIN album_artists aa ON al.id = aa.album_id
@@ -859,15 +882,15 @@ MusicInfoListPtr MySqlDao::getPlaylistSongs(int playlist_id, int user_id)
 			songList.push_back(music);
 		}
 
-		std::cout << "获取歌单歌曲列表成功: " << playlist_id
-			<< ", 歌曲数量: " << songList.size() << std::endl;
+		LOG(INFO) << "获取歌单歌曲列表成功: " << playlist_id
+			<< ", 歌曲数量: " << songList.size();
 
 		return songList;
 	}
 	catch (sql::SQLException& e) {
-		std::cerr << "SQLException in getPlaylistSongs: " << e.what();
-		std::cerr << " (MySQL error code: " << e.getErrorCode();
-		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		LOG(ERROR) << "SQLException in getPlaylistSongs: " << e.what();
+		LOG(ERROR) << " (MySQL error code: " << e.getErrorCode();
+		LOG(ERROR) << ", SQLState: " << e.getSQLState() << " )";
 		return songList;
 	}
 }

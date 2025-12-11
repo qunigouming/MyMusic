@@ -69,7 +69,7 @@ class StorageGrpcClient : public Singleton<StorageGrpcClient>
 	friend class Singleton<StorageGrpcClient>;
 public:
 	~StorageGrpcClient() = default;
-	UploadImageResponse UploadImage(std::string file_data);
+	UploadImageResponse UploadImage(std::string file_name, std::string file_data);
 
 private:
     StorageGrpcClient();

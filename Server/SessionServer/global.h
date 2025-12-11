@@ -9,6 +9,7 @@
 #include <mutex>
 #include <vector>
 #include <queue>
+#include "LogManager.h"
 
 //data define length
 #define MAX_LENGTH 1024 * 1024 * 2

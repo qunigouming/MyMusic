@@ -36,21 +36,22 @@ class StorageService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::message::UploadImageResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>> AsyncUploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>>(AsyncUploadImageRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientWriterInterface< ::message::UploadImageRequest>> UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response) {
+      return std::unique_ptr< ::grpc::ClientWriterInterface< ::message::UploadImageRequest>>(UploadImageRaw(context, response));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>> PrepareAsyncUploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>>(PrepareAsyncUploadImageRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>> AsyncUploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>>(AsyncUploadImageRaw(context, response, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>> PrepareAsyncUploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>>(PrepareAsyncUploadImageRaw(context, response, cq));
     }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
-      virtual void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::ClientWriteReactor< ::message::UploadImageRequest>* reactor) = 0;
       #else
-      virtual void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::experimental::ClientWriteReactor< ::message::UploadImageRequest>* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -61,27 +62,29 @@ class StorageService final {
     #endif
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>* AsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::message::UploadImageResponse>* PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientWriterInterface< ::message::UploadImageRequest>* UploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>* AsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::message::UploadImageRequest>* PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
-    ::grpc::Status UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::message::UploadImageResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>> AsyncUploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>>(AsyncUploadImageRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientWriter< ::message::UploadImageRequest>> UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response) {
+      return std::unique_ptr< ::grpc::ClientWriter< ::message::UploadImageRequest>>(UploadImageRaw(context, response));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>> PrepareAsyncUploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>>(PrepareAsyncUploadImageRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>> AsyncUploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>>(AsyncUploadImageRaw(context, response, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>> PrepareAsyncUploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>>(PrepareAsyncUploadImageRaw(context, response, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
-      void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::ClientWriteReactor< ::message::UploadImageRequest>* reactor) override;
       #else
-      void UploadImage(::grpc::ClientContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::experimental::ClientWriteReactor< ::message::UploadImageRequest>* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -94,8 +97,9 @@ class StorageService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>* AsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::message::UploadImageResponse>* PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, const ::message::UploadImageRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientWriter< ::message::UploadImageRequest>* UploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response) override;
+    ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* AsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncWriter< ::message::UploadImageRequest>* PrepareAsyncUploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_UploadImage_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -104,7 +108,7 @@ class StorageService final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status UploadImage(::grpc::ServerContext* context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response);
+    virtual ::grpc::Status UploadImage(::grpc::ServerContext* context, ::grpc::ServerReader< ::message::UploadImageRequest>* reader, ::message::UploadImageResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_UploadImage : public BaseClass {
@@ -118,12 +122,12 @@ class StorageService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
+    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::message::UploadImageRequest>* /*reader*/, ::message::UploadImageResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestUploadImage(::grpc::ServerContext* context, ::message::UploadImageRequest* request, ::grpc::ServerAsyncResponseWriter< ::message::UploadImageResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestUploadImage(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::message::UploadImageResponse, ::message::UploadImageRequest>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncClientStreaming(0, context, reader, new_call_cq, notification_cq, tag);
     }
   };
   typedef WithAsyncMethod_UploadImage<Service > AsyncService;
@@ -139,38 +143,29 @@ class StorageService final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::message::UploadImageRequest, ::message::UploadImageResponse>(
+          new ::grpc::internal::CallbackClientStreamingHandler< ::message::UploadImageRequest, ::message::UploadImageResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::message::UploadImageRequest* request, ::message::UploadImageResponse* response) { return this->UploadImage(context, request, response); }));}
-    void SetMessageAllocatorFor_UploadImage(
-        ::grpc::experimental::MessageAllocator< ::message::UploadImageRequest, ::message::UploadImageResponse>* allocator) {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
-    #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
-    #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::message::UploadImageRequest, ::message::UploadImageResponse>*>(handler)
-              ->SetMessageAllocator(allocator);
+                     context, ::message::UploadImageResponse* response) { return this->UploadImage(context, response); }));
     }
     ~ExperimentalWithCallbackMethod_UploadImage() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
+    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::message::UploadImageRequest>* /*reader*/, ::message::UploadImageResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* UploadImage(
-      ::grpc::CallbackServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/)
+    virtual ::grpc::ServerReadReactor< ::message::UploadImageRequest>* UploadImage(
+      ::grpc::CallbackServerContext* /*context*/, ::message::UploadImageResponse* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* UploadImage(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/)
+    virtual ::grpc::experimental::ServerReadReactor< ::message::UploadImageRequest>* UploadImage(
+      ::grpc::experimental::CallbackServerContext* /*context*/, ::message::UploadImageResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -191,7 +186,7 @@ class StorageService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
+    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::message::UploadImageRequest>* /*reader*/, ::message::UploadImageResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -208,12 +203,12 @@ class StorageService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
+    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::message::UploadImageRequest>* /*reader*/, ::message::UploadImageResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestUploadImage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestUploadImage(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncClientStreaming(0, context, reader, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -228,62 +223,35 @@ class StorageService final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodRawCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc::internal::CallbackClientStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UploadImage(context, request, response); }));
+                     context, ::grpc::ByteBuffer* response) { return this->UploadImage(context, response); }));
     }
     ~ExperimentalWithRawCallbackMethod_UploadImage() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
+    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::message::UploadImageRequest>* /*reader*/, ::message::UploadImageResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* UploadImage(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    virtual ::grpc::ServerReadReactor< ::grpc::ByteBuffer>* UploadImage(
+      ::grpc::CallbackServerContext* /*context*/, ::grpc::ByteBuffer* /*response*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* UploadImage(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    virtual ::grpc::experimental::ServerReadReactor< ::grpc::ByteBuffer>* UploadImage(
+      ::grpc::experimental::CallbackServerContext* /*context*/, ::grpc::ByteBuffer* /*response*/)
     #endif
       { return nullptr; }
   };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_UploadImage : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_UploadImage() {
-      ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::message::UploadImageRequest, ::message::UploadImageResponse>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::message::UploadImageRequest, ::message::UploadImageResponse>* streamer) {
-                       return this->StreamedUploadImage(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_UploadImage() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status UploadImage(::grpc::ServerContext* /*context*/, const ::message::UploadImageRequest* /*request*/, ::message::UploadImageResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedUploadImage(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::message::UploadImageRequest,::message::UploadImageResponse>* server_unary_streamer) = 0;
-  };
-  typedef WithStreamedUnaryMethod_UploadImage<Service > StreamedUnaryService;
+  typedef Service StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_UploadImage<Service > StreamedService;
+  typedef Service StreamedService;
 };
 
 }  // namespace message

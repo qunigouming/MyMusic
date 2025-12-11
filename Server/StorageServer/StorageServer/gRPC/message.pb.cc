@@ -14,36 +14,36 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
-extern PROTOBUF_INTERNAL_EXPORT_message_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Metadata_message_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_message_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_FileMetadata_message_2eproto;
 namespace message {
 class UploadImageRequestDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<UploadImageRequest> _instance;
-  const ::message::Metadata* metadata_;
+  const ::message::FileMetadata* metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr chunk_data_;
 } _UploadImageRequest_default_instance_;
-class MetadataDefaultTypeInternal {
+class FileMetadataDefaultTypeInternal {
  public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Metadata> _instance;
-} _Metadata_default_instance_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<FileMetadata> _instance;
+} _FileMetadata_default_instance_;
 class UploadImageResponseDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<UploadImageResponse> _instance;
 } _UploadImageResponse_default_instance_;
 }  // namespace message
-static void InitDefaultsscc_info_Metadata_message_2eproto() {
+static void InitDefaultsscc_info_FileMetadata_message_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::message::_Metadata_default_instance_;
-    new (ptr) ::message::Metadata();
+    void* ptr = &::message::_FileMetadata_default_instance_;
+    new (ptr) ::message::FileMetadata();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::message::Metadata::InitAsDefaultInstance();
+  ::message::FileMetadata::InitAsDefaultInstance();
 }
 
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Metadata_message_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Metadata_message_2eproto}, {}};
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_FileMetadata_message_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_FileMetadata_message_2eproto}, {}};
 
 static void InitDefaultsscc_info_UploadImageRequest_message_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -58,7 +58,7 @@ static void InitDefaultsscc_info_UploadImageRequest_message_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_UploadImageRequest_message_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_UploadImageRequest_message_2eproto}, {
-      &scc_info_Metadata_message_2eproto.base,}};
+      &scc_info_FileMetadata_message_2eproto.base,}};
 
 static void InitDefaultsscc_info_UploadImageResponse_message_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -86,56 +86,64 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_message_2eproto::offsets[] PRO
   ~0u,  // no _weak_field_map_
   offsetof(::message::UploadImageRequestDefaultTypeInternal, metadata_),
   offsetof(::message::UploadImageRequestDefaultTypeInternal, chunk_data_),
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageRequest, chunk_index_),
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageRequest, total_chunks_),
   PROTOBUF_FIELD_OFFSET(::message::UploadImageRequest, data_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::message::Metadata, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::message::FileMetadata, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::message::Metadata, filename_),
-  PROTOBUF_FIELD_OFFSET(::message::Metadata, mime_type_),
-  PROTOBUF_FIELD_OFFSET(::message::Metadata, file_size_),
+  PROTOBUF_FIELD_OFFSET(::message::FileMetadata, filename_),
+  PROTOBUF_FIELD_OFFSET(::message::FileMetadata, mime_type_),
+  PROTOBUF_FIELD_OFFSET(::message::FileMetadata, file_size_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, error_),
   PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, storage_url_),
-  PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, file_id_),
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, fastdfs_group_),
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, fastdfs_path_),
+  PROTOBUF_FIELD_OFFSET(::message::UploadImageResponse, file_size_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::message::UploadImageRequest)},
-  { 8, -1, sizeof(::message::Metadata)},
-  { 16, -1, sizeof(::message::UploadImageResponse)},
+  { 10, -1, sizeof(::message::FileMetadata)},
+  { 18, -1, sizeof(::message::UploadImageResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::message::_UploadImageRequest_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::message::_Metadata_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::message::_FileMetadata_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::message::_UploadImageResponse_default_instance_),
 };
 
 const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rmessage.proto\022\007message\"Y\n\022UploadImageR"
-  "equest\022%\n\010metadata\030\001 \001(\0132\021.message.Metad"
-  "ataH\000\022\024\n\nchunk_data\030\002 \001(\014H\000B\006\n\004data\"B\n\010M"
-  "etadata\022\020\n\010filename\030\001 \001(\t\022\021\n\tmime_type\030\002"
-  " \001(\t\022\021\n\tfile_size\030\003 \001(\003\";\n\023UploadImageRe"
-  "sponse\022\023\n\013storage_url\030\001 \001(\t\022\017\n\007file_id\030\002"
-  " \001(\t2\\\n\016StorageService\022J\n\013UploadImage\022\033."
-  "message.UploadImageRequest\032\034.message.Upl"
-  "oadImageResponse\"\000b\006proto3"
+  "\n\rmessage.proto\022\007message\"\210\001\n\022UploadImage"
+  "Request\022)\n\010metadata\030\001 \001(\0132\025.message.File"
+  "MetadataH\000\022\024\n\nchunk_data\030\002 \001(\014H\000\022\023\n\013chun"
+  "k_index\030\003 \001(\005\022\024\n\014total_chunks\030\004 \001(\005B\006\n\004d"
+  "ata\"F\n\014FileMetadata\022\020\n\010filename\030\001 \001(\t\022\021\n"
+  "\tmime_type\030\002 \001(\t\022\021\n\tfile_size\030\003 \001(\003\"y\n\023U"
+  "ploadImageResponse\022\r\n\005error\030\001 \001(\005\022\023\n\013sto"
+  "rage_url\030\002 \001(\t\022\025\n\rfastdfs_group\030\003 \001(\t\022\024\n"
+  "\014fastdfs_path\030\004 \001(\t\022\021\n\tfile_size\030\005 \001(\0032^"
+  "\n\016StorageService\022L\n\013UploadImage\022\033.messag"
+  "e.UploadImageRequest\032\034.message.UploadIma"
+  "geResponse\"\000(\001b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_message_2eproto_deps[1] = {
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_message_2eproto_sccs[3] = {
-  &scc_info_Metadata_message_2eproto.base,
+  &scc_info_FileMetadata_message_2eproto.base,
   &scc_info_UploadImageRequest_message_2eproto.base,
   &scc_info_UploadImageResponse_message_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_message_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_message_2eproto = {
-  false, false, descriptor_table_protodef_message_2eproto, "message.proto", 346,
+  false, false, descriptor_table_protodef_message_2eproto, "message.proto", 462,
   &descriptor_table_message_2eproto_once, descriptor_table_message_2eproto_sccs, descriptor_table_message_2eproto_deps, 3, 0,
   schemas, file_default_instances, TableStruct_message_2eproto::offsets,
   file_level_metadata_message_2eproto, 3, file_level_enum_descriptors_message_2eproto, file_level_service_descriptors_message_2eproto,
@@ -148,21 +156,21 @@ namespace message {
 // ===================================================================
 
 void UploadImageRequest::InitAsDefaultInstance() {
-  ::message::_UploadImageRequest_default_instance_.metadata_ = const_cast< ::message::Metadata*>(
-      ::message::Metadata::internal_default_instance());
+  ::message::_UploadImageRequest_default_instance_.metadata_ = const_cast< ::message::FileMetadata*>(
+      ::message::FileMetadata::internal_default_instance());
   ::message::_UploadImageRequest_default_instance_.chunk_data_.UnsafeSetDefault(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 class UploadImageRequest::_Internal {
  public:
-  static const ::message::Metadata& metadata(const UploadImageRequest* msg);
+  static const ::message::FileMetadata& metadata(const UploadImageRequest* msg);
 };
 
-const ::message::Metadata&
+const ::message::FileMetadata&
 UploadImageRequest::_Internal::metadata(const UploadImageRequest* msg) {
   return *msg->data_.metadata_;
 }
-void UploadImageRequest::set_allocated_metadata(::message::Metadata* metadata) {
+void UploadImageRequest::set_allocated_metadata(::message::FileMetadata* metadata) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   clear_data();
   if (metadata) {
@@ -186,10 +194,13 @@ UploadImageRequest::UploadImageRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 UploadImageRequest::UploadImageRequest(const UploadImageRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&chunk_index_, &from.chunk_index_,
+    static_cast<size_t>(reinterpret_cast<char*>(&total_chunks_) -
+    reinterpret_cast<char*>(&chunk_index_)) + sizeof(total_chunks_));
   clear_has_data();
   switch (from.data_case()) {
     case kMetadata: {
-      _internal_mutable_metadata()->::message::Metadata::MergeFrom(from._internal_metadata());
+      _internal_mutable_metadata()->::message::FileMetadata::MergeFrom(from._internal_metadata());
       break;
     }
     case kChunkData: {
@@ -205,6 +216,9 @@ UploadImageRequest::UploadImageRequest(const UploadImageRequest& from)
 
 void UploadImageRequest::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_UploadImageRequest_message_2eproto.base);
+  ::memset(&chunk_index_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&total_chunks_) -
+      reinterpret_cast<char*>(&chunk_index_)) + sizeof(total_chunks_));
   clear_has_data();
 }
 
@@ -263,6 +277,9 @@ void UploadImageRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  ::memset(&chunk_index_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&total_chunks_) -
+      reinterpret_cast<char*>(&chunk_index_)) + sizeof(total_chunks_));
   clear_data();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -275,7 +292,7 @@ const char* UploadImageRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // .message.Metadata metadata = 1;
+      // .message.FileMetadata metadata = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_metadata(), ptr);
@@ -287,6 +304,20 @@ const char* UploadImageRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_chunk_data();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 chunk_index = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          chunk_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 total_chunks = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          total_chunks_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -318,7 +349,7 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .message.Metadata metadata = 1;
+  // .message.FileMetadata metadata = 1;
   if (_internal_has_metadata()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -330,6 +361,18 @@ failure:
   if (_internal_has_chunk_data()) {
     target = stream->WriteBytesMaybeAliased(
         2, this->_internal_chunk_data(), target);
+  }
+
+  // int32 chunk_index = 3;
+  if (this->chunk_index() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_chunk_index(), target);
+  }
+
+  // int32 total_chunks = 4;
+  if (this->total_chunks() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_total_chunks(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -348,8 +391,22 @@ size_t UploadImageRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // int32 chunk_index = 3;
+  if (this->chunk_index() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_chunk_index());
+  }
+
+  // int32 total_chunks = 4;
+  if (this->total_chunks() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_total_chunks());
+  }
+
   switch (data_case()) {
-    // .message.Metadata metadata = 1;
+    // .message.FileMetadata metadata = 1;
     case kMetadata: {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -398,9 +455,15 @@ void UploadImageRequest::MergeFrom(const UploadImageRequest& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.chunk_index() != 0) {
+    _internal_set_chunk_index(from._internal_chunk_index());
+  }
+  if (from.total_chunks() != 0) {
+    _internal_set_total_chunks(from._internal_total_chunks());
+  }
   switch (from.data_case()) {
     case kMetadata: {
-      _internal_mutable_metadata()->::message::Metadata::MergeFrom(from._internal_metadata());
+      _internal_mutable_metadata()->::message::FileMetadata::MergeFrom(from._internal_metadata());
       break;
     }
     case kChunkData: {
@@ -434,6 +497,12 @@ bool UploadImageRequest::IsInitialized() const {
 void UploadImageRequest::InternalSwap(UploadImageRequest* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UploadImageRequest, total_chunks_)
+      + sizeof(UploadImageRequest::total_chunks_)
+      - PROTOBUF_FIELD_OFFSET(UploadImageRequest, chunk_index_)>(
+          reinterpret_cast<char*>(&chunk_index_),
+          reinterpret_cast<char*>(&other->chunk_index_));
   swap(data_, other->data_);
   swap(_oneof_case_[0], other->_oneof_case_[0]);
 }
@@ -445,19 +514,19 @@ void UploadImageRequest::InternalSwap(UploadImageRequest* other) {
 
 // ===================================================================
 
-void Metadata::InitAsDefaultInstance() {
+void FileMetadata::InitAsDefaultInstance() {
 }
-class Metadata::_Internal {
+class FileMetadata::_Internal {
  public:
 };
 
-Metadata::Metadata(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+FileMetadata::FileMetadata(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:message.Metadata)
+  // @@protoc_insertion_point(arena_constructor:message.FileMetadata)
 }
-Metadata::Metadata(const Metadata& from)
+FileMetadata::FileMetadata(const FileMetadata& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
@@ -471,45 +540,45 @@ Metadata::Metadata(const Metadata& from)
       GetArena());
   }
   file_size_ = from.file_size_;
-  // @@protoc_insertion_point(copy_constructor:message.Metadata)
+  // @@protoc_insertion_point(copy_constructor:message.FileMetadata)
 }
 
-void Metadata::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Metadata_message_2eproto.base);
+void FileMetadata::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_FileMetadata_message_2eproto.base);
   filename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   mime_type_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   file_size_ = PROTOBUF_LONGLONG(0);
 }
 
-Metadata::~Metadata() {
-  // @@protoc_insertion_point(destructor:message.Metadata)
+FileMetadata::~FileMetadata() {
+  // @@protoc_insertion_point(destructor:message.FileMetadata)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void Metadata::SharedDtor() {
+void FileMetadata::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
   filename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   mime_type_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void Metadata::ArenaDtor(void* object) {
-  Metadata* _this = reinterpret_cast< Metadata* >(object);
+void FileMetadata::ArenaDtor(void* object) {
+  FileMetadata* _this = reinterpret_cast< FileMetadata* >(object);
   (void)_this;
 }
-void Metadata::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void FileMetadata::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void Metadata::SetCachedSize(int size) const {
+void FileMetadata::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const Metadata& Metadata::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Metadata_message_2eproto.base);
+const FileMetadata& FileMetadata::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_FileMetadata_message_2eproto.base);
   return *internal_default_instance();
 }
 
 
-void Metadata::Clear() {
-// @@protoc_insertion_point(message_clear_start:message.Metadata)
+void FileMetadata::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.FileMetadata)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -520,7 +589,7 @@ void Metadata::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* Metadata::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* FileMetadata::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
@@ -533,7 +602,7 @@ const char* Metadata::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_filename();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.Metadata.filename"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.FileMetadata.filename"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -542,7 +611,7 @@ const char* Metadata::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_mime_type();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.Metadata.mime_type"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.FileMetadata.mime_type"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -575,9 +644,9 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* Metadata::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* FileMetadata::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:message.Metadata)
+  // @@protoc_insertion_point(serialize_to_array_start:message.FileMetadata)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -586,7 +655,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_filename().data(), static_cast<int>(this->_internal_filename().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "message.Metadata.filename");
+      "message.FileMetadata.filename");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_filename(), target);
   }
@@ -596,7 +665,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_mime_type().data(), static_cast<int>(this->_internal_mime_type().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "message.Metadata.mime_type");
+      "message.FileMetadata.mime_type");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_mime_type(), target);
   }
@@ -611,12 +680,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:message.Metadata)
+  // @@protoc_insertion_point(serialize_to_array_end:message.FileMetadata)
   return target;
 }
 
-size_t Metadata::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:message.Metadata)
+size_t FileMetadata::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:message.FileMetadata)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -653,23 +722,23 @@ size_t Metadata::ByteSizeLong() const {
   return total_size;
 }
 
-void Metadata::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:message.Metadata)
+void FileMetadata::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:message.FileMetadata)
   GOOGLE_DCHECK_NE(&from, this);
-  const Metadata* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Metadata>(
+  const FileMetadata* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<FileMetadata>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:message.Metadata)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:message.FileMetadata)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:message.Metadata)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:message.FileMetadata)
     MergeFrom(*source);
   }
 }
 
-void Metadata::MergeFrom(const Metadata& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:message.Metadata)
+void FileMetadata::MergeFrom(const FileMetadata& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:message.FileMetadata)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -686,25 +755,25 @@ void Metadata::MergeFrom(const Metadata& from) {
   }
 }
 
-void Metadata::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:message.Metadata)
+void FileMetadata::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:message.FileMetadata)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Metadata::CopyFrom(const Metadata& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:message.Metadata)
+void FileMetadata::CopyFrom(const FileMetadata& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.FileMetadata)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Metadata::IsInitialized() const {
+bool FileMetadata::IsInitialized() const {
   return true;
 }
 
-void Metadata::InternalSwap(Metadata* other) {
+void FileMetadata::InternalSwap(FileMetadata* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   filename_.Swap(&other->filename_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
@@ -712,7 +781,7 @@ void Metadata::InternalSwap(Metadata* other) {
   swap(file_size_, other->file_size_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata Metadata::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata FileMetadata::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -739,18 +808,30 @@ UploadImageResponse::UploadImageResponse(const UploadImageResponse& from)
     storage_url_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_storage_url(),
       GetArena());
   }
-  file_id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_file_id().empty()) {
-    file_id_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_file_id(),
+  fastdfs_group_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_fastdfs_group().empty()) {
+    fastdfs_group_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_fastdfs_group(),
       GetArena());
   }
+  fastdfs_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_fastdfs_path().empty()) {
+    fastdfs_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_fastdfs_path(),
+      GetArena());
+  }
+  ::memcpy(&file_size_, &from.file_size_,
+    static_cast<size_t>(reinterpret_cast<char*>(&error_) -
+    reinterpret_cast<char*>(&file_size_)) + sizeof(error_));
   // @@protoc_insertion_point(copy_constructor:message.UploadImageResponse)
 }
 
 void UploadImageResponse::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_UploadImageResponse_message_2eproto.base);
   storage_url_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  file_id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  fastdfs_group_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  fastdfs_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&file_size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&error_) -
+      reinterpret_cast<char*>(&file_size_)) + sizeof(error_));
 }
 
 UploadImageResponse::~UploadImageResponse() {
@@ -762,7 +843,8 @@ UploadImageResponse::~UploadImageResponse() {
 void UploadImageResponse::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
   storage_url_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  file_id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  fastdfs_group_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  fastdfs_path_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void UploadImageResponse::ArenaDtor(void* object) {
@@ -787,7 +869,11 @@ void UploadImageResponse::Clear() {
   (void) cached_has_bits;
 
   storage_url_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  file_id_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  fastdfs_group_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  fastdfs_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  ::memset(&file_size_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&error_) -
+      reinterpret_cast<char*>(&file_size_)) + sizeof(error_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -799,21 +885,44 @@ const char* UploadImageResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAME
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // string storage_url = 1;
+      // int32 error = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          error_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string storage_url = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_storage_url();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.UploadImageResponse.storage_url"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // string file_id = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          auto str = _internal_mutable_file_id();
+      // string fastdfs_group = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_fastdfs_group();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.UploadImageResponse.file_id"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.UploadImageResponse.fastdfs_group"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string fastdfs_path = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_fastdfs_path();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.UploadImageResponse.fastdfs_path"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int64 file_size = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          file_size_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -845,24 +954,46 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string storage_url = 1;
+  // int32 error = 1;
+  if (this->error() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_error(), target);
+  }
+
+  // string storage_url = 2;
   if (this->storage_url().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_storage_url().data(), static_cast<int>(this->_internal_storage_url().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "message.UploadImageResponse.storage_url");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_storage_url(), target);
+        2, this->_internal_storage_url(), target);
   }
 
-  // string file_id = 2;
-  if (this->file_id().size() > 0) {
+  // string fastdfs_group = 3;
+  if (this->fastdfs_group().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_file_id().data(), static_cast<int>(this->_internal_file_id().length()),
+      this->_internal_fastdfs_group().data(), static_cast<int>(this->_internal_fastdfs_group().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "message.UploadImageResponse.file_id");
+      "message.UploadImageResponse.fastdfs_group");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_file_id(), target);
+        3, this->_internal_fastdfs_group(), target);
+  }
+
+  // string fastdfs_path = 4;
+  if (this->fastdfs_path().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_fastdfs_path().data(), static_cast<int>(this->_internal_fastdfs_path().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "message.UploadImageResponse.fastdfs_path");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_fastdfs_path(), target);
+  }
+
+  // int64 file_size = 5;
+  if (this->file_size() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(5, this->_internal_file_size(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -881,18 +1012,39 @@ size_t UploadImageResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string storage_url = 1;
+  // string storage_url = 2;
   if (this->storage_url().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_storage_url());
   }
 
-  // string file_id = 2;
-  if (this->file_id().size() > 0) {
+  // string fastdfs_group = 3;
+  if (this->fastdfs_group().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_file_id());
+        this->_internal_fastdfs_group());
+  }
+
+  // string fastdfs_path = 4;
+  if (this->fastdfs_path().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_fastdfs_path());
+  }
+
+  // int64 file_size = 5;
+  if (this->file_size() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
+        this->_internal_file_size());
+  }
+
+  // int32 error = 1;
+  if (this->error() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_error());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -929,8 +1081,17 @@ void UploadImageResponse::MergeFrom(const UploadImageResponse& from) {
   if (from.storage_url().size() > 0) {
     _internal_set_storage_url(from._internal_storage_url());
   }
-  if (from.file_id().size() > 0) {
-    _internal_set_file_id(from._internal_file_id());
+  if (from.fastdfs_group().size() > 0) {
+    _internal_set_fastdfs_group(from._internal_fastdfs_group());
+  }
+  if (from.fastdfs_path().size() > 0) {
+    _internal_set_fastdfs_path(from._internal_fastdfs_path());
+  }
+  if (from.file_size() != 0) {
+    _internal_set_file_size(from._internal_file_size());
+  }
+  if (from.error() != 0) {
+    _internal_set_error(from._internal_error());
   }
 }
 
@@ -956,7 +1117,14 @@ void UploadImageResponse::InternalSwap(UploadImageResponse* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   storage_url_.Swap(&other->storage_url_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  file_id_.Swap(&other->file_id_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  fastdfs_group_.Swap(&other->fastdfs_group_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  fastdfs_path_.Swap(&other->fastdfs_path_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UploadImageResponse, error_)
+      + sizeof(UploadImageResponse::error_)
+      - PROTOBUF_FIELD_OFFSET(UploadImageResponse, file_size_)>(
+          reinterpret_cast<char*>(&file_size_),
+          reinterpret_cast<char*>(&other->file_size_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata UploadImageResponse::GetMetadata() const {
@@ -970,8 +1138,8 @@ PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::message::UploadImageRequest* Arena::CreateMaybeMessage< ::message::UploadImageRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::message::UploadImageRequest >(arena);
 }
-template<> PROTOBUF_NOINLINE ::message::Metadata* Arena::CreateMaybeMessage< ::message::Metadata >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::message::Metadata >(arena);
+template<> PROTOBUF_NOINLINE ::message::FileMetadata* Arena::CreateMaybeMessage< ::message::FileMetadata >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::message::FileMetadata >(arena);
 }
 template<> PROTOBUF_NOINLINE ::message::UploadImageResponse* Arena::CreateMaybeMessage< ::message::UploadImageResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::message::UploadImageResponse >(arena);

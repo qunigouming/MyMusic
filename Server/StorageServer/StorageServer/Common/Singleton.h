@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SINGLETON_H__
+#define __SINGLETON_H__
 
 #include <memory>
 #include <mutex>
@@ -29,3 +30,4 @@ protected:
 template<typename T>
 std::shared_ptr<T> Singleton<T>::_instance = nullptr;
 
+#endif

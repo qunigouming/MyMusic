@@ -1,6 +1,5 @@
 create table file_map (
 	id int unsigned auto_increment primary key,
-	file_id varchar(512) not null,
 	storage_path varchar(512) not null,
 	mime_type varchar(100),
 	created_by int unsigned,

@@ -73,7 +73,7 @@ void LogicSystem::Run()
 			//handling remains request
 			while (!_msg_que.empty()) {
 				auto msg_node = _msg_que.front();
-				std::cout << "recv message id is " << msg_node->_message->_msg_id << std::endl;
+				LOG(INFO) << "recv message id is " << msg_node->_message->_msg_id;
 				auto func = _handler.find(msg_node->_message->_msg_id);
 				if (func == _handler.end()) {
 					_msg_que.pop();
@@ -86,11 +86,11 @@ void LogicSystem::Run()
 		}
 
 		auto msg_node = _msg_que.front();
-		std::cout << "recv message id is " << msg_node->_message->_msg_id << std::endl;
+		LOG(INFO) << "recv message id is " << msg_node->_message->_msg_id;
 		auto func = _handler.find(msg_node->_message->_msg_id);
 		if (func == _handler.end()) {
 			_msg_que.pop();
-			std::cout << "message id [" << msg_node->_message->_msg_id << "] handler not found" << std::endl;
+			LOG(INFO) << "message id [" << msg_node->_message->_msg_id << "] handler not found";
 			continue;
 		}
 		func->second(msg_node->_session, msg_node->_message->_msg_id, std::string(msg_node->_message->_data, msg_node->_message->_total_len));
@@ -116,7 +116,7 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 	reader.parse(msg_data, root);
 	auto uid = root["uid"].asInt();
 	auto token = root["token"].asString();
-	std::cout << "user login uid is " << uid << "user token is " << token << std::endl;
+	LOG(INFO) << "user login uid is " << uid << "user token is " << token;
 	Json::Value rspJson;
 	Defer defer([this, &rspJson, session] {
 		std::string str = rspJson.toStyledString();
@@ -232,7 +232,7 @@ void LogicSystem::HeartBeatHandler(std::shared_ptr<Session> session, const short
 	Json::Reader reader;
 	reader.parse(msg_data, root);
 	auto uid = root["fromuid"].asInt();
-	std::cout << "user heartbeat uid is " << uid << std::endl;
+	LOG(INFO) << "user heartbeat uid is " << uid;
 	Json::Value rspJson;
     rspJson["error"] = ErrorCodes::Success;
     session->Send(rspJson.toStyledString(), ID_HEARTBEAT_RSP);
@@ -259,7 +259,7 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 	auto file_path = ConfigManager::GetInstance()["Store"]["MusicPath"] + name;
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring wide_path = converter.from_bytes(file_path);
-	std::cout << "file path is " << file_path << std::endl;
+	LOG(INFO) << "file path is " << file_path;
 	std::ofstream outfile;
 	if (seq == 1) {
 		outfile.open(wide_path, std::ios::out | std::ios::binary | std::ios::trunc);
@@ -269,31 +269,31 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 	}
 
 	if (!outfile) {
-		std::cerr << "open file failed" << std::endl;
+		LOG(ERROR) << "open file failed";
 		return;
 	}
 	outfile.write(decoded.c_str(), decoded.size());
 	if (!outfile) {
-		std::cerr << "write file failed" << std::endl;
+		LOG(ERROR) << "write file failed";
 		return;
 	}
 
 	outfile.close();
-	std::cout << "file upload success" << std::endl;
+	LOG(INFO) << "file upload success";
     retValue["error"] = ErrorCodes::Success;
     retValue["seq"] = seq;
 	retValue["name"] = name;
     retValue["total_size"] = total_size;
 	retValue["trans_size"] = trans_size;
-	std::cout << "file upload progress: " << trans_size << "/" << total_size << std::endl;
+	LOG(INFO) << "file upload progress: " << trans_size << "/" << total_size;
 	if (total_size == trans_size) {
-		std::cout << "file upload complete" << std::endl;
+		LOG(INFO) << "file upload complete";
 		_song.file_url = ConfigManager::GetInstance()["Store"]["RemotePath"] + name;
 		try {
 			MysqlManager::GetInstance()->getOrCreateSong(_song);
 		}
 		catch (std::exception& e) {
-			std::cerr << "Exception: " << e.what() << std::endl;
+			LOG(ERROR) << "Exception: " << e.what();
 		}
 		_song.Clear();
 	}
@@ -329,10 +329,10 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 		std::wstring wide_path = converter.from_bytes(cover_url);
 		std::ofstream file;
 		file.open(wide_path, std::ios::out | std::ios::binary | std::ios::trunc);
-		std::cout << "cover url is " << cover_url << "\t" << title << std::endl;
+		LOG(INFO) << "cover url is " << cover_url << "\t" << title;
 		if (!file) {
 			int errnum = errno;
-			std::cerr << "open file failed" << errnum << std::endl;
+			LOG(ERROR) << "open file failed" << errnum;
 			retValue["error"] = ErrorCodes::EtherInvalid;
 			return;
 		}
@@ -377,20 +377,19 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	std::string cover_data = decode_base64(root["icon"].asString());
 	if (!cover_data.empty()) {
 		// 图片映射地址存储到数据库中
-		UploadImageResponse response = StorageGrpcClient::GetInstance()->UploadImage(cover_data);
+		std::string cover_name = album.title + "_" + album.artist_name + "_" + title;
+		UploadImageResponse response = StorageGrpcClient::GetInstance()->UploadImage(cover_name, cover_data);
 		if (response.error() != ErrorCodes::Success) {
-			LOG(INFO) << "Unknow Error: Upload Image Failed!!!";
+			LOG(INFO) << "Unknown Error: Upload Image Failed!!!";
             retValue["error"] = ErrorCodes::EtherInvalid;
 			return;
 		}
-		std::string filename = album.title + "_" + album.artist_name + "_" + title;
 		FileMapInfo file_map_info;
-        file_map_info.file_id = response.file_id();
 		file_map_info.storage_path = response.storage_url();
 		file_map_info.mime_type = "image/png";
 		file_map_info.create_id = session->GetUserUid();
-		MysqlManager::GetInstance()->createFileMap(file_map_info);
-		album.cover_url = response.file_id();
+		int cover_url_id = MysqlManager::GetInstance()->createFileMap(file_map_info);
+		album.cover_url_id = cover_url_id;
 	}
 	album.description = root["description"].asString();
 	album.release_date = root["release_date"].asString();
@@ -435,7 +434,7 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
 		playlist.is_default = true;
 		playlist.description = "";
 		playlist.user_id = session->GetUserUid();
-		playlist.cover_url = MysqlManager::GetInstance()->getCoverUrl(root["song_id"].asInt());
+		playlist.cover_url_id = MysqlManager::GetInstance()->getCoverUrlId(root["song_id"].asInt());
 		MysqlManager::GetInstance()->getOrCreatePlaylist(playlist);			// 创建歌单
 
 		// 添加歌曲
@@ -445,12 +444,12 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
         playlist_song.user_id = session->GetUserUid();
 		playlist_song.position = 0;			// 默认添加到最后
 		MysqlManager::GetInstance()->createPlaylistSong(playlist_song);
-		std::cout << "收藏歌曲" << root["song_id"].asInt() << "成功" << std::endl;
+		LOG(INFO) << "收藏歌曲" << root["song_id"].asInt() << "成功";
 	}
 	else {
 		// 取消收藏歌曲
         MysqlManager::GetInstance()->deletePlaylistSong(session->GetUserUid(), "喜欢的音乐", root["song_id"].asInt());
-        std::cout << "取消收藏歌曲" << root["song_id"].asInt() << "成功" << std::endl;
+        LOG(INFO) << "取消收藏歌曲" << root["song_id"].asInt() << "成功";
 	}
 }
 
@@ -475,7 +474,7 @@ void LogicSystem::GetCollectSongListHandler(std::shared_ptr<Session> session, co
 	std::shared_ptr<SongListPageInfo> pageinfo = MysqlManager::GetInstance()->getSongListPageInfo(session->GetUserUid(), "喜欢的音乐");
 	if (pageinfo == nullptr) {
         retValue["error"] = ErrorCodes::EtherInvalid;
-		std::cerr << "获取歌单信息失败" << std::endl;
+		LOG(ERROR) << "获取歌单信息失败";
         return;
 	}
 	retValue["title"] = pageinfo->title;
@@ -501,7 +500,7 @@ void LogicSystem::GetSongListPageInfoHandler(std::shared_ptr<Session> session, c
 	MusicInfoListPtr playlistsongs = MysqlManager::GetInstance()->getPlaylistSongs(session->GetUserUid(), root["playlist_name"].asString());
 	if (playlistsongs.empty()) {
         retValue["error"] = ErrorCodes::EtherInvalid;
-        std::cerr << "获取歌单歌曲信息失败" << std::endl;
+        LOG(ERROR) << "获取歌单歌曲信息失败";
         return;
 	}
 
@@ -535,7 +534,7 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 		userinfo->email = base_info["email"].asString();
 		userinfo->sex = base_info["sex"].asInt();
 		userinfo->icon = base_info["icon"].asString();
-		std::cout << "user login the uid:" << userinfo->uid << " name:" << userinfo->name << " email:" << userinfo->email << " sex:" << userinfo->sex << " icon:" << userinfo->icon << std::endl;
+		LOG(INFO) << "user login the uid:" << userinfo->uid << " name:" << userinfo->name << " email:" << userinfo->email << " sex:" << userinfo->sex << " icon:" << userinfo->icon;
 	}
 	else {
 		std::shared_ptr<UserInfo> user_info = nullptr;

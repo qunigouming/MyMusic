@@ -11,6 +11,7 @@
 #include "dataInfo.h"
 #include <queue>
 #include <vector>
+#include <variant>
 
 class SqlConnection
 {
@@ -39,7 +40,7 @@ public:
 				auto current_time = std::chrono::system_clock::now().time_since_epoch();
 				long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(current_time).count();
 				_pool.push(std::make_unique<SqlConnection>(conn, timestamp));
-				std::cout << "Mysql Connection Success" << std::endl;
+				LOG(INFO) << "Mysql Connection Success";
 			}
 
 			_check_thread = std::thread([this]() {
@@ -56,9 +57,9 @@ public:
 			_check_thread.detach();
 		}
 		catch (sql::SQLException &e) {
-			std::cout << "Error: " << e.what() << std::endl;
-			std::cout << "SQLState: " << e.getSQLState() << std::endl;
-			std::cout << "VendorError: " << e.getErrorCode() << std::endl;
+			LOG(ERROR) << "Error: " << e.what();
+			LOG(ERROR) << "SQLState: " << e.getSQLState();
+			LOG(ERROR) << "VendorError: " << e.getErrorCode();
 		}
 	}
 	~MySqlPool() {
@@ -94,7 +95,7 @@ public:
 					conn->_last_operate_time = timestamp;
 				}
 				catch (sql::SQLException& e) {
-					std::cout << "Error keeping connection alive: " << e.what() << std::endl;
+					LOG(INFO) << "Error keeping connection alive: " << e.what();
 					healthy = false;
 					++_fail_count;
 				}
@@ -128,11 +129,11 @@ public:
 				std::lock_guard<std::mutex> lock(_mutex);
 				_pool.push(std::move(newCon));
 			}
-			std::cout << "connect mysql success" << std::endl;
+			LOG(INFO) << "connect mysql success";
 			return true;
 		}
 		catch (sql::SQLException& e) {
-			std::cout << "Reconnect failed, Error: " << e.what() << std::endl;
+			LOG(ERROR) << "Reconnect failed, Error: " << e.what();
 			return false;
 		}
 	}
@@ -179,6 +180,7 @@ private:
 using MusicInfoListPtr = std::list<std::shared_ptr<MusicInfo>>;
 class MySqlDao
 {
+	using Params = std::vector<std::variant<std::string, int>>;
 public:
 	MySqlDao();
 	~MySqlDao();
@@ -209,6 +211,7 @@ public:
 	void createPlaylistSong(const PlaylistSong& ps);
 
 	std::string getCoverUrl(int song_id);
+	int getCoverUrlId(int song_id);
 
 	std::string getSongTitle(int song_id);
 
@@ -224,7 +227,7 @@ public:
 
 	MusicInfoListPtr getPlaylistSongs(int playlist_id, int user_id);
 
-	void createFileMap(FileMapInfo file_info);
+	int createFileMap(FileMapInfo file_info);		// 创建文件映射 返回记录ID
 
 private:
 	// 通用ID查询
@@ -234,7 +237,7 @@ private:
 	bool recordExists(const std::string& table, const std::string& column, const std::string& value);
 
 	// 插入记录并返回ID
-	int insertRecord(const std::string& sql, const std::vector<std::string>& params);
+	int insertRecord(const std::string& sql, const Params& params);
 
 private:
 	std::unique_ptr<MySqlPool> _pool;

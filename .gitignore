@@ -14,3 +14,7 @@ Client/
 MyMusic/MyMusic/config.json
 
 vcpkg_installed/
+
+out/
+
+logs/

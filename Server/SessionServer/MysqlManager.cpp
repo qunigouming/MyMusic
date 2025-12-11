@@ -50,6 +50,11 @@ std::string MysqlManager::getCoverUrl(int song_id)
     return _dao.getCoverUrl(song_id);
 }
 
+int MysqlManager::getCoverUrlId(int song_id)
+{
+    return _dao.getCoverUrlId(song_id);
+}
+
 std::string MysqlManager::getSongTitle(int song_id)
 {
     return _dao.getSongTitle(song_id);
@@ -96,7 +101,7 @@ MusicInfoListPtr MysqlManager::getPlaylistSongs(int user_id, const std::string& 
     return MusicInfoListPtr();
 }
 
-void MysqlManager::createFileMap(FileMapInfo file_info)
+int MysqlManager::createFileMap(FileMapInfo file_info)
 {
-    _dao.createFileMap(file_info);
+    return _dao.createFileMap(file_info);
 }

@@ -33,6 +33,7 @@ public:
 
 	// 获取封面url
     std::string getCoverUrl(int song_id);
+	int getCoverUrlId(int song_id);
 
 	// 获取歌曲标题
 	std::string getSongTitle(int song_id);
@@ -46,7 +47,7 @@ public:
 	// 获取歌单歌曲
 	MusicInfoListPtr getPlaylistSongs(int user_id, const std::string& playlist_name);
 
-	void createFileMap(FileMapInfo file_info);
+	int createFileMap(FileMapInfo file_info);
 private:
 	MysqlManager() {}
 	MySqlDao _dao;

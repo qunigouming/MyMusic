@@ -74,6 +74,8 @@ void SelectLocMusic_Dlg::on_close_Btn_clicked()
 void SelectLocMusic_Dlg::on_add_file_Btn_clicked()
 {
     QString file_path = QFileDialog::getExistingDirectory(this, QDir::currentPath());
+    if (file_path.isEmpty()) return;
+
     QCheckBox* new_CheckBox = new QCheckBox(file_path, this);
     ui->pathWidget->layout()->addWidget(new_CheckBox);
 

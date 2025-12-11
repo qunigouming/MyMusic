@@ -14,6 +14,8 @@ add_executable (StorageServer "main.cpp"
     "gRPC/message.grpc.pb.h"
     "gRPC/message.pb.cc"
     "gRPC/message.pb.h"
- "gRPC/StorageGrpcClient.cpp")
+ "gRPC/StorageServiceImpl.cpp" "Common/FdfsClient.cpp" "Common/FdfsClient.h" "Common/AsioIOServicePool.h" "Common/AsioIOServicePool.cpp" "Common/global.h"
+ "config.ini"
+ )
 
 # TODO: 如有需要，请添加测试并安装目标。

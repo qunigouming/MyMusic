@@ -14,7 +14,7 @@ public:
 	}
 
 	~MessageNode() {
-		std::cout << "destory MessageNode" << std::endl;
+		LOG(INFO) << "destory MessageNode";
 		delete[] _data;
 	}
 

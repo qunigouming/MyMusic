@@ -3,10 +3,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <iostream>
+#include "LogManager.h"
 
 ConfigManager::ConfigManager()
 {
 	boost::filesystem::path current_path = boost::filesystem::current_path();
+	LOG(INFO) << "current_path:" << current_path << std::endl;
 	boost::filesystem::path config_path = current_path / "config.ini";
 	std::cout << config_path << std::endl;
 	boost::property_tree::ptree pt;

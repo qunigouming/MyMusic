@@ -15,7 +15,7 @@ public:
 			}
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
-				std::cout << "Redis认证失败" << std::endl;
+				LOG(FATAL) << "Redis认证失败";
 				freeReplyObject(reply);
 				continue;
 			}

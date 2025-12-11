@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AsioIOServicePool.cpp" />
+    <ClCompile Include="Common\Tools\ImgFmtInspector\ImgFmtInspector.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="DistributeLock.cpp" />
     <ClCompile Include="LogicSystem.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsioIOServicePool.h" />
+    <ClInclude Include="Common\Tools\ImgFmtInspector\ImgFmtInspector.h" />
     <ClInclude Include="ConfigManager.h" />
     <ClInclude Include="dataInfo.h" />
     <ClInclude Include="DistributeLock.h" />

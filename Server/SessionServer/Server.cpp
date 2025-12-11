@@ -6,13 +6,13 @@
 
 Server::Server(boost::asio::io_context& ioc, short port) : _ioc(ioc), _port(port), _acceptor(ioc, tcp::endpoint(tcp::v4(), port)), _timer(ioc, std::chrono::seconds(TIMER_INTERVAL))
 {
-	std::cout << "Server Start success, listen on port: " << _port << std::endl;
+	LOG(INFO) << "Server Start success, listen on port: " << _port;
 	Accept();
 }
 
 Server::~Server()
 {
-	std::cout << "Server are destructed on port:" << _port << std::endl;
+	LOG(INFO) << "Server are destructed on port:" << _port;
 }
 
 void Server::ClearSession(std::string session_uid)
@@ -39,7 +39,7 @@ bool Server::CheckVaild(std::string& uid)
 void Server::On_Timer(const boost::system::error_code& ec)
 {
 	if (ec) {
-        std::cout << "Timer error: " << ec.message() << std::endl;
+		LOG(ERROR) << "Timer error: " << ec.message();
 		return;
 	}
 	std::vector<std::shared_ptr<Session>> expiredSessions;
@@ -101,7 +101,7 @@ void Server::HandleAccept(std::shared_ptr<Session> new_session, const boost::sys
 		_sessions.insert(std::make_pair(new_session->GetSessionId(), new_session));
 	}
 	else {
-		std::cout << "Server acceptance of handling has failed: " << error.what() << std::endl;
+		LOG(FATAL) << "Server acceptance of handling has failed: " << error.what();
 	}
 	Accept();
 }

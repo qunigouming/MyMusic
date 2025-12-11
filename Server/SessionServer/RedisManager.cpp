@@ -14,12 +14,12 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "GET %s", key.c_str());
 	if (!reply) {
-		std::cout << "[ Get " << key << " ] failed" << std::endl;
+		LOG(ERROR) << "[ Get " << key << " ] failed";
 		// freeReplyObject(reply);
 		return false;
 	}
 	if (reply->type != REDIS_REPLY_STRING) {
-		std::cout << "[ Get " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Get " << key << "] failed";
 		freeReplyObject(reply);
 		return false;
 	}
@@ -35,12 +35,12 @@ bool RedisManager::Set(const std::string& key, const std::string& value)
 	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "SET %s %s", key.c_str(), value.c_str());
 	if (!reply) {
-		std::cout << "[ Set " << key << " ] failed" << std::endl;
+		LOG(ERROR) << "[ Set " << key << " ] failed";
 		// freeReplyObject(reply);
 		return false;
 	}
 	if (!(reply->type == REDIS_REPLY_STATUS && (strcmp(reply->str, "OK") == 0 || strcmp(reply->str, "ok") == 0))) {
-		std::cout << "[ Set " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Set " << key << "] failed";
 		freeReplyObject(reply);
 		return false;
 	}
@@ -57,16 +57,16 @@ bool RedisManager::Del(const std::string& key)
 	Defer defer([this, &connection] { _pool->returnConnection(connection); });
 	redisReply* reply = (redisReply*)redisCommand(connection, "DEL %s", key.c_str());
 	if (!reply) {
-		std::cout << "[ Del " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Del " << key << "] failed";
 		return false;
 	}
 	if (reply->type != REDIS_REPLY_INTEGER) {
-		std::cout << "[ Del " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Del " << key << "] failed";
         freeReplyObject(reply);
         return false;
 	}
 
-	std::cout << "[ Del " << key << "] success" << std::endl;
+	LOG(INFO) << "[ Del " << key << "] success";
     freeReplyObject(reply);
     return true;
 }
@@ -89,19 +89,19 @@ std::string RedisManager::HGet(const std::string& key, const std::string& hkey)
 
 	auto reply = (redisReply*)redisCommandArgv(connect, 3, argv, argvlen);
 	if (reply == nullptr) {
-		std::cout << "reply is nullptr" << std::endl;
-		std::cout << "Execut command [ HGet " << key << " " << hkey << "  ] failure ! " << std::endl;
+		LOG(ERROR) << "reply is nullptr";
+		LOG(ERROR) << "Execute command [ HGet " << key << " " << hkey << "  ] failure ! ";
 		return "";
 	}
 	if (reply == nullptr || reply->type == REDIS_REPLY_NIL) {
 		freeReplyObject(reply);
-		std::cout << "Execut command [ HGet " << key << " " << hkey << "  ] failure ! " << std::endl;
+		LOG(ERROR) << "Execute command [ HGet " << key << " " << hkey << "  ] failure ! ";
 		return "";
 	}
 
 	std::string value = reply->str;
 	freeReplyObject(reply);
-	std::cout << "Execut command [ HGet " << key << " " << hkey << " ] success ! " << std::endl;
+	LOG(INFO) << "Execute command [ HGet " << key << " " << hkey << " ] success ! ";
 	return value;
 }
 
@@ -114,16 +114,16 @@ bool RedisManager::HSet(const std::string& key, const std::string& hkey, const s
 	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "HSET %s %s %s", key.c_str(), hkey.c_str(), value.c_str());
 	if (reply == nullptr) {
-		std::cout << "reply is nullptr" << std::endl;
-		std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! " << std::endl;
+		LOG(ERROR) << "reply is nullptr";
+		LOG(ERROR) << "Execute command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! ";
 		return false;
 	}
 	if (reply->type != REDIS_REPLY_INTEGER) {
-		std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! " << std::endl;
+		LOG(ERROR) << "Execute command [ HSet " << key << "  " << hkey << "  " << value << " ] failure ! ";
 		freeReplyObject(reply);
 		return false;
 	}
-	std::cout << "Execut command [ HSet " << key << "  " << hkey << "  " << value << " ] success ! " << std::endl;
+	LOG(INFO) << "Execute command [ HSet " << key << "  " << hkey << "  " << value << " ] success ! ";
 	freeReplyObject(reply);
 	return true;
 }
@@ -139,7 +139,7 @@ bool RedisManager::HDel(const std::string& key, const std::string& field)
 
 	redisReply* reply = (redisReply*)redisCommand(connect, "HDEL %s %s", key.c_str(), field.c_str());
     if (reply == nullptr) {
-        std::cout << "Execut command [ HDel " << key << "  " << field << " ] failure ! " << std::endl;
+		LOG(ERROR) << "Execute command [ HDel " << key << "  " << field << " ] failure ! ";
         return false;
     }
 
@@ -159,7 +159,7 @@ bool RedisManager::Auth(const std::string& password)
 	Defer defer([this, &connect] { _pool->returnConnection(connect); });
 	auto reply = (redisReply*)redisCommand(connect, "AUTH %s", password.c_str());
 	if (reply->type == REDIS_REPLY_ERROR) {
-		std::cout << "Redis verify failed!!!" << std::endl;
+		LOG(ERROR) << "Redis verify failed!!!";
 		freeReplyObject(reply);
 		return false;
 	}
