@@ -12,6 +12,7 @@
 #include "SessionGrpcClient.h"
 #include "StorageGrpcClient.h"
 #include "LogManager.h"
+#include "Common/Tools/ImgFmtInspector/ImgFmtInspector.h"
 
 #define DEBUG_TEST_UPLOAD_FILE_FUNCTION
 
@@ -378,7 +379,8 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 	if (!cover_data.empty()) {
 		// 图片映射地址存储到数据库中
 		std::string cover_name = album.title + "_" + album.artist_name + "_" + title;
-		UploadImageResponse response = StorageGrpcClient::GetInstance()->UploadImage(cover_name, cover_data);
+		std::string mime_type = ImgFmtInspector::getImageMimeType(cover_data);
+		UploadImageResponse response = StorageGrpcClient::GetInstance()->UploadImage(cover_name, cover_data, mime_type);
 		if (response.error() != ErrorCodes::Success) {
 			LOG(INFO) << "Unknown Error: Upload Image Failed!!!";
             retValue["error"] = ErrorCodes::EtherInvalid;
@@ -386,7 +388,7 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 		}
 		FileMapInfo file_map_info;
 		file_map_info.storage_path = response.storage_url();
-		file_map_info.mime_type = "image/png";
+		file_map_info.mime_type = mime_type;
 		file_map_info.create_id = session->GetUserUid();
 		int cover_url_id = MysqlManager::GetInstance()->createFileMap(file_map_info);
 		album.cover_url_id = cover_url_id;

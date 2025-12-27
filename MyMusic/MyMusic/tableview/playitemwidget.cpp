@@ -11,7 +11,7 @@ PlayItemWidget::PlayItemWidget(QWidget *parent)
 {
     setStyleSheet(R"(font-size: 18px;)");
 
-    _songIcon = new QLabel(this);
+    _songIcon = new NetworkImageLabel(this);
     _songIcon->setPixmap(QPixmap(":/source/icon/08.jpg").scaled(_iconWidth, _iconWidth, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     _songIcon->setFixedSize(_iconWidth, _iconWidth);
     _songIcon->setAlignment(Qt::AlignCenter);
@@ -116,6 +116,11 @@ void PlayItemWidget::setSongIcon(const QPixmap &pixmap)
                                    Qt::KeepAspectRatio, Qt::SmoothTransformation);
     _songIcon->setPixmap(scaled);
     update();
+}
+
+void PlayItemWidget::setSongIcon(const QString& url)
+{
+    _songIcon->setImageUrl(url);
 }
 
 void PlayItemWidget::setSongName(const QString& name)

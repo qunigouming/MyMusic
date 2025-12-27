@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "elidedlabel.h"
+#include "../NetworkImageLabel.h"
 
 class PlayItemWidget : public QWidget
 {
@@ -12,6 +13,7 @@ public:
     explicit PlayItemWidget(QWidget *parent = nullptr);
 
     void setSongIcon(const QPixmap& pixmap);
+    void setSongIcon(const QString& url);
     void setSongName(const QString& name);
     void setAuthorName(const QString& name);
 
@@ -26,7 +28,7 @@ private:
     void updateLayout();
     void updateTextWidth();
 
-    QLabel* _songIcon = nullptr;
+    NetworkImageLabel* _songIcon = nullptr;
     ElidedLabel* _songName = nullptr;
     QLabel* _songTip = nullptr;
     ElidedLabel* _authorName = nullptr;

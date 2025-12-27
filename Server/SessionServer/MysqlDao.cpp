@@ -29,7 +29,7 @@ bool MySqlDao::GetAllMusicInfo(int user_id, MusicInfoListPtr& music_list_info)
             s.id AS song_id,
             s.title AS song_title,
             al.title AS album_title,
-            s.duration,
+            s.duration AS duration,
             fm.storage_path AS song_icon,
             GROUP_CONCAT(DISTINCT ar.name SEPARATOR '/ ') AS artist_names,
             s.file_url,
@@ -355,7 +355,6 @@ int MySqlDao::getOrCreatePlaylist(const Playlist& playlist)
 				<< ", ID: " << playlist_id << ")";
 			return playlist_id;
 		}
-		return -1;
 	}
 	catch (sql::SQLException& e) {
 		LOG(ERROR) << "SQLException: " << e.what();
@@ -505,7 +504,7 @@ int MySqlDao::getCoverUrlId(int song_id)
 				R"(SELECT a.cover_url_id AS cover_url_id
 				   FROM songs s
 				   LEFT JOIN albums a ON s.album_id = a.id
-				   WHERE id = ?)"
+				   WHERE s.id = ?)"
 			)
 		);
         pstmt->setInt(1, song_id);

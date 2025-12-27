@@ -70,6 +70,7 @@ class StorageGrpcClient : public Singleton<StorageGrpcClient>
 public:
 	~StorageGrpcClient() = default;
 	UploadImageResponse UploadImage(std::string file_name, std::string file_data);
+	UploadImageResponse UploadImage(std::string file_name, std::string file_data, std::string mime_type);
 
 private:
     StorageGrpcClient();

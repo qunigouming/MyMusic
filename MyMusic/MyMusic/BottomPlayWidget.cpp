@@ -49,7 +49,13 @@ BottomPlayWidget::~BottomPlayWidget()
 
 void BottomPlayWidget::play(const SongInfo& info)
 {
-    ui->music_icon->setPixmap(QPixmap(info.icon));
+    if (info.icon.isNull()) {
+        // 网络图片加载
+        ui->music_icon->setPixmap(info.icon_url);
+    }
+    else {
+        ui->music_icon->setPixmap(QPixmap(info.icon));
+    }
     ui->music_icon->startRotation();
 
     ui->music_title->setText(info.title);

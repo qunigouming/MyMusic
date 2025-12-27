@@ -3,6 +3,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "UserManager.h"
+#include "NetworkImageLabel.h"
 
 SongListPage::SongListPage(QWidget *parent)
 	: QWidget(parent)
@@ -25,13 +26,13 @@ void SongListPage::setupUI(std::shared_ptr<SongListPageInfo> info)
 	_mainLayout = new QVBoxLayout();
 
 	_topLayout = new QHBoxLayout();
-	_songlist_icon = new QLabel();
+	_songlist_icon = new NetworkImageLabel();
 	_songlist_icon->setFixedSize(200, 200);
 	if (_pageInfo->songlist_icon.isEmpty()) {
 		_songlist_icon->setPixmap(QPixmap(":/source/image/default_album.png").scaled(200, 200));
 	}
 	else {
-		_songlist_icon->setPixmap(QPixmap(_pageInfo->songlist_icon).scaled(200, 200));
+		_songlist_icon->setImageUrl(_pageInfo->songlist_icon);
 	}
 	_topLayout->addWidget(_songlist_icon);
 

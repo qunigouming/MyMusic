@@ -1,12 +1,16 @@
 #pragma once
+
 #include <QLabel>
 #include <QTimer>
+#include <QNetworkAccessManager>
+
 class RotationLabel : public QLabel
 {
 public:
 	explicit RotationLabel(QWidget* parent = nullptr);
 
 	void setPixmap(const QPixmap& pixmap);
+	void setPixmap(const QString& url);
 
 	void startRotation();
 
@@ -20,6 +24,7 @@ private:
 
 private slots:
 	void rotateImage();
+	void onImageDownloaded(QNetworkReply* reply);
 
 private:
 	QPixmap _pixmap;
@@ -27,5 +32,7 @@ private:
 	double _rotation_angle = 0;
 	double _rotation_speed = 1.0;
 	bool _is_rotating = false;
+
+	QNetworkAccessManager* _manager;
 };
 

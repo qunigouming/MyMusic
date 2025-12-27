@@ -8,6 +8,7 @@
 #include "tableview/tableview.h"
 #include <QTabWidget>
 #include "dataInfo.h"
+#include "NetworkImageLabel.h"
 
 class SongListPage : public QWidget
 {
@@ -26,7 +27,7 @@ private:
 	QVBoxLayout* _mainLayout = nullptr;
 
 	QHBoxLayout* _topLayout = nullptr;
-	QLabel* _songlist_icon = nullptr;
+	NetworkImageLabel* _songlist_icon = nullptr;
 
 	QVBoxLayout* _songlist_info_layout = nullptr;
 	QHBoxLayout* _songlist_info_top_layout = nullptr;

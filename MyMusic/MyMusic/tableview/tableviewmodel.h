@@ -27,10 +27,10 @@ struct SongInfo {
     QPixmap icon;
     int insertOrder;
 
-    SongInfo(QString str_title, QString str_duration, QString str_file_size,
+    SongInfo(QString str_title, QString duration, QString str_file_size,
         QString str_path, QPixmap icon = QPixmap(), QString str_author = "", QString str_album = "未知专辑",
         QString str_icon_url = "", bool b_isLiked = false, bool b_isVIP = false, int insertOrder = -1)
-        : icon_url(str_icon_url), icon(icon), title(str_title), album(str_album), isLiked(b_isLiked), duration(str_duration),
+        : icon_url(str_icon_url), icon(icon), title(str_title), album(str_album), isLiked(b_isLiked), duration(duration),
         file_size(str_file_size), isVIP(b_isVIP), author(str_author), path(str_path), insertOrder(insertOrder) {
         // 先获取歌曲的封面，如果没有封面则使用url，若还没有封面则使用默认封面
         if (icon.isNull()) {
@@ -62,8 +62,7 @@ struct SongInfo {
         album = QString::fromStdString(music_info->album);
         isLiked = music_info->is_like;
 
-        QTime time(0, 0, music_info->duration);
-        duration = time.toString("mm:ss");
+        duration = QTime(0, 0, 0).addSecs(music_info->duration).toString("mm:ss");
 
         isVIP = false;
         author = QString::fromStdString(music_info->artists);

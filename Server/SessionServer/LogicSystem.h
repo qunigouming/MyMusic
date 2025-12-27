@@ -17,13 +17,13 @@ private:
 	LogicSystem();
 	void Run();
 	void RegisterCallBack();
-	void LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-	void HeartBeatHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-	void UploadFileHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-	void UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-	void CollectSongHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-    void GetCollectSongListHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
-	void GetSongListPageInfoHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);
+	void LoginHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);			// 登录请求
+	void HeartBeatHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);		// 心跳包请求
+	void UploadFileHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);		// 上传文件请求
+	void UploadMetaTypeHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);	// 上传文件元数据请求
+	void CollectSongHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);	// 收藏歌曲请求
+    void GetCollectSongListHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);		// 获取收藏歌单信息请求(一般信息)
+	void GetSongListPageInfoHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);	// 获取收藏歌单列表请求(歌单歌曲)
 
 	bool GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo);
 

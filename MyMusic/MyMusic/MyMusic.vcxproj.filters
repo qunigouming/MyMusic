@@ -78,6 +78,9 @@
     <Filter Include="Tool\Common\Log">
       <UniqueIdentifier>{7355c4ba-a706-4828-afee-c89b5051facb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\NetworkImageLoader">
+      <UniqueIdentifier>{01a498ae-cbf0-47de-82e4-876f72259eb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -233,6 +236,9 @@
     <ClCompile Include="SearchLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NetworkImageLabel.cpp">
+      <Filter>UI\NetworkImageLoader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -369,6 +375,9 @@
     </QtMoc>
     <QtMoc Include="SearchLine.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="NetworkImageLabel.h">
+      <Filter>UI\NetworkImageLoader</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

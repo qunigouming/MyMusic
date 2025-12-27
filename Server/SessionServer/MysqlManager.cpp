@@ -42,7 +42,11 @@ int MysqlManager::getOrCreatePlaylist(const Playlist& playlist)
 
 void MysqlManager::createPlaylistSong(const PlaylistSong& ps)
 {
-    _dao.createPlaylistSong(ps);
+    try {
+        _dao.createPlaylistSong(ps);
+    } catch (std::exception& e) {
+        LOG(FATAL) << "MysqlManager::createPlaylistSong error: " << e.what() << std::endl;
+    }
 }
 
 std::string MysqlManager::getCoverUrl(int song_id)
