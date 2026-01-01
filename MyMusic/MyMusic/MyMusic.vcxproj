@@ -103,7 +103,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIChatClient.cpp" />
     <ClCompile Include="BottomPlayWidget.cpp" />
+    <ClCompile Include="BubbleFrame.cpp" />
+    <ClCompile Include="ChatPage.cpp" />
+    <ClCompile Include="ChatInputWidget.cpp" />
+    <ClCompile Include="ChatWidget.cpp" />
     <ClCompile Include="colorblocklabel.cpp" />
     <ClCompile Include="Common\Encrypt\Encrypt.cpp" />
     <ClCompile Include="complexionwidget.cpp" />
@@ -178,6 +183,11 @@
     <QtMoc Include="UserManager.h" />
     <QtMoc Include="UploadWidget.h" />
     <QtMoc Include="BottomPlayWidget.h" />
+    <QtMoc Include="ChatPage.h" />
+    <QtMoc Include="BubbleFrame.h" />
+    <QtMoc Include="ChatInputWidget.h" />
+    <QtMoc Include="AIChatClient.h" />
+    <QtMoc Include="ChatWidget.h" />
     <ClInclude Include="Common\blockqueue.h" />
     <QtMoc Include="FFPlayer\AudioDecoder.h" />
     <QtMoc Include="FFPlayer\DecoderInterface.h" />

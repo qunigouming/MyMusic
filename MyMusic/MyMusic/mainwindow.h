@@ -6,6 +6,21 @@
 #include "selectlocmusic_dlg.h"
 #include "tableview/tableview.h"
 #include "FFPlayer/FFPlayer.h"
+#include "SidebarWidget.h"
+
+enum class StackWidgetPage {
+    MainPage = 0,
+    SetPage,
+    ComplexionPage,
+    LocalMusicPage,
+    SongListPage,
+    ChatPage,
+    None = 999
+};
+
+inline bool operator<(StackWidgetPage lhs, StackWidgetPage rhs) {
+    return static_cast<int>(lhs) < static_cast<int>(rhs);
+}
 
 namespace Ui {
 class MainWindow;
@@ -58,6 +73,8 @@ private:
     int _currentPlayIndex = -1;                 // 当前播放的索引，根据当前播放的视图来获取
 
     QTimer* _heartbeatTimer = nullptr;      // 心跳定时器，处理服务器心跳包
+
+    QMap<SidebarItemType, StackWidgetPage> _stackWidgetPageMap;
 };
 
 #endif // MAINWINDOW_H

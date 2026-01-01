@@ -46,6 +46,7 @@ void SidebarComponent::setupUI()
     _mainLayout->setSpacing(0);
 
     addNavItem(QChar(0xe007), "主页(beta)");
+    addNavItem(QChar(0xe01A), tr("AI聊天"));
     
     _mainLayout->addWidget(new SeparatorWidget());
 

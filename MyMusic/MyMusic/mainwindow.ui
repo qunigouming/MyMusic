@@ -1071,6 +1071,7 @@ QTabBar::tab::selected {
             </layout>
            </widget>
            <widget class="SongListPage" name="songlistPage"/>
+           <widget class="ChatWidget" name="ChatPage"/>
           </widget>
          </item>
         </layout>
@@ -1146,6 +1147,12 @@ QPushButton:pressed {
    <class>SearchLine</class>
    <extends>QWidget</extends>
    <header>searchline.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ChatWidget</class>
+   <extends>QWidget</extends>
+   <header>chatwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

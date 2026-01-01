@@ -81,6 +81,15 @@
     <Filter Include="UI\NetworkImageLoader">
       <UniqueIdentifier>{01a498ae-cbf0-47de-82e4-876f72259eb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\ChatPage">
+      <UniqueIdentifier>{a83ac0c3-70ff-45cd-af35-0e0cbf4992d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\ChatPage\Header Files">
+      <UniqueIdentifier>{1bb1f11b-4663-4a18-9c2c-74e0badd4725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\ChatPage\Source Files">
+      <UniqueIdentifier>{d2a230dd-a967-4ecf-9f9b-ee0addf73964}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -239,6 +248,30 @@
     <ClCompile Include="NetworkImageLabel.cpp">
       <Filter>UI\NetworkImageLoader</Filter>
     </ClCompile>
+    <ClCompile Include="ChatPage.cpp">
+      <Filter>UI\ChatPage</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleFrame.cpp">
+      <Filter>UI\ChatPage</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleFrame.cpp">
+      <Filter>UI\ChatPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatInputWidget.cpp">
+      <Filter>UI\ChatPage</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatInputWidget.cpp">
+      <Filter>UI\ChatPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIChatClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatWidget.cpp">
+      <Filter>UI\ChatPage</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="colorblocklabel.h">
@@ -378,6 +411,30 @@
     </QtMoc>
     <QtMoc Include="NetworkImageLabel.h">
       <Filter>UI\NetworkImageLoader</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatPage.h">
+      <Filter>UI\ChatPage</Filter>
+    </QtMoc>
+    <QtMoc Include="BubbleFrame.h">
+      <Filter>UI\ChatPage</Filter>
+    </QtMoc>
+    <QtMoc Include="BubbleFrame.h">
+      <Filter>UI\ChatPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatInputWidget.h">
+      <Filter>UI\ChatPage</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatInputWidget.h">
+      <Filter>UI\ChatPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="AIChatClient.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatWidget.h">
+      <Filter>UI\ChatPage</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatWidget.h">
+      <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

@@ -92,6 +92,14 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     _heartbeatTimer->start(10000);
+
+    // 映射表
+    _stackWidgetPageMap[SidebarItemType::MainPage] = StackWidgetPage::MainPage;
+    _stackWidgetPageMap[SidebarItemType::AIChat] = StackWidgetPage::ChatPage;
+    _stackWidgetPageMap[SidebarItemType::FavoriteMusic] = StackWidgetPage::SongListPage;
+    _stackWidgetPageMap[SidebarItemType::MyCollection] = StackWidgetPage::None;
+    _stackWidgetPageMap[SidebarItemType::LatestPlay] = StackWidgetPage::None;
+    _stackWidgetPageMap[SidebarItemType::LocalMusic] = StackWidgetPage::LocalMusicPage;
 }
 
 MainWindow::~MainWindow()
@@ -128,16 +136,6 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             }
         }
     }
-    // if (watched != compWidget && event->type() == QEvent::MouseButtonPress) {
-    //     qDebug() << "capture object";
-    //     QMouseEvent *me = static_cast<QMouseEvent*>(event);
-    //     if (!compWidget->geometry().contains(me->globalPos())) {
-    //         qDebug() << "hide" << me->globalPos() << me->pos() << compWidget->geometry();
-    //         compWidget->hide();
-    //         return true;
-    //     }
-    // }
-
     return QWidget::eventFilter(watched,event);
 }
 
@@ -179,11 +177,15 @@ void MainWindow::on_zoomBtn_clicked(bool checked)
 void MainWindow::initBaseFuncLWg()
 {
     connect(ui->funcListWid, &SidebarWidget::itemClicked, this, [this](int index) {
-        if (index == 0) {
+        if (index == static_cast<int>(SidebarItemType::MainPage)) {
             // 主页
-            ui->stackedWidget->setCurrentIndex(0);
+            ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::MainPage]));
         }
-        if (index == 1) {
+        else if (index == static_cast<int>(SidebarItemType::AIChat)) {
+            // AI聊天
+            ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::AIChat]));
+        }
+        else if (index == static_cast<int>(SidebarItemType::FavoriteMusic)) {
             // 发送获取喜欢的音乐请求
             QJsonObject jsonObj;
             jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
@@ -191,12 +193,12 @@ void MainWindow::initBaseFuncLWg()
             QJsonDocument doc(jsonObj);
             TcpManager::GetInstance()->sig_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_INFO_REQ, doc.toJson());
             // 喜欢的音乐
-            ui->stackedWidget->setCurrentIndex(4);
+            ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::FavoriteMusic]));
             _activeView = _am_view;
         }
-        else if (index == 4) {
+        else if (index == static_cast<int>(SidebarItemType::LocalMusic)) {
             // 本地音乐
-            ui->stackedWidget->setCurrentIndex(3);
+            ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::LocalMusic]));
             _activeView = _lm_view;
             readLocalMusicConfig();
         }
@@ -344,7 +346,7 @@ void MainWindow::changeSkinColor(QColor showcaseColor)
 
 void MainWindow::on_setBtn_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentIndex(static_cast<int>(StackWidgetPage::SetPage));
 }
 
 
