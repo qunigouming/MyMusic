@@ -97,6 +97,18 @@ int FFPlayer::getDuration()
 	return _formatCtx ? _formatCtx->duration / AV_TIME_BASE : 0;
 }
 
+void FFPlayer::updateBand(int index, float gain)
+{
+	AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+	decoder->updateBand(index, gain);
+}
+
+void FFPlayer::setEnvironment(int index)
+{
+	AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+	decoder->setEnvironment(index);
+}
+
 void FFPlayer::fateError()
 {
 	qDebug() << "ffmpeg fate error";

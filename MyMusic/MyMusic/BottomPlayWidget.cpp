@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include "LocalDataManager.h"
 
+
 BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::BottomPlayWidgetClass())
@@ -17,7 +18,7 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     ui->more_btn->setText(QChar(0xe61c));
     _volumeWidget = QSharedPointer<VolumeWidget>(new VolumeWidget);
     ui->volume_btn->installEventFilter(this);
-
+    _audioEffectDialog = QSharedPointer<AudioEffectDialog>(new AudioEffectDialog);
     connect(_volumeWidget.get(), &VolumeWidget::volumeChanged, this, [this](int volume) {
         _player->setVolume(volume);
         LocalDataManager::GetInstance()->setVolume(volume);
@@ -25,19 +26,19 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     });
 
     connect(ui->volume_btn, &QPushButton::clicked, [this](bool checked) {
-        if (checked) {
-            _volumeWidget->mute();
-            //setVolumeUI(0);
-        }
-        else {
-            int volume = _volumeWidget->unMute();
-            //setVolumeUI(volume);
-        }
+        if (checked) _volumeWidget->mute();
+        else _volumeWidget->unMute();
+    });
+    connect(ui->more_btn, &QPushButton::clicked, this, [this] {
+        _audioEffectDialog->show();
     });
     _player = new FFPlayer(this);
     playSigConnect();
     uiSigConnect();
     _volumeWidget->setVolume(LocalDataManager::GetInstance()->getVolume());
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::EQValueChanged, _player, &FFPlayer::updateBand);
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::envComboChanged, _player, &FFPlayer::setEnvironment);
+    
 }
 
 BottomPlayWidget::~BottomPlayWidget()

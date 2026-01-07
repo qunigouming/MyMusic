@@ -1,6 +1,8 @@
 #include "AudioDecoder.h"
 #include <QAudioFormat>
 
+#include "LogManager.h"
+
 AudioDecoder::AudioDecoder(AVFormatContext* fmtCtx, QObject* parent)
     : DecoderInterface(fmtCtx)
 {
@@ -30,9 +32,16 @@ bool AudioDecoder::init()
     format.setChannelCount(_outSpec.channels);
     format.setSampleFormat(QAudioFormat::Int16);
 
-    _audioSink = new QAudioSink(format);
+    _audioStreamProcessor = std::make_unique<AudioStreamProcessor>();
+    if (!_audioStreamProcessor->initialize()) {
+        LOG(ERROR) << "Failed to initialize AudioStreamProcessor";
+        emit  DecoderInterface::initFinished(false);
+        return false;
+    }
+    //_audioSink = new QAudioSink(format);
+    //_audioDevice = _audioSink->start();
+    _equalizer = std::make_unique<Equalizer10Band>(_outSpec.sampleRate);
     setVolume(60);
-    _audioDevice = _audioSink->start();
 
     emit DecoderInterface::initFinished(true);
     return true;
@@ -60,13 +69,13 @@ void AudioDecoder::free()
         avcodec_close(_decodecCtx);
         _decodecCtx = nullptr;
     }
-    if (_audioSink) {
-        _audioSink->stop();
-        _audioDevice->close();
-        delete _audioSink;
-        _audioDevice = nullptr;
-        _audioSink = nullptr;
-    }
+    _audioStreamProcessor.reset();
+    //if (_audioSink) {
+    //    _audioSink->stop();
+    //    delete _audioSink;
+    //    _audioDevice = nullptr;
+    //    _audioSink = nullptr;
+    //}
 }
 
 int AudioDecoder::getStreamIndex()
@@ -167,6 +176,8 @@ int AudioDecoder::initSws()
 void AudioDecoder::start()
 {
     _state = PlayerState::PLAYING;
+    int prefillCount = 0;
+    const int PREFILL_BUFFERS = 2;
     while (true) {
         if (_state == PlayerState::STOP)    break;
         if (_pktQueue.empty() || _state == PlayerState::PAUSE) {
@@ -195,6 +206,7 @@ void AudioDecoder::start()
         av_packet_unref(&pkt);
         CONTINUE(avcodec_send_packet);
         ret = avcodec_receive_frame(_decodecCtx, _inFrame);
+
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)   CONTINUE(avcodec_receive_frame);
         int outSamples = av_rescale_rnd(_outSpec.sampleRate, _inFrame->nb_samples, _inSpec.sampleRate, AV_ROUND_UP);
         ret = swr_convert(_swrCtx,
@@ -205,11 +217,26 @@ void AudioDecoder::start()
         BREAK(swr_convert);
         
         int size = ret * _outSpec.bytesPerSampleFrame;
-        while (_audioSink->bytesFree() < size && _state != PlayerState::STOP) {
+        //while (_audioSink->bytesFree() < size && _state != PlayerState::STOP) {
+        //    QThread::msleep(1);
+        //}
+        if (_equalizer) {
+            _equalizer->process(_outFrame->data[0], size);
+        }
+        // prefill the buffer ensure play queued is not empty
+        if (prefillCount < PREFILL_BUFFERS) {
+            if (_audioStreamProcessor->write(_outFrame->data[0], size)) {
+                ++prefillCount;
+            }
+        }
+        while (!_audioStreamProcessor->hasBuffer() && _state != PlayerState::STOP) {
             QThread::msleep(1);
         }
         if (_state == PlayerState::STOP)    break;
-        _audioDevice->write((char*)_outFrame->data[0], size);
+        if (!_audioStreamProcessor->write(_outFrame->data[0], size)) {
+            LOG(WARNING) << "Failed to write audio data";
+        }
+        //_audioDevice->write((char*)_outFrame->data[0], size);
     }
     qDebug() << "AudioDecoder::start() end";
     emit DecoderInterface::decodingFinished();
@@ -217,5 +244,16 @@ void AudioDecoder::start()
 
 void AudioDecoder::setVolume(int volume)
 {
-    if (_audioSink) _audioSink->setVolume(volume / 100.0);
+    //if (_audioSink) _audioSink->setVolume(volume / 100.0);
+    if (_audioStreamProcessor) _audioStreamProcessor->setVolume(volume / 100.0f);
+}
+
+void AudioDecoder::updateBand(int index, float gain)
+{
+    _equalizer->updateBand(index, gain);
+}
+
+void AudioDecoder::setEnvironment(int index)
+{
+    _audioStreamProcessor->setEnvironment(index);
 }

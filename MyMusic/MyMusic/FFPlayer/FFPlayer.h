@@ -25,6 +25,8 @@ public:
 
 public slots:
     void seek(int clock);
+    void updateBand(int index, float gain);
+    void setEnvironment(int index);
 
 signals:
     void stateChanged(PlayerState state); // 状态变化信号，用于控制播放器状态

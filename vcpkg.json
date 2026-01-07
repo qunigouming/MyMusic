@@ -20,6 +20,9 @@
 		},
 		{
 			"name": "glog"
+		},
+		{
+			"name": "openal-soft"
 		}
 	],
 	"overrides": [

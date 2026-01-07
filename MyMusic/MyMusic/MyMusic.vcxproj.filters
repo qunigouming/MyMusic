@@ -90,6 +90,12 @@
     <Filter Include="UI\ChatPage\Source Files">
       <UniqueIdentifier>{d2a230dd-a967-4ecf-9f9b-ee0addf73964}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FFPlayer\AudioModel">
+      <UniqueIdentifier>{882125ad-7f2f-40bd-bdcb-95e865a3eb8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\AudioEffect">
+      <UniqueIdentifier>{61ac5282-df4f-4ce7-95c1-b1c76ac2890e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorblocklabel.cpp">
@@ -248,17 +254,8 @@
     <ClCompile Include="NetworkImageLabel.cpp">
       <Filter>UI\NetworkImageLoader</Filter>
     </ClCompile>
-    <ClCompile Include="ChatPage.cpp">
-      <Filter>UI\ChatPage</Filter>
-    </ClCompile>
-    <ClCompile Include="BubbleFrame.cpp">
-      <Filter>UI\ChatPage</Filter>
-    </ClCompile>
     <ClCompile Include="BubbleFrame.cpp">
       <Filter>UI\ChatPage\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChatInputWidget.cpp">
-      <Filter>UI\ChatPage</Filter>
     </ClCompile>
     <ClCompile Include="ChatInputWidget.cpp">
       <Filter>UI\ChatPage\Source Files</Filter>
@@ -267,10 +264,34 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChatWidget.cpp">
-      <Filter>UI\ChatPage</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioProcessor.cpp">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioStreamProcessor.cpp">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Equalizer.cpp">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleFrame.cpp">
+      <Filter>UI\ChatPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatInputWidget.cpp">
+      <Filter>UI\ChatPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatPage.cpp">
+      <Filter>UI\ChatPage\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChatWidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>UI\ChatPage\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioEffectDialog.cpp">
+      <Filter>UI\AudioEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="ToneControl.cpp">
+      <Filter>FFPlayer\AudioModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -412,17 +433,8 @@
     <QtMoc Include="NetworkImageLabel.h">
       <Filter>UI\NetworkImageLoader</Filter>
     </QtMoc>
-    <QtMoc Include="ChatPage.h">
-      <Filter>UI\ChatPage</Filter>
-    </QtMoc>
-    <QtMoc Include="BubbleFrame.h">
-      <Filter>UI\ChatPage</Filter>
-    </QtMoc>
     <QtMoc Include="BubbleFrame.h">
       <Filter>UI\ChatPage\Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="ChatInputWidget.h">
-      <Filter>UI\ChatPage</Filter>
     </QtMoc>
     <QtMoc Include="ChatInputWidget.h">
       <Filter>UI\ChatPage\Header Files</Filter>
@@ -431,10 +443,22 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ChatWidget.h">
-      <Filter>UI\ChatPage</Filter>
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="BubbleFrame.h">
+      <Filter>UI\ChatPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatInputWidget.h">
+      <Filter>UI\ChatPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatPage.h">
+      <Filter>UI\ChatPage\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ChatWidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>UI\ChatPage\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="AudioEffectDialog.h">
+      <Filter>UI\AudioEffect</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -505,6 +529,18 @@
     </ClInclude>
     <ClInclude Include="LocalDataManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioProcessor.h">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioStreamProcessor.h">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Equalizer.h">
+      <Filter>FFPlayer\AudioModel</Filter>
+    </ClInclude>
+    <ClInclude Include="ToneControl.h">
+      <Filter>FFPlayer\AudioModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

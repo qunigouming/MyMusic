@@ -3,6 +3,8 @@
 #include <QAudioSink>
 #include <QIODevice>
 #include <QThread>
+#include "AudioStreamProcessor.h"
+#include "Equalizer.h"
 
 struct SwrSpec {
 	int sampleRate;			// 音频采样率
@@ -25,6 +27,9 @@ public:
 	int getStreamIndex() override;
 
 	void setVolume(int volume) override;
+
+	void updateBand(int index, float gain);
+	void setEnvironment(int index);
 
 public slots:
 	void setDecoderState(PlayerState state) override;
@@ -49,7 +54,9 @@ private:
 	double _clock = 0;
 
 	// 音频输出
-	QAudioSink* _audioSink = nullptr;
-    QIODevice* _audioDevice = nullptr;
+	//QAudioSink* _audioSink = nullptr;
+    //QIODevice* _audioDevice = nullptr;
+	std::unique_ptr<AudioStreamProcessor>  _audioStreamProcessor = nullptr;
+	std::unique_ptr<Equalizer10Band> _equalizer;
 };
 

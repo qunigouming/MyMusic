@@ -67,7 +67,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;cryptopp.lib;SoundTouch.lib;glog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tag.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;avutil.lib;cryptopp.lib;SoundTouch.lib;glog.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -104,6 +104,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AIChatClient.cpp" />
+    <ClCompile Include="AudioEffectDialog.cpp" />
+    <ClCompile Include="AudioProcessor.cpp" />
+    <ClCompile Include="AudioStreamProcessor.cpp" />
+    <ClCompile Include="Equalizer.cpp" />
     <ClCompile Include="BottomPlayWidget.cpp" />
     <ClCompile Include="BubbleFrame.cpp" />
     <ClCompile Include="ChatPage.cpp" />
@@ -148,6 +152,7 @@
     <ClCompile Include="tcpmanager.cpp" />
     <ClCompile Include="timerbutton.cpp" />
     <ClCompile Include="TitleWidget.cpp" />
+    <ClCompile Include="ToneControl.cpp" />
     <ClCompile Include="Tool\directoryscannertask.cpp" />
     <ClCompile Include="Tool\FileInspectorImp.cpp" />
     <ClCompile Include="Tool\filescannerworker.cpp" />
@@ -188,6 +193,10 @@
     <QtMoc Include="ChatInputWidget.h" />
     <QtMoc Include="AIChatClient.h" />
     <QtMoc Include="ChatWidget.h" />
+    <QtMoc Include="AudioEffectDialog.h" />
+    <ClInclude Include="AudioProcessor.h" />
+    <ClInclude Include="AudioStreamProcessor.h" />
+    <ClInclude Include="Equalizer.h" />
     <ClInclude Include="Common\blockqueue.h" />
     <QtMoc Include="FFPlayer\AudioDecoder.h" />
     <QtMoc Include="FFPlayer\DecoderInterface.h" />
@@ -215,6 +224,7 @@
     <QtMoc Include="SysTray.h" />
     <QtMoc Include="TitleWidget.h" />
     <QtMoc Include="SongListPage.h" />
+    <ClInclude Include="ToneControl.h" />
     <ClInclude Include="Tool\FileInfo.h" />
     <QtMoc Include="Tool\filescannerworker.h" />
     <QtMoc Include="Tool\FileInspectorInterface.h" />

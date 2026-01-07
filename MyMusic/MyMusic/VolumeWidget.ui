@@ -71,7 +71,7 @@ QSlider::handle:vertical {
 	width: 4px;
 	margin: 0px -3px 0px -3px;
 	border-radius: 4px;
-	background-color: rgb(236, 65, 65);
+	background-color: white;
 }</string>
      </property>
      <property name="minimum">

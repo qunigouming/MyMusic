@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QWidget>
+#include <QSharedPointer>
+
 #include "ui_BottomPlayWidget.h"
 #include "FFPlayer/FFPlayer.h"
 #include "tableview/tableviewmodel.h"
 #include "global.h"
 #include "VolumeWidget.h"
-#include <QSharedPointer>
+#include "AudioEffectDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class BottomPlayWidgetClass; };
@@ -42,5 +44,6 @@ private:
 	QString _current_SongPath;
 	PlayModel _playModel = PlayModel::LISTLOOP;
 	QSharedPointer<VolumeWidget> _volumeWidget = nullptr;
+    QSharedPointer<AudioEffectDialog> _audioEffectDialog = nullptr;
 };
 
