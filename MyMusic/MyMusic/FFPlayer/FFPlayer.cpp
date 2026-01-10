@@ -109,6 +109,30 @@ void FFPlayer::setEnvironment(int index)
 	decoder->setEnvironment(index);
 }
 
+void FFPlayer::setEnvDepthValue(int value)
+{
+	AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+	decoder->setEnvDepthValue(value);
+}
+
+void FFPlayer::setEnvIntensityValue(int value)
+{
+    AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+    decoder->setEnvIntensityValue(value);
+}
+
+void FFPlayer::setBassLevel(int value)
+{
+	AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+	decoder->setBassLevel(value);
+}
+
+void FFPlayer::setTrableLevel(int value)
+{
+	AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+	decoder->setTrableLevel(value);
+}
+
 void FFPlayer::fateError()
 {
 	qDebug() << "ffmpeg fate error";
@@ -148,7 +172,6 @@ void FFPlayer::readFile()
 	}
 
 	// 等待音频解码器初始化完成
-	qDebug() << "into event loop";
 	QEventLoop loop;
 	QTimer timer;
 	timer.setSingleShot(true);
@@ -162,7 +185,6 @@ void FFPlayer::readFile()
 		// emit PlayFinished();
 		return;
 	}
-	qDebug() << "out of event loop";
 
 	// emit initFinished();
 	int streamIndex = _audioDecoderMgr->decoder() ? _audioDecoderMgr->decoder()->getStreamIndex() : -1;

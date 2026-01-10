@@ -38,7 +38,10 @@ BottomPlayWidget::BottomPlayWidget(QWidget* parent)
     _volumeWidget->setVolume(LocalDataManager::GetInstance()->getVolume());
     connect(_audioEffectDialog.get(), &AudioEffectDialog::EQValueChanged, _player, &FFPlayer::updateBand);
     connect(_audioEffectDialog.get(), &AudioEffectDialog::envComboChanged, _player, &FFPlayer::setEnvironment);
-    
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::envDepthChanged, _player, &FFPlayer::setEnvDepthValue);
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::envIntensityChanged, _player, &FFPlayer::setEnvIntensityValue);
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::bassChanged, _player, &FFPlayer::setBassLevel);
+    connect(_audioEffectDialog.get(), &AudioEffectDialog::TrableChanged, _player, &FFPlayer::setTrableLevel);
 }
 
 BottomPlayWidget::~BottomPlayWidget()

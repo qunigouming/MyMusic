@@ -22,6 +22,8 @@ public:
 	bool write(uint8_t* data, int size);
 
 	void setEnvironment(int index);
+	void setEnvDepthValue(int value);
+    void setEnvIntensityValue(int value);
 
 private:
 	ALuint _source = 0;

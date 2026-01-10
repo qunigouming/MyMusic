@@ -49,7 +49,14 @@ private:
 class ParamControlWidget : public QWidget {
     Q_OBJECT
 public:
-    ParamControlWidget(const QString& title, QWidget* parent = nullptr);
+    enum ParamType {
+        Base,               // Base form
+        Strength            // environment strenght form
+    };
+    ParamControlWidget(const QString& title, ParamType type, QWidget* parent = nullptr);
+
+signals:
+    void valueChanged(int val);
 private:
     QLabel* _titleLabel;
     QLabel* _valLabel;
@@ -72,6 +79,10 @@ protected:
 signals:
     void EQValueChanged(int index, int value);
     void envComboChanged(int index);
+    void envDepthChanged(int value);
+    void envIntensityChanged(int value);
+    void bassChanged(int value);
+    void TrableChanged(int value);
 private:
     void setupUI();
     void setupStyles();

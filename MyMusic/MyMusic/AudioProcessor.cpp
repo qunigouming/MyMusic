@@ -1,11 +1,12 @@
 #include "AudioProcessor.h"
 #include <stdexcept>
+#include <algorithm>
+
 #include "LogManager.h"
 
 void AudioProcessor::setEnvironment(EnvironmentPreset preset)
 {
     EFXEAXREVERBPROPERTIES props;
-
     // Load base values based on selection
     switch (preset) {
     case EnvironmentPreset::None:
@@ -74,23 +75,35 @@ void AudioProcessor::setEnvironment(EnvironmentPreset preset)
     alAuxiliaryEffectSloti(_slot, AL_EFFECTSLOT_EFFECT, _effect);
 }
 
-void AudioProcessor::setSurroundDepth(float percent)
+void AudioProcessor::setSurroundDepth(int value)
 {
     // Modulate the decay time based on the current preset baseline
     // Or just set strict limits (e.g., 0.1s to 10.0s)
-
-    float newDecay = _currentDecayTime * (0.5f + percent * 1.5f); // Range: 50% to 200% of preset
-    alEffectf(_effect, AL_REVERB_DECAY_TIME, newDecay);
+    value = std::clamp(value, -10, 10);
+    float decayMultiplier = 1.0f;
+    if (value < 0) {
+        // Linear interpolation from 0.1 to 1.0
+        decayMultiplier = 1.0f + (value / 11.0f); // approx 0.1 at -10
+    }
+    else {
+        // Linear interpolation from 1.0 to 2.5
+        decayMultiplier = 1.0f + (value * 0.15f); // 1.0 + 1.5 = 2.5 at 10
+    }
+    float finalDecay = _currentDecayTime * decayMultiplier;
+    finalDecay = std::clamp(finalDecay, 0.1f, 20.0f);
+    alEffectf(_effect, AL_REVERB_DECAY_TIME, finalDecay);
 
     // You must update the slot for changes to take effect immediately
     alAuxiliaryEffectSloti(_slot, AL_EFFECTSLOT_EFFECT, _effect);
 }
 
-void AudioProcessor::setSurroundStrength(float percent)
+void AudioProcessor::setSurroundStrength(int value)
 {
+    value = value / 10.0f;
+    float finalGain = value / 10.0f;
     // Map slider to Gain (0.0 silent to 1.0 max)
     // Note: Reverb gain usually maxes at 1.0, but can go lower
-    alEffectf(_effect, AL_REVERB_GAIN, percent); // Direct mapping
+    alEffectf(_effect, AL_REVERB_GAIN, finalGain); // Direct mapping
 
     alAuxiliaryEffectSloti(_slot, AL_EFFECTSLOT_EFFECT, _effect);
 }
@@ -122,7 +135,8 @@ bool AudioProcessor::initialize()
             LOG(ERROR) << "load EFX failed!!!";
             return false;
         }
-
+        alGenEffects(1, &_effect);
+        alGenAuxiliaryEffectSlots(1, &_slot);
         // 检查错误
         ALenum error = alGetError();
         return (error == AL_NO_ERROR);

@@ -26,11 +26,6 @@ bool AudioDecoder::init()
         emit DecoderInterface::initFinished(false);
         return false;
     }
-    
-    QAudioFormat format;
-    format.setSampleRate(_outSpec.sampleRate);
-    format.setChannelCount(_outSpec.channels);
-    format.setSampleFormat(QAudioFormat::Int16);
 
     _audioStreamProcessor = std::make_unique<AudioStreamProcessor>();
     if (!_audioStreamProcessor->initialize()) {
@@ -38,9 +33,9 @@ bool AudioDecoder::init()
         emit  DecoderInterface::initFinished(false);
         return false;
     }
-    //_audioSink = new QAudioSink(format);
-    //_audioDevice = _audioSink->start();
+
     _equalizer = std::make_unique<Equalizer10Band>(_outSpec.sampleRate);
+    _toneControl = std::make_unique<ToneControl>(_outSpec.sampleRate);
     setVolume(60);
 
     emit DecoderInterface::initFinished(true);
@@ -217,11 +212,11 @@ void AudioDecoder::start()
         BREAK(swr_convert);
         
         int size = ret * _outSpec.bytesPerSampleFrame;
-        //while (_audioSink->bytesFree() < size && _state != PlayerState::STOP) {
-        //    QThread::msleep(1);
-        //}
         if (_equalizer) {
             _equalizer->process(_outFrame->data[0], size);
+        }
+        if (_toneControl) {
+            _toneControl->process(_outFrame->data[0], size);
         }
         // prefill the buffer ensure play queued is not empty
         if (prefillCount < PREFILL_BUFFERS) {
@@ -236,7 +231,6 @@ void AudioDecoder::start()
         if (!_audioStreamProcessor->write(_outFrame->data[0], size)) {
             LOG(WARNING) << "Failed to write audio data";
         }
-        //_audioDevice->write((char*)_outFrame->data[0], size);
     }
     qDebug() << "AudioDecoder::start() end";
     emit DecoderInterface::decodingFinished();
@@ -256,4 +250,24 @@ void AudioDecoder::updateBand(int index, float gain)
 void AudioDecoder::setEnvironment(int index)
 {
     _audioStreamProcessor->setEnvironment(index);
+}
+
+void AudioDecoder::setEnvDepthValue(int index)
+{
+    _audioStreamProcessor->setEnvDepthValue(index);
+}
+
+void AudioDecoder::setEnvIntensityValue(int index)
+{
+    _audioStreamProcessor->setEnvIntensityValue(index);
+}
+
+void AudioDecoder::setBassLevel(int value)
+{
+    float db = value * 1.2f;
+    _toneControl->setBass(db);
+}
+
+void AudioDecoder::setTrableLevel(int value)
+{
 }

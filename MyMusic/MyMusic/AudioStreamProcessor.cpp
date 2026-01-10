@@ -26,6 +26,10 @@ bool AudioStreamProcessor::initialize()
     }
     createOpenALResources();
 
+    // Connect source to slot
+    ALuint slotID = _processor->getEffectSlot();
+    alSource3i(_source, AL_AUXILIARY_SEND_FILTER, slotID, 0, AL_FILTER_NULL);
+
     return true;
 }
 
@@ -155,4 +159,15 @@ void AudioStreamProcessor::setEnvironment(int index)
 {
     _processor->setEnvironment(static_cast<EnvironmentPreset>(index));
     LOG(INFO) << "Set new Environment is: " << index;
+}
+
+void AudioStreamProcessor::setEnvDepthValue(int value)
+{
+    _processor->setSurroundDepth(value);
+}
+
+void AudioStreamProcessor::setEnvIntensityValue(int value)
+{
+    LOG(INFO) << "Set environment intensity value: " << value;
+    _processor->setSurroundStrength(value);
 }

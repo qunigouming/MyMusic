@@ -31,6 +31,7 @@ void SwitchButton::paintEvent(QPaintEvent*) {
 
 // --- EQBandWidget (Vertical) ---
 EQBandWidget::EQBandWidget(const QString& freqText, QWidget* parent) : QWidget(parent) {
+    setMinimumHeight(200);
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(5);
@@ -59,7 +60,7 @@ EQBandWidget::EQBandWidget(const QString& freqText, QWidget* parent) : QWidget(p
 }
 
 // --- ParamControlWidget (Horizontal) ---
-ParamControlWidget::ParamControlWidget(const QString& title, QWidget* parent) : QWidget(parent) {
+ParamControlWidget::ParamControlWidget(const QString& title, ParamType type, QWidget* parent) : QWidget(parent) {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 10, 20, 10);
     mainLayout->setSpacing(5);
@@ -69,8 +70,15 @@ ParamControlWidget::ParamControlWidget(const QString& title, QWidget* parent) : 
     QLabel* minLab = new QLabel("-");
     QLabel* maxLab = new QLabel("+");
     _slider = new QSlider(Qt::Horizontal);
-    _slider->setRange(0, 100);
-
+    if (type == ParamType::Base) {
+        _slider->setRange(-10, 10);
+        _slider->setValue(0);
+    }
+    else {
+        _slider->setRange(0, 10);
+        _slider->setValue(0);
+    }
+    connect(_slider, &QSlider::valueChanged, this, &ParamControlWidget::valueChanged);
     sliderRow->addWidget(minLab);
     sliderRow->addWidget(_slider);
     sliderRow->addWidget(maxLab);
@@ -78,7 +86,7 @@ ParamControlWidget::ParamControlWidget(const QString& title, QWidget* parent) : 
     // Title & Value Row
     QHBoxLayout* textRow = new QHBoxLayout();
     _titleLabel = new QLabel(title);
-    _valLabel = new QLabel("0%");
+    _valLabel = new QLabel("0");
     _valLabel->setStyleSheet("color: #FF3333; font-weight: bold;");
 
     textRow->addStretch();
@@ -91,7 +99,7 @@ ParamControlWidget::ParamControlWidget(const QString& title, QWidget* parent) : 
     mainLayout->addLayout(textRow);
 
     connect(_slider, &QSlider::valueChanged, [this](int val) {
-        _valLabel->setText(QString("%1%").arg(val));
+        _valLabel->setText(QString("%1").arg(val));
     });
 }
 
@@ -209,20 +217,25 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
 
     // dB Grid Labels
     QVBoxLayout* dbLabels = new QVBoxLayout();
-    dbLabels->setContentsMargins(0, 20, 0, 20); // Align with sliders area
-    dbLabels->addWidget(new QLabel("+12dB"));
+    dbLabels->setContentsMargins(0, 0, 0, 0); // Align with sliders area
+    QLabel* db12 = new QLabel("+12dB");
+    db12->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    dbLabels->addWidget(db12);
     dbLabels->addStretch();
-    dbLabels->addWidget(new QLabel("0dB"));
+    auto db0 = new QLabel("0dB");
+    db0->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    dbLabels->addWidget(db0);
     dbLabels->addStretch();
-    dbLabels->addWidget(new QLabel("-12dB"));
-    dbLabels->addSpacing(25); // Space for freq label alignment
+    auto dbnegative12 = new QLabel("-12dB");
+    dbnegative12->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    dbLabels->addWidget(dbnegative12);
+    //dbLabels->addSpacing(25); // Space for freq label alignment
     eqContainer->addLayout(dbLabels);
 
     // Bands
     QStringList freqs = { "31", "63", "125", "250", "500", "1k", "2k", "4k", "8k", "16k" };
     int index = 0;
     for (const QString& freq : freqs) {
-        
         EQBandWidget* widget = new EQBandWidget(freq);
         connect(widget, &EQBandWidget::valueChanged, [this, index](int val) {
             emit EQValueChanged(index, val);
@@ -242,10 +255,21 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     layout->addLayout(controlsHeader);
 
     QGridLayout* slidersGrid = new QGridLayout();
-    slidersGrid->addWidget(new ParamControlWidget("低音"), 0, 0);
-    slidersGrid->addWidget(new ParamControlWidget("高音"), 0, 1);
-    slidersGrid->addWidget(new ParamControlWidget("环境深度"), 1, 0);
-    slidersGrid->addWidget(new ParamControlWidget("环境强度"), 1, 1);
+    ParamControlWidget* bassWidget = new ParamControlWidget("低音", ParamControlWidget::Base);
+    slidersGrid->addWidget(bassWidget, 0, 0);
+    connect(bassWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::bassChanged);
+
+    ParamControlWidget* trableWidget = new ParamControlWidget("高音", ParamControlWidget::Base);
+    slidersGrid->addWidget(trableWidget, 0, 1);
+    connect(bassWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::TrableChanged);
+
+    ParamControlWidget* envDepth = new ParamControlWidget("环绕深度", ParamControlWidget::Base);
+    slidersGrid->addWidget(envDepth, 1, 0);
+    connect(envDepth, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envDepthChanged);
+
+    ParamControlWidget* envIntensity = new ParamControlWidget("环绕强度", ParamControlWidget::Strength);
+    slidersGrid->addWidget(envIntensity, 1, 1);
+    connect(envIntensity, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envIntensityChanged);
     layout->addLayout(slidersGrid);
 
     // --- Env Dropdown ---
@@ -257,9 +281,7 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     envLayout->addStretch();
     layout->addLayout(envLayout);
 
-    connect(envCombo, &QComboBox::currentIndexChanged, [this](int index) {
-        emit envComboChanged(index);
-    });
+    connect(envCombo, &QComboBox::currentIndexChanged, this, &AudioEffectDialog::envComboChanged);
 
     return container;
 }

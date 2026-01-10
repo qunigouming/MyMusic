@@ -42,6 +42,8 @@ public:
 
     bool initialize();
 
+    ALuint getEffectSlot() { return _slot; }
+
     // EFX Function Pointers
     LPALGENEFFECTS alGenEffects = nullptr;
     LPALDELETEEFFECTS alDeleteEffects = nullptr;
@@ -54,8 +56,8 @@ public:
     LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti = nullptr;
 
     void setEnvironment(EnvironmentPreset preset);
-    void setSurroundDepth(float percent);    // 0.0 to 1.0 (Slider)
-    void setSurroundStrength(float percent); // 0.0 to 1.0 (Slider)
+    void setSurroundDepth(int value);    // -10 to 10 (Slider)
+    void setSurroundStrength(int value); // 0 to 10 (Slider)
     
 private:
     bool loadEFXFunctions();

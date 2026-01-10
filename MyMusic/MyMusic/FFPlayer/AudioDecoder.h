@@ -5,6 +5,7 @@
 #include <QThread>
 #include "AudioStreamProcessor.h"
 #include "Equalizer.h"
+#include "ToneControl.h"
 
 struct SwrSpec {
 	int sampleRate;			// 音频采样率
@@ -28,11 +29,14 @@ public:
 
 	void setVolume(int volume) override;
 
-	void updateBand(int index, float gain);
-	void setEnvironment(int index);
-
 public slots:
 	void setDecoderState(PlayerState state) override;
+	void updateBand(int index, float gain);
+	void setEnvironment(int index);
+	void setEnvDepthValue(int index);
+	void setEnvIntensityValue(int index);
+	void setBassLevel(int value);
+	void setTrableLevel(int value);
 
 signals:
 	void initFinished(bool success);
@@ -58,5 +62,6 @@ private:
     //QIODevice* _audioDevice = nullptr;
 	std::unique_ptr<AudioStreamProcessor>  _audioStreamProcessor = nullptr;
 	std::unique_ptr<Equalizer10Band> _equalizer;
+	std::unique_ptr<ToneControl> _toneControl;
 };
 
