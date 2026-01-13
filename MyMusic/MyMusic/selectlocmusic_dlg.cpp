@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QFileDialog>
 #include <QMenu>
+#include <QCheckBox>
 #include "LocalDataManager.h"
 
 SelectLocMusic_Dlg::SelectLocMusic_Dlg(QWidget *parent)

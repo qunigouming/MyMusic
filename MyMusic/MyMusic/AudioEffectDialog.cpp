@@ -1,6 +1,9 @@
 #include "AudioEffectDialog.h"
 #include <QApplication>
 
+#include "LogManager.h"
+#include "LocalDataManager.h"
+
 // --- SwitchButton ---
 SwitchButton::SwitchButton(QWidget* parent) : QWidget(parent) {
     setCursor(Qt::PointingHandCursor);
@@ -103,14 +106,111 @@ ParamControlWidget::ParamControlWidget(const QString& title, ParamType type, QWi
     });
 }
 
+void ParamControlWidget::setValue(int value)
+{
+    _slider->setValue(value);
+}
+
 // --- AudioEffectDialog ---
 
 AudioEffectDialog::AudioEffectDialog(QWidget* parent) : QDialog(parent) {
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     setAttribute(Qt::WA_TranslucentBackground);
     resize(800, 550);
+    _eqValues = LocalDataManager::GetInstance()->getEQValues();
     setupUI();
     setupStyles();
+}
+
+void AudioEffectDialog::resetParamControls() {
+    _bassWidget->setValue(0);
+    _trableWidget->setValue(0);
+    _envDepth->setValue(0);
+    _envIntensity->setValue(0);
+}
+
+void AudioEffectDialog::setPresetEQ(int preset)
+{
+    switch (static_cast<PresetEQ>(preset)) {
+        case PresetEQ::Custom: 
+            setEQValues(_eqValues);
+            break;
+        case PresetEQ::Null:
+            setEQValues({0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            break;
+        case PresetEQ::Pop:
+            setEQValues({ -1, -1, 0, 2, 4, 4, 2, 1, -1, 1 });
+            break;
+        case PresetEQ::Dance:
+            setEQValues({ 4, 6, 7, 0, 2, 3, 5, 4, 3, 0 });
+            break;
+        case PresetEQ::Blues:
+            setEQValues({ 2, 6, 5, 0, -2, -1, 2, 3, 2, 3 });
+            break;
+        case PresetEQ::Classical:
+            setEQValues({ 5, 4, 3, 2, -1, -1, 0, 2, 3, 5 });
+            break;
+        case PresetEQ::Jazz:
+            setEQValues({ 3, 3, 2, 2, -1, -1, 0, 2, 2, 5 });
+            break;
+        case PresetEQ::SlowSong:
+            setEQValues({ 2, 0, 1, 0, -1, 0, 0, 0, -1, 1 });
+            break;
+        case PresetEQ::ElectronicMusic:
+            setEQValues({ 5, 6, 5, 0, -2, 2, 0, 1, 5, 4 });
+            break;
+        case PresetEQ::Rock:
+            setEQValues({ 5, 3, 3, 1, 0, -1, 0, 2, 3, 5 });
+            break;
+        case PresetEQ::Country:
+            setEQValues({ 0, 2, 3, 1, 0, 2, 3, 1, 0, 0 });
+            break;
+        case PresetEQ::ACG:
+            setEQValues({ 4, 6, 4, 0, -1, 2, 5, 1, 2, 4 });
+            break;
+        case PresetEQ::Bass:
+            setEQValues({ 6, 5, 6, 2, 0, 0, 0, 0, 0, 0 });
+            break;
+        case PresetEQ::MegaBass:
+            setEQValues({ 6, 6, 8, 2, 0, 0, 0, 0, 0, 0 });
+            break;
+        case PresetEQ::BassTrable:
+            setEQValues({ 6, 5, 6, 2, 0, 0, 1, 3, 4, 0 });
+            break;
+        case PresetEQ::Speaker:
+            setEQValues({ -6, -4, -2, 2, 4, 5, 3, 0, -3, -8 });
+            break;
+        case PresetEQ::Live:
+            setEQValues({ 6, 5, 6, 0, -1, 0, 3, 5, 6, 5 });
+            break;
+        case PresetEQ::Mid:
+            setEQValues({ -2, -3, -3, 0, 1, 5, 3, 2, -1, -2 });
+            break;
+        case PresetEQ::Soft:
+            setEQValues({ 1, 0, 0, 0, 0, 0, 0, -2, -3, 0 });
+            break;
+        case PresetEQ::SoftBass:
+            setEQValues({ 4, 2, 1, 1, 0, 0, 0, -2, -2, -2 });
+            break;
+        case PresetEQ::SoftTrable:
+            setEQValues({ -3, -2, 0, 0, 0, 0, 0, -1, 3, 2 });
+            break;
+        case PresetEQ::HeavyMetal:
+            setEQValues({ -2, 5, 4, -2, -2, -2, 2, 3, 1, 4 });
+            break;
+        case PresetEQ::NationalCustoms:
+            setEQValues({ 4, 2, 2, 0, -1, 4, 5, 1, 1, 3 });
+            break;
+        case PresetEQ::Ballad:
+            setEQValues({ 0, 3, 0, -1, 2, 5, 6, 3, 1, 2 });
+            break;
+        case PresetEQ::Rap:
+            setEQValues({ 6, 5, 4, 1, -2, 1, 4, 1, 4, 4 });
+            break;
+        default:
+            LOG(ERROR) << "Invalid preset EQ";
+            break;
+    }
 }
 
 void AudioEffectDialog::setupUI() {
@@ -197,14 +297,21 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     QVBoxLayout* layout = new QVBoxLayout(container);
     layout->setContentsMargins(0, 0, 10, 0); // Right margin for scrollbar space
     layout->setSpacing(20);
-
     // --- Presets Row ---
     QHBoxLayout* presetLayout = new QHBoxLayout();
     QLabel* presetLabel = new QLabel("均衡器");
     QComboBox* presetCombo = new QComboBox();
-    presetCombo->addItems({ "无", "Custom", "Rock", "Pop", "Jazz" });
+    presetCombo->addItems({ tr("自定义"), tr("无"), tr("流行"), tr("舞曲"), tr("蓝调"), tr("古典"), tr("爵士"), tr("慢歌"), tr("电音"), tr("摇滚"), tr("乡村"), tr("ACG"), tr("低音"), tr("超重低音"), tr("低音&高音"), tr("扬声器"), tr("现场"), tr("中音"), tr("柔和"), tr("柔和低音"), tr("柔和高音"), tr("重金属"), tr("国风"), tr("民谣"), tr("说唱")});
+    connect(presetCombo, &QComboBox::currentIndexChanged, [this](int index) {
+        _isProgrammaticChange = true;
+        setPresetEQ(index);
+        _isProgrammaticChange = false;
+    });
     QPushButton* saveBtn = new QPushButton("保存");
     saveBtn->setFixedSize(60, 28);
+    connect(saveBtn, &QPushButton::click, this, [this] {
+        LocalDataManager::GetInstance()->setEQValues(_eqValues);
+    });
 
     presetLayout->addWidget(presetLabel);
     presetLayout->addWidget(presetCombo);
@@ -237,10 +344,17 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     int index = 0;
     for (const QString& freq : freqs) {
         EQBandWidget* widget = new EQBandWidget(freq);
-        connect(widget, &EQBandWidget::valueChanged, [this, index](int val) {
+        connect(widget, &EQBandWidget::valueChanged, [this, index, presetCombo](int val) {
+            _eqValues[index] = val;
+            setEQValues(_eqValues);
             emit EQValueChanged(index, val);
+            if (!_isProgrammaticChange && presetCombo->currentIndex() != 0) {
+                const QSignalBlocker blocker(presetCombo);
+                presetCombo->setCurrentIndex(0);
+            }
         });
         eqContainer->addWidget(widget);
+        _eqWidgets.append(widget);
         ++index;
     }
     layout->addLayout(eqContainer);
@@ -249,27 +363,28 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     QHBoxLayout* controlsHeader = new QHBoxLayout();
     controlsHeader->addWidget(new QLabel("增强音效"));
     QPushButton* resetBtn = new QPushButton("重置");
+    connect(resetBtn, &QPushButton::clicked, this, &AudioEffectDialog::resetParamControls);
     resetBtn->setFixedSize(60, 28);
     controlsHeader->addWidget(resetBtn);
     controlsHeader->addStretch();
     layout->addLayout(controlsHeader);
 
     QGridLayout* slidersGrid = new QGridLayout();
-    ParamControlWidget* bassWidget = new ParamControlWidget("低音", ParamControlWidget::Base);
-    slidersGrid->addWidget(bassWidget, 0, 0);
-    connect(bassWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::bassChanged);
+    _bassWidget = new ParamControlWidget("低音", ParamControlWidget::Base);
+    slidersGrid->addWidget(_bassWidget, 0, 0);
+    connect(_bassWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::bassChanged);
 
-    ParamControlWidget* trableWidget = new ParamControlWidget("高音", ParamControlWidget::Base);
-    slidersGrid->addWidget(trableWidget, 0, 1);
-    connect(bassWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::TrableChanged);
+    _trableWidget = new ParamControlWidget("高音", ParamControlWidget::Base);
+    slidersGrid->addWidget(_trableWidget, 0, 1);
+    connect(_trableWidget, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::TrableChanged);
 
-    ParamControlWidget* envDepth = new ParamControlWidget("环绕深度", ParamControlWidget::Base);
-    slidersGrid->addWidget(envDepth, 1, 0);
-    connect(envDepth, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envDepthChanged);
+    _envDepth = new ParamControlWidget("环绕深度", ParamControlWidget::Base);
+    slidersGrid->addWidget(_envDepth, 1, 0);
+    connect(_envDepth, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envDepthChanged);
 
-    ParamControlWidget* envIntensity = new ParamControlWidget("环绕强度", ParamControlWidget::Strength);
-    slidersGrid->addWidget(envIntensity, 1, 1);
-    connect(envIntensity, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envIntensityChanged);
+    _envIntensity = new ParamControlWidget("环绕强度", ParamControlWidget::Strength);
+    slidersGrid->addWidget(_envIntensity, 1, 1);
+    connect(_envIntensity, &ParamControlWidget::valueChanged, this, &AudioEffectDialog::envIntensityChanged);
     layout->addLayout(slidersGrid);
 
     // --- Env Dropdown ---
@@ -368,6 +483,17 @@ void AudioEffectDialog::setupStyles() {
     )");
 }
 
+void AudioEffectDialog::setEQValues(QVector<int> values)
+{
+    if (values.size() != _eqWidgets.size()) {
+        LOG(ERROR) << "The size is not equality, values is: " << values.size();
+        return;
+    }
+    for (int i = 0; i < values.size(); ++i) {
+        _eqWidgets[i]->setValue(values[i]);
+    }
+}
+
 // --- Window Logic ---
 void AudioEffectDialog::paintEvent(QPaintEvent*) {
     QPainter p(this);
@@ -391,4 +517,9 @@ void AudioEffectDialog::mouseMoveEvent(QMouseEvent* event) {
 void AudioEffectDialog::showEvent(QShowEvent* event) {
     QDialog::showEvent(event);
     if (parentWidget()) move(parentWidget()->geometry().center() - rect().center());
+}
+
+void EQBandWidget::setValue(int value)
+{
+    _slider->setValue(value);
 }

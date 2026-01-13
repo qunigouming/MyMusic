@@ -3,6 +3,7 @@
 #include <QAudioSink>
 #include <QIODevice>
 #include <QThread>
+
 #include "AudioStreamProcessor.h"
 #include "Equalizer.h"
 #include "ToneControl.h"
@@ -28,15 +29,18 @@ public:
 	int getStreamIndex() override;
 
 	void setVolume(int volume) override;
+	void switchAudioDevice();
 
 public slots:
 	void setDecoderState(PlayerState state) override;
 	void updateBand(int index, float gain);
 	void setEnvironment(int index);
-	void setEnvDepthValue(int index);
-	void setEnvIntensityValue(int index);
+	void setEnvDepthValue(int value);
+	void setEnvIntensityValue(int value);
 	void setBassLevel(int value);
 	void setTrableLevel(int value);
+
+	void onAudioOutputChanged();
 
 signals:
 	void initFinished(bool success);
@@ -58,10 +62,12 @@ private:
 	double _clock = 0;
 
 	// 音频输出
-	//QAudioSink* _audioSink = nullptr;
-    //QIODevice* _audioDevice = nullptr;
+	EnvironmentPreset _lastPreset = EnvironmentPreset::None;
+	int _lastDepth = 0;
+	int _lastStrength = 0;
 	std::unique_ptr<AudioStreamProcessor>  _audioStreamProcessor = nullptr;
 	std::unique_ptr<Equalizer10Band> _equalizer;
 	std::unique_ptr<ToneControl> _toneControl;
+	std::atomic_bool _needResetAudio = false;
 };
 

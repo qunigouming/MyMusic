@@ -63,7 +63,7 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
 
     connect(this, &TableView::doubleClicked, this, [this](const QModelIndex& index) {
         // 获取索引对应的文件路径
-        SongInfo info = _model->songAt(index.row());
+        SongInfo info = getSongInfoByProxyRow(index.row());
         emit rowDoubleClicked(info);
     });
 

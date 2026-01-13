@@ -26,6 +26,8 @@ public:
 	void setVolume(int volume);
 	int getVolume();
 
+	void setEQValues(QVector<int> values);
+	QVector<int> getEQValues();
 private:
     LocalDataManager();
 	bool readConfig();

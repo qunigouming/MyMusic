@@ -126,7 +126,7 @@ bool AudioStreamProcessor::write(uint8_t* data, int size)
 
     ALenum error = alGetError();
     if (error != AL_NO_ERROR) {
-        LOG(ERROR) << "alBufferData failed: , error: " << error;
+        LOG(WARNING) << "alBufferData failed: , error: " << error;
         return false;
     }
 

@@ -1,5 +1,6 @@
 #include "AudioDecoder.h"
 #include <QAudioFormat>
+#include <QMediaDevices>
 
 #include "LogManager.h"
 
@@ -26,7 +27,6 @@ bool AudioDecoder::init()
         emit DecoderInterface::initFinished(false);
         return false;
     }
-
     _audioStreamProcessor = std::make_unique<AudioStreamProcessor>();
     if (!_audioStreamProcessor->initialize()) {
         LOG(ERROR) << "Failed to initialize AudioStreamProcessor";
@@ -175,6 +175,25 @@ void AudioDecoder::start()
     const int PREFILL_BUFFERS = 2;
     while (true) {
         if (_state == PlayerState::STOP)    break;
+
+        if (_needResetAudio) {
+            LOG(INFO) << "change the audio device";
+            // recreating a source
+            _audioStreamProcessor.reset();
+            _audioStreamProcessor = std::make_unique<AudioStreamProcessor>();
+            if (!_audioStreamProcessor->initialize()) {
+                LOG(FATAL) << "Failed to initialize AudioStreamProcessor";
+                emit DecoderInterface::initFinished(false);
+                return;
+            }
+            _audioStreamProcessor->setEnvironment(static_cast<int>(_lastPreset));
+            _audioStreamProcessor->setEnvDepthValue(_lastDepth);
+            _audioStreamProcessor->setEnvIntensityValue(_lastStrength);
+
+            _needResetAudio = false;
+            prefillCount = 0;
+        }
+
         if (_pktQueue.empty() || _state == PlayerState::PAUSE) {
             if (_state == PlayerState::STOP)    break;
             QThread::msleep(1);
@@ -218,18 +237,20 @@ void AudioDecoder::start()
         if (_toneControl) {
             _toneControl->process(_outFrame->data[0], size);
         }
-        // prefill the buffer ensure play queued is not empty
-        if (prefillCount < PREFILL_BUFFERS) {
-            if (_audioStreamProcessor->write(_outFrame->data[0], size)) {
-                ++prefillCount;
+        if (_audioStreamProcessor) {
+            // prefill the buffer ensure play queued is not empty
+            if (prefillCount < PREFILL_BUFFERS) {
+                if (_audioStreamProcessor->write(_outFrame->data[0], size)) {
+                    ++prefillCount;
+                }
             }
-        }
-        while (!_audioStreamProcessor->hasBuffer() && _state != PlayerState::STOP) {
-            QThread::msleep(1);
-        }
-        if (_state == PlayerState::STOP)    break;
-        if (!_audioStreamProcessor->write(_outFrame->data[0], size)) {
-            LOG(WARNING) << "Failed to write audio data";
+            while (!_audioStreamProcessor->hasBuffer() && _state != PlayerState::STOP) {
+                QThread::msleep(1);
+            }
+            if (_state == PlayerState::STOP)    break;
+            if (!_audioStreamProcessor->write(_outFrame->data[0], size)) {
+                LOG(WARNING) << "Failed to write audio data";
+            }
         }
     }
     qDebug() << "AudioDecoder::start() end";
@@ -242,6 +263,11 @@ void AudioDecoder::setVolume(int volume)
     if (_audioStreamProcessor) _audioStreamProcessor->setVolume(volume / 100.0f);
 }
 
+void AudioDecoder::switchAudioDevice()
+{
+    _needResetAudio = true;
+}
+
 void AudioDecoder::updateBand(int index, float gain)
 {
     _equalizer->updateBand(index, gain);
@@ -249,25 +275,55 @@ void AudioDecoder::updateBand(int index, float gain)
 
 void AudioDecoder::setEnvironment(int index)
 {
-    _audioStreamProcessor->setEnvironment(index);
+    if (_audioStreamProcessor) {
+        _lastPreset = static_cast<EnvironmentPreset>(index);
+        _audioStreamProcessor->setEnvironment(index);
+    }
 }
 
-void AudioDecoder::setEnvDepthValue(int index)
+void AudioDecoder::setEnvDepthValue(int value)
 {
-    _audioStreamProcessor->setEnvDepthValue(index);
+    if (_audioStreamProcessor) {
+        _lastDepth = value;
+        _audioStreamProcessor->setEnvDepthValue(value);
+    }
 }
 
-void AudioDecoder::setEnvIntensityValue(int index)
+void AudioDecoder::setEnvIntensityValue(int value)
 {
-    _audioStreamProcessor->setEnvIntensityValue(index);
+    if (_audioStreamProcessor) {
+        _lastStrength = value;
+        _audioStreamProcessor->setEnvIntensityValue(value);
+    }
 }
 
 void AudioDecoder::setBassLevel(int value)
 {
+    // Map -10..10 to -12db..+12db
     float db = value * 1.2f;
     _toneControl->setBass(db);
 }
 
 void AudioDecoder::setTrableLevel(int value)
 {
+    // Map -10..10 to -12db..+12db
+    float db =  value * 1.2f;
+    _toneControl->setTreble(db);
+}
+
+void AudioDecoder::onAudioOutputChanged()
+{
+    LOG(INFO) << "change the audio device";
+    // recreating a source
+    _state = PlayerState::PAUSE;
+    _audioStreamProcessor.reset();
+    _audioStreamProcessor = std::make_unique<AudioStreamProcessor>();
+    if (!_audioStreamProcessor->initialize()) {
+        LOG(FATAL) << "Failed to initialize AudioStreamProcessor";
+        emit DecoderInterface::initFinished(false);
+        return;
+    }
+    _audioStreamProcessor->setEnvironment(static_cast<int>(_lastPreset));
+    _audioStreamProcessor->setEnvDepthValue(_lastDepth);
+    _audioStreamProcessor->setEnvIntensityValue(_lastStrength);
 }

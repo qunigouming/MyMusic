@@ -15,6 +15,7 @@
 int main(int argc, char *argv[])
 {
     LogManager::InitGlog(argv[0]);
+    LOG(INFO) << "argv[0]: " << argv[0];
     qSetMessagePattern("[ %{time [hh:mm:ss:zzz]} %{file}: %{line} %{threadid} ] %{message}");
     QApplication a(argc, argv);
     //加载字体文件

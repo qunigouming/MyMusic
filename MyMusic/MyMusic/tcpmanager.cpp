@@ -3,7 +3,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+
 #include "UserManager.h"
+#include "LogManager.h"
 
 void TcpManager::slot_tcp_connect(ServerInfo serverinfo)
 {
@@ -34,41 +36,41 @@ TcpManager::TcpManager(QObject *parent)
 {
     _socket = new QTcpSocket(this);
     connect(_socket, &QTcpSocket::connected, [&]{
-        qDebug() << "connected to server!!!";
+        LOG(INFO) << "connected to server!!!";
         emit sig_con_status(true);
     });
 
     //handle tcp connect error
     connect(_socket, &QTcpSocket::errorOccurred, [&](QTcpSocket::SocketError error){
-        qDebug() << "Error is:" << _socket->errorString();
+        LOG(ERROR) << "Error is:" << _socket->errorString().toStdString();
         switch (error) {
             case QTcpSocket::ConnectionRefusedError: {
-                qDebug() << "Connection Refused!";
+                LOG(ERROR) << "Connection Refused!";
                 emit sig_con_status(false);
                 break;
             }
             case QTcpSocket::RemoteHostClosedError: {
-                qDebug() << "Remot host closed connection!";
+                LOG(ERROR) << "Remot host closed connection!";
                 emit sig_con_status(false);
                 break;
             }
             case QTcpSocket::HostNotFoundError: {
-                qDebug() << "Host not found!";
+                LOG(ERROR) << "Host not found!";
                 emit sig_con_status(false);
                 break;
             }
             case QTcpSocket::SocketTimeoutError: {
-                qDebug() << "Connection timeout!";
+                LOG(ERROR) << "Connection timeout!";
                 emit sig_con_status(false);
                 break;
             }
             case QTcpSocket::NetworkError: {
-                qDebug() << "Network Error!";
+                LOG(ERROR) << "Network Error!";
                 emit sig_con_status(false);
                 break;
             }
             default: {
-                qDebug() << "Other Error!";
+                LOG(ERROR) << "Other Error!";
                 emit sig_con_status(false);
                 break;
             }
@@ -76,7 +78,7 @@ TcpManager::TcpManager(QObject *parent)
     });
 
     connect(_socket, &QTcpSocket::disconnected, [&]{
-        qDebug() << "Disconnected from server.";
+        LOG(INFO) << "Disconnected from server.";
     });
     connect(this, &TcpManager::sig_send_data, this, &TcpManager::slot_send_data);
     connect(_socket, &QTcpSocket::readyRead, [&]{
@@ -90,7 +92,7 @@ TcpManager::TcpManager(QObject *parent)
                 if (_buffer.size() < static_cast<int>(sizeof(quint16) * 2))    return;
                 stream >> _message_id >> _message_len;
                 _buffer.remove(0, sizeof(quint16)*2);          //delete id and len data
-                qDebug() << "Message ID: " << _message_id << ", Length: " << _message_len;
+                LOG(INFO) << "Message ID: " << _message_id << ", Length: " << _message_len;
             }
 
             //数据长度不足去处理
@@ -116,7 +118,7 @@ void TcpManager::initHandler()
     _handlers.insert(ID_LOGIN_USER_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
@@ -127,7 +129,7 @@ void TcpManager::initHandler()
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Login Failed, error is " << err;
+            LOG(ERROR) << "Login Failed, error is " << err;
             emit sig_login_failed(static_cast<ErrorCode>(err));
             return;
         }
@@ -172,39 +174,37 @@ void TcpManager::initHandler()
     _handlers.insert(ID_HEARTBEAT_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Heart Beat Failed, Json Parse error is " << err;
+            LOG(ERROR) << "Heart Beat Failed, Json Parse error is " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
 
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Heart Beat Failed, error is " << err;
+            LOG(ERROR) << "Heart Beat Failed, error is " << err;
             return;
         }
-
-        qDebug() << "Heart Beat Success.";
     });
     _handlers.insert(ID_UPLOAD_META_TYPE_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Upload Meta Type Failed, Json Parse error is " << err;
+            LOG(ERROR) << "Upload Meta Type Failed, Json Parse error is " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Upload Meta Type Failed, error is " << err;
+            LOG(ERROR) << "Upload Meta Type Failed, error is " << err;
             return;
         }
 
@@ -214,66 +214,66 @@ void TcpManager::initHandler()
     _handlers.insert(ID_UPLOAD_FILE_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Upload File Failed, Json Parse error is " << err;
+            LOG(ERROR) << "Upload File Failed, Json Parse error is " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Upload File Failed, error is " << err;
+            LOG(ERROR) << "Upload File Failed, error is " << err;
             return;
         }
 
         int total_size = jsonObj["total_size"].toInt();
         int trans_size = jsonObj["trans_size"].toInt();
 
-        qDebug() << jsonObj["total_size"].toInt() << " bytes uploaded." << jsonObj["trans_size"].toInt();
+        LOG(INFO) << jsonObj["total_size"].toInt() << " bytes uploaded." << jsonObj["trans_size"].toInt();
         if (total_size == trans_size) {
-            qDebug() << "Upload File Success.";
+            LOG(INFO) << "Upload File Success.";
             //emit sig_upload_success();
         }
     });
     _handlers.insert(ID_NOTIFY_OFF_LINE_REQ, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Notify Session Msg Failed, err is Json Parse Err " << err;
+            LOG(ERROR) << "Notify Session Msg Failed, err is Json Parse Err " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Notify Session Msg Failed, err is " << err;
+            LOG(ERROR) << "Notify Session Msg Failed, err is " << err;
             return;
         }
         auto uid = jsonObj["uid"].toInt();
-        qDebug() << "Notify Session Msg Success, uid is " << uid;
+        LOG(INFO) << "Notify Session Msg Success, uid is " << uid;
         emit sig_notify_off_line();
     });
     _handlers.insert(ID_GET_COLLECT_SONG_LIST_INFO_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Collect Song Failed, Json Parse error is " << err;
+            LOG(ERROR) << "Collect Song Failed, Json Parse error is " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Get Collect Song Failed, error is " << err;
+            LOG(ERROR) << "Get Collect Song Failed, error is " << err;
             return;
         }
 
@@ -292,18 +292,18 @@ void TcpManager::initHandler()
     _handlers.insert(ID_GET_COLLECT_SONG_LIST_RSP, [this](ReqID id, int len, QByteArray data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
         if (jsonDoc.isNull()) {
-            qDebug() << "Failed to create QJsonDocument.";
+            LOG(ERROR) << "Failed to create QJsonDocument.";
             return;
         }
         QJsonObject jsonObj = jsonDoc.object();
         if (!jsonObj.contains("error")) {
             int err = ErrorCode::ERR_JSON;
-            qDebug() << "Get Collect Song Failed, Json Parse error is " << err;
+            LOG(ERROR) << "Get Collect Song Failed, Json Parse error is " << err;
             return;
         }
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
-            qDebug() << "Get Collect Song Failed, error is " << err;
+            LOG(ERROR) << "Get Collect Song Failed, error is " << err;
             return;
         }
 
@@ -331,7 +331,7 @@ void TcpManager::handleMsg(ReqID id, int len, QByteArray data)
 {
     auto find_iter = _handlers.find(id);
     if (find_iter == _handlers.end()) {
-        qDebug() << "not found id [" << _message_id << "] to handle";
+        LOG(ERROR) << "Not found id [" << _message_id << "] to handle";
         return;
     }
     find_iter.value()(id, len, data);

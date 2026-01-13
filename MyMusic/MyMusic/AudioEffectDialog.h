@@ -14,6 +14,7 @@
 #include <QButtonGroup>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QVector>
 
 // --- Custom Components ---
 
@@ -36,7 +37,7 @@ class EQBandWidget : public QWidget {
     Q_OBJECT
 public:
     EQBandWidget(const QString& freqText, QWidget* parent = nullptr);
-
+    void setValue(int value);
 signals:
     void valueChanged(int val);
 private:
@@ -54,7 +55,7 @@ public:
         Strength            // environment strenght form
     };
     ParamControlWidget(const QString& title, ParamType type, QWidget* parent = nullptr);
-
+    void setValue(int value);
 signals:
     void valueChanged(int val);
 private:
@@ -68,7 +69,39 @@ private:
 class AudioEffectDialog : public QDialog {
     Q_OBJECT
 public:
+    enum PresetEQ {
+        Custom = 0,
+        Null,
+        Pop,
+        Dance,
+        Blues,
+        Classical,
+        Jazz,
+        SlowSong,
+        ElectronicMusic,
+        Rock,
+        Country,
+        ACG,
+        Bass,
+        MegaBass,
+        BassTrable,
+        Speaker,
+        Live,
+        Mid,
+        Soft,
+        SoftBass,
+        SoftTrable,
+        HeavyMetal,
+        NationalCustoms,
+        Ballad,
+        Rap
+    };
     explicit AudioEffectDialog(QWidget* parent = nullptr);
+    ~AudioEffectDialog() = default;
+
+    void resetParamControls();
+
+    void setPresetEQ(int preset);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -86,6 +119,7 @@ signals:
 private:
     void setupUI();
     void setupStyles();
+    void setEQValues(QVector<int> values);
 
     // Helper to create the top Tab buttons
     QPushButton* createTabButton(const QString& text, int id);
@@ -96,5 +130,14 @@ private:
     QPoint _dragPosition;
     QStackedWidget* _stack;
     QButtonGroup* _tabGroup;
+
+    QVector<EQBandWidget*> _eqWidgets;
+    QVector<int> _eqValues;
+    ParamControlWidget* _bassWidget;
+    ParamControlWidget* _trableWidget;
+    ParamControlWidget* _envDepth;
+    ParamControlWidget* _envIntensity;
+
+    bool _isProgrammaticChange = true;
 };
 

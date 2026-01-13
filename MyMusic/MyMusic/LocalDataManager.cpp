@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include "Common\Encrypt\Encrypt.h"
 
 #define CONFIG_FILE_NAME "/config.json"
@@ -103,6 +104,32 @@ int LocalDataManager::getVolume()
     QJsonObject userDataObj = _config[KUSER_USE_CONFIG_KEY].toObject();
     if (userDataObj.isEmpty())  return 60;
     return userDataObj["volume"].toInt();
+}
+
+void LocalDataManager::setEQValues(QVector<int> values)
+{
+    QJsonObject userDataObj = _config[KUSER_USE_CONFIG_KEY].toObject();
+    QJsonArray array;
+    for (int value : values) {
+        array.append(value);
+    }
+    userDataObj["CustomEQ"] = array;
+    saveConfig();
+}
+
+QVector<int> LocalDataManager::getEQValues()
+{
+    QJsonObject userDataObj = _config[KUSER_USE_CONFIG_KEY].toObject();
+    QVector<int> values(10, 0);
+    if (userDataObj.isEmpty())  return values;
+    QJsonArray array = userDataObj["CustomEQ"].toArray();
+    if (array.size() == 0) return values;
+    for (int i = 0; i < 10; ++i) {
+        if (array[i].isDouble()) {
+            values[i] = array[i].toInt();
+        }
+    }
+    return values;
 }
 
 LocalDataManager::LocalDataManager()

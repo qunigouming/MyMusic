@@ -3,6 +3,9 @@
 #include "FFPlayer/AudioDecoder.h"
 #include <cstringt.h>
 #include <QTimer>
+#include <QMediaDevices>
+
+#include "LogManager.h"
 
 FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 {
@@ -14,9 +17,9 @@ FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::initFinished, this, [this](bool success) {
 		_hasAudio = success;
 		if (!_hasAudio) {
-			qDebug() << "Audio decoder initialization failed";
+			LOG(INFO) << "Audio decoder initialization failed";
 		}
-		qDebug() << "Audio decoder initialization success";
+		LOG(INFO) << "Audio decoder initialization success";
 		emit initFinished();
 	});
 	connect(_audioDecoderMgr.get(), &DecoderThreadManager::clockChanged, this, [this](double clock) {
@@ -24,11 +27,20 @@ FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
 	});
 
 	connect(this, &FFPlayer::volumeChanged, _audioDecoderMgr.get(), &DecoderThreadManager::setVolume);
+
+	QMediaDevices* _mediaDevices = new QMediaDevices(this);
+	connect(_mediaDevices, &QMediaDevices::audioOutputsChanged, this, [this]() {
+		if (_audioDecoderMgr->decoder()) {
+			AudioDecoder* decoder = dynamic_cast<AudioDecoder*>(_audioDecoderMgr->decoder());
+			decoder->switchAudioDevice();
+		}
+	});
+
 }
 
 FFPlayer::~FFPlayer()
 {
-	qDebug() << "~FFPlayer";
+	LOG(INFO) << "FFPlayer destory.";
 	stop();
 }
 
@@ -49,7 +61,7 @@ void FFPlayer::play()
 
 void FFPlayer::stop()
 {
-	qDebug() << "free FFPlayer";
+	LOG(INFO) << "free FFPlayer";
 	setState(PlayerState::STOP);
 	if (_hasAudio) {
 		// 清空音频相关资源
@@ -135,13 +147,13 @@ void FFPlayer::setTrableLevel(int value)
 
 void FFPlayer::fateError()
 {
-	qDebug() << "ffmpeg fate error";
+	LOG(FATAL) << "ffmpeg fate error";
 	stop();
 }
 
 void FFPlayer::setState(PlayerState state)
 {
-	qDebug() << "setState" << (int)state;
+	LOG(INFO) << "setState" << (int)state;
 	if (_state == state)	return;
     _state = state;
 	emit stateChanged(_state);
@@ -164,10 +176,10 @@ void FFPlayer::readFile()
     END(avformat_find_stream_info);
 	if (_audioDecoderMgr->init(_formatCtx)) {
 		if (!_audioDecoderMgr->start()) {
-			qDebug() << "Audio decoder start failed";
+			LOG(FATAL) << "Audio decoder start failed";
 		}
 	} else {
-		qDebug() << "Audio decoder initialization failed";
+		LOG(FATAL) << "Audio decoder initialization failed";
 		return;
 	}
 
@@ -180,7 +192,7 @@ void FFPlayer::readFile()
     timer.start(2000);
 	loop.exec();
 	if (!timer.isActive()) {
-		qDebug() << "timer timeout";
+		LOG(FATAL) << "timer timeout";
 		stop();
 		// emit PlayFinished();
 		return;
@@ -190,12 +202,14 @@ void FFPlayer::readFile()
 	int streamIndex = _audioDecoderMgr->decoder() ? _audioDecoderMgr->decoder()->getStreamIndex() : -1;
 	qDebug() << "streamIndex" << streamIndex;
 	AVPacket pkt;
+	int errorCount = 0;
+	const int MAX_ERRORS = 50;
 	while (_state != PlayerState::STOP) {
 		if (_seek_pos >= 0) {
 			AVRational avRational = { 1, AV_TIME_BASE };
 			int64_t seek_target = _seek_pos / av_q2d(_formatCtx->streams[streamIndex]->time_base);
 			if (av_seek_frame(_formatCtx, streamIndex, seek_target, AVSEEK_FLAG_BACKWARD) < 0) {
-				qDebug() << "seek error";
+				LOG(ERROR) << "seek error";
 			}
 			else {
 				if (_hasAudio) {
@@ -211,6 +225,7 @@ void FFPlayer::readFile()
 		}
 		ret = av_read_frame(_formatCtx, &pkt);
 		if (ret == 0) {
+			errorCount = 0;		// reset error counter on success
             if (_hasAudio && pkt.stream_index == streamIndex) {
 				_audioDecoderMgr->decoder()->pushPkt(pkt);
 			}
@@ -219,20 +234,27 @@ void FFPlayer::readFile()
 			}
 		}
 		else if (ret == AVERROR(EAGAIN) || ret == AVERROR(ETIMEDOUT) || ret == AVERROR(ECONNRESET)) {
-			qDebug() << "Network error occurred, attempting to reconnect...";
+			LOG(INFO) << "Network error occurred, attempting to reconnect...";
 			// 等待避免频繁重连
-			std::this_thread::sleep_for(std::chrono::seconds(2));
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			// TODO: 重连机制
 			continue;
 		}
 		else if (ret == AVERROR_EOF) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
             //setState(PlayerState::STOP);
 			// qDebug() << "read file finished!!!";
 		}
 		else {
 			ERROR_BUF;
-			qDebug() << "av_read_frame Error" << errbuf;
-			setState(PlayerState::STOP);
+			LOG(WARNING) << "av_read_frame Error (Count:" << errorCount << "):" << errbuf;
+			errorCount++;
+			if (errorCount > MAX_ERRORS) {
+				LOG(ERROR) << "Too many errors, stopping playback.";
+				setState(PlayerState::STOP);
+				break;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			continue;
 		}
 	}
