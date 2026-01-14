@@ -1,5 +1,4 @@
-#ifndef __LOG_MANAGER_H__
-#define __LOG_MANAGER_H__
+#pragma once
 
 #include <string>
 #pragma warning(disable:4996)
@@ -7,7 +6,7 @@
 #define GOOGLE_GLOG_DLL_DECL
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #define GLOG_EXPORT __declspec(dllimport)
-#include <mutex>
+
 #include <glog/logging.h>
 
 class LogManager
@@ -18,5 +17,3 @@ private:
     LogManager() = default;
     ~LogManager();
 };
-
-#endif

@@ -8,15 +8,17 @@
 #include <QDebug>
 #include <QColor>
 #include <algorithm>
+#include <QJsonDocument>
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "funclistwidgetitem.h"
 #include "Tool/FileInspectorImp.h"
-#include <QJsonDocument>
 #include "UploadWidget.h"
-#include <QFileDialog>
 #include "UserManager.h"
 #include "tcpmanager.h"
-#include <QMessageBox>
 #include "LocalDataManager.h"
+#include "LogManager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -45,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     _lm_view = new TableView(MusicTableViewType::LOCAL_MODEL, this);
     ui->local_music_view->layout()->addWidget(_lm_view);
-
+    _activeView = _am_view;
     initBaseFuncLWg();
 
     ui->headIcon->setPixmap(QPixmap(UserManager::GetInstance()->getIcon()).scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -58,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     bindConntoView(_am_view);
     bindConntoView(_lm_view);
-
+    bindConntoView(ui->songlistPage->getTableView());
     connect(_am_view, &TableView::likeChanged, this, [this](int id, bool status) {
         QJsonObject jsonObj;
         jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
@@ -180,6 +182,7 @@ void MainWindow::initBaseFuncLWg()
         if (index == static_cast<int>(SidebarItemType::MainPage)) {
             // 主页
             ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::MainPage]));
+            _activeView = _am_view;
         }
         else if (index == static_cast<int>(SidebarItemType::AIChat)) {
             // AI聊天
@@ -194,7 +197,7 @@ void MainWindow::initBaseFuncLWg()
             TcpManager::GetInstance()->sig_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_INFO_REQ, doc.toJson());
             // 喜欢的音乐
             ui->stackedWidget->setCurrentIndex(static_cast<int>(_stackWidgetPageMap[SidebarItemType::FavoriteMusic]));
-            _activeView = _am_view;
+            _activeView = ui->songlistPage->getTableView();
         }
         else if (index == static_cast<int>(SidebarItemType::LocalMusic)) {
             // 本地音乐
@@ -224,7 +227,7 @@ void MainWindow::scanFileToTableView(QStringList list)
         }
     });
     connect(inspector, &FileInspectorImp::scanFinished, this, [this, thread](){
-        qDebug() << "scan finished";
+        LOG(INFO) << "scan finished";
         thread->quit();
     });
     connect(_lm_view, &TableView::allSongsAdded, this, [this]() {
@@ -281,12 +284,45 @@ void MainWindow::readLocalMusicConfig()
 void MainWindow::bindConntoView(TableView* view)
 {
     connect(view, &TableView::rowDoubleClicked, this, [this, view](const SongInfo& info) {
-        qDebug() << "Receive rowDoubleClicked";
+        LOG(INFO) << "Receive rowDoubleClicked";
         ui->bottomWid->play(info);
         _currentPlayIndex = view->currentIndex().row();     // 更新播放索引
     });
+    connect(ui->bottomWid, &BottomPlayWidget::playLastSong, this, [this, view](PlayModel model) {
+        LOG(INFO) << "Receive playLastSong";
+        if (_activeView != view)    return;     // 只处理当前视图
+        if (view->rowCount() == 0) return;
+        if (_currentPlayIndex == -1) return;
+
+        // 通过不同播放模式获取下一首歌曲索引
+        int lastIndex = 0;
+        if (model == PlayModel::LISTLOOP) {
+            lastIndex = _currentPlayIndex - 1;
+        }
+        else if (model == PlayModel::SINGLELOOP) {
+            lastIndex = _currentPlayIndex;
+        }
+        else if (model == PlayModel::RANDOM) {
+            // 通过随机数去生成下一首歌曲索引
+            // 若当前索引和下一首索引相同，则重新生成下一首索引
+            do {
+                lastIndex = rand() % view->rowCount();
+                LOG(INFO) << "lastIndex" << lastIndex;
+            } while (lastIndex == _currentPlayIndex);
+        }
+
+        if (lastIndex < 0) {
+            lastIndex = view->rowCount() - 1;
+        }
+
+        _currentPlayIndex = lastIndex;
+        SongInfo info = view->getSongInfoByProxyRow(lastIndex);
+        ui->bottomWid->play(info);
+        // 更新选中行
+        view->setCurrentIndex(view->model()->index(lastIndex, 0));
+    });
     connect(ui->bottomWid, &BottomPlayWidget::playNextSong, this, [this, view](PlayModel model) {
-        qDebug() << "Receive playNextSong";
+        LOG(INFO) << "Receive playNextSong";
         if (_activeView != view)    return;     // 只处理当前视图
         if (view->rowCount() == 0) return;
         if (_currentPlayIndex == -1) return;
@@ -304,7 +340,7 @@ void MainWindow::bindConntoView(TableView* view)
             // 若当前索引和下一首索引相同，则重新生成下一首索引
             do {
                 nextIndex = rand() % view->rowCount();
-                qDebug() << "nextIndex" << nextIndex;
+                LOG(INFO) << "nextIndex" << nextIndex;
             } while (nextIndex == _currentPlayIndex);
         }
 

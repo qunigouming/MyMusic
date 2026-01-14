@@ -19,7 +19,7 @@ public:
 	~SongListPage();
 
 	void setupUI(std::shared_ptr<SongListPageInfo> info);
-
+	TableView* getTableView() const { return _tableView; };
 private:
 	std::shared_ptr<SongListPageInfo> _pageInfo;
 

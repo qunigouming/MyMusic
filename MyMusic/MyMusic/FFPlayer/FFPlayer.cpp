@@ -1,10 +1,10 @@
 #include "FFPlayer.h"
 #include <QEventLoop>
-#include "FFPlayer/AudioDecoder.h"
 #include <cstringt.h>
 #include <QTimer>
 #include <QMediaDevices>
 
+#include "FFPlayer/AudioDecoder.h"
 #include "LogManager.h"
 
 FFPlayer::FFPlayer(QObject* parent) : QObject(parent)
@@ -170,6 +170,10 @@ void FFPlayer::readFile()
 	AVDictionary* opt = nullptr;
 	av_dict_set(&opt, "rtsp_transport", "tcp", 0);
 	av_dict_set(&opt, "stimeout", "60000000", 0);
+	av_dict_set(&opt, "reconnect", "1", 0);
+	av_dict_set(&opt, "reconnect_at_eof", "1", 0);
+	av_dict_set(&opt, "reconnect_streamed", "1", 0);
+	av_dict_set(&opt, "reconnect_delay_max", "5", 0);
 	int ret = avformat_open_input(&_formatCtx, _filepath.toStdString().c_str(), nullptr, &opt);
 	END(avformat_open_input);
 	ret = avformat_find_stream_info(_formatCtx, nullptr);
@@ -200,10 +204,18 @@ void FFPlayer::readFile()
 
 	// emit initFinished();
 	int streamIndex = _audioDecoderMgr->decoder() ? _audioDecoderMgr->decoder()->getStreamIndex() : -1;
-	qDebug() << "streamIndex" << streamIndex;
+	LOG(INFO) << "streamIndex" << streamIndex;
+	int64_t streamDuration = _formatCtx->streams[streamIndex]->duration;
+	if (streamDuration == AV_NOPTS_VALUE) {
+		streamDuration = av_rescale_q(_formatCtx->duration, { 1, AV_TIME_BASE }, _formatCtx->streams[streamIndex]->time_base);
+	}
+
 	AVPacket pkt;
+	int64_t currentPts = 0;
 	int errorCount = 0;
-	const int MAX_ERRORS = 50;
+	const int MAX_RETRY = 50;
+
+	const int64_t EOF_THRESHOLD = av_rescale_q(5000000, { 1, AV_TIME_BASE }, _formatCtx->streams[streamIndex]->time_base);
 	while (_state != PlayerState::STOP) {
 		if (_seek_pos >= 0) {
 			AVRational avRational = { 1, AV_TIME_BASE };
@@ -219,15 +231,21 @@ void FFPlayer::readFile()
 					_audioDecoderMgr->decoder()->clearPkt();
                     _audioDecoderMgr->decoder()->pushPkt(pkt_tmp);
 				}
+				errorCount = 0;
+				currentPts = seek_target;
 			}
-			// qDebug() << "seek to: " << _seek_pos;
             _seek_pos = -1;
 		}
 		ret = av_read_frame(_formatCtx, &pkt);
 		if (ret == 0) {
 			errorCount = 0;		// reset error counter on success
-            if (_hasAudio && pkt.stream_index == streamIndex) {
-				_audioDecoderMgr->decoder()->pushPkt(pkt);
+            if (pkt.stream_index == streamIndex) {
+				if (pkt.pts != AV_NOPTS_VALUE) {
+					currentPts = pkt.pts;
+				}
+				if (_hasAudio) {
+					_audioDecoderMgr->decoder()->pushPkt(pkt);
+				}
 			}
 			else {
 				av_packet_unref(&pkt);
@@ -243,19 +261,29 @@ void FFPlayer::readFile()
 		else if (ret == AVERROR_EOF) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));
             //setState(PlayerState::STOP);
-			// qDebug() << "read file finished!!!";
+			LOG_EVERY_T(INFO, 0.5) << "read file finished!!!";
 		}
 		else {
 			ERROR_BUF;
-			LOG(WARNING) << "av_read_frame Error (Count:" << errorCount << "):" << errbuf;
-			errorCount++;
-			if (errorCount > MAX_ERRORS) {
-				LOG(ERROR) << "Too many errors, stopping playback.";
-				setState(PlayerState::STOP);
-				break;
+			LOG_EVERY_T(WARNING, 2) << "av_read_frame Error (Count:" << errorCount << "):" << errbuf << "result: " << ret;
+			// judge whether in file end nearby
+			bool isNearEnd = (streamDuration != AV_NOPTS_VALUE) &&
+				(currentPts >= (streamDuration - EOF_THRESHOLD));
+			if (isNearEnd) {
+				LOG_EVERY_T(INFO, 2) << "Read error near end of stream (" << ret << "). Treating as normal EOF.";
+				// We assume we are done. Just idle.
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+				continue;
 			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			continue;
+			errorCount++;
+			if (errorCount > MAX_RETRY) {
+				LOG(ERROR) << "Stream ended (server closed connection or file truncated). Treating as EOF.";
+				// setState(PlayerState::STOP);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+			else {
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			}
 		}
 	}
 	// emit PlayFinished();

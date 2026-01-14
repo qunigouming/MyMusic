@@ -1,4 +1,5 @@
 #include "AudioEffectDialog.h"
+
 #include <QApplication>
 
 #include "LogManager.h"
