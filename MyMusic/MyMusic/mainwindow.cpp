@@ -215,16 +215,20 @@ void MainWindow::scanFileToTableView(QStringList list)
     inspector->moveToThread(thread);
     _lm_view->clearAllSongs();
     connect(inspector, &FileInspectorImp::filesFound, this, [this](const QList<FileInfo>& files){
+        QList<SongInfo> songBatch;
+        songBatch.reserve(files.size());
         for (auto& file : files) {
-            QString name = file.title;
-            QString author = file.artist;
-            QString duration = file.duration;
-            QString file_size = file.size;
-            QString path = file.filePath;
-            QPixmap cover = file.cover;
-            QString album = file.album;
-            _lm_view->addSong(SongInfo(name, duration, file_size, path, cover, author, album));
+            songBatch.emplace_back(
+                file.title,
+                file.duration,
+                file.size,
+                file.filePath,
+                file.cover,
+                file.artist,
+                file.album
+            );
         }
+        _lm_view->addSong(songBatch);
     });
     connect(inspector, &FileInspectorImp::scanFinished, this, [this, thread](){
         LOG(INFO) << "scan finished";

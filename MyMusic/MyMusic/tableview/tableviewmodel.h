@@ -126,6 +126,8 @@ public:
                 }
             case Qt::EditRole:
                 if (column == 3 && (_type == MusicTableViewType::NET_MODEL)) return song.isLiked;
+            //case (Qt::UserRole + 1):
+            //    return QVariant::fromValue(song);
             //未知原因，使用(Qt::AlignLeft | Qt::AlignVCenter)有问题，但Qt::AlignRight没有问题
             // case Qt::TextAlignmentRole: {
             //     if (column == 0) return Qt::AlignCenter;

@@ -114,6 +114,7 @@ void LocalDataManager::setEQValues(QVector<int> values)
         array.append(value);
     }
     userDataObj["CustomEQ"] = array;
+    _config[KUSER_USE_CONFIG_KEY] = userDataObj;
     saveConfig();
 }
 

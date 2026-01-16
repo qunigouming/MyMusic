@@ -20,6 +20,24 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
     _model = new TableViewModel(_type, this);
     _proxyModel = new SortProxyModel(this);
     _proxyModel->setSourceModel(_model);
+    connect(_proxyModel, &QSortFilterProxyModel::layoutChanged, this, [this]() {
+        // 1. When sorting finishes, the row orders are completely different.
+        // We must assume all our cached knowledge of "what is visible" is wrong.
+
+        // 2. Close ALL current editors to avoid "ghost" widgets on wrong rows
+        for (int row : _editorRows) {
+            QModelIndex index = _proxyModel->index(row, 1);
+            if (index.isValid()) {
+                closePersistentEditor(index);
+            }
+        }
+        _editorRows.clear();
+        _visibleRows.clear();
+
+        // 3. Re-calculate and re-open editors for the new state
+        updateVisibleRange();
+        updatePersistentEditors();
+    });
     setModel(_proxyModel);
     setSortingEnabled(true);
 
@@ -27,7 +45,7 @@ TableView::TableView(MusicTableViewType view_type, QWidget *parent)
     setItemDelegate(_delegate);
     _header = new TableHeaderView(Qt::Horizontal, this);
     setHorizontalHeader(_header);
-    _header->initSize(this);
+    _header->initSize(this->width());
 
     connect(_delegate, &SongDelegate::likeChanged, this, [this](const int row, const bool status) {
         emit likeChanged(_model->songAt(row).id, status);
@@ -355,13 +373,6 @@ void TableView::processPendingSongs() {
     _pendingSongs = _pendingSongs.mid(processCount);
 
     _model->addSong(batch);
-
-    for (int i = 0; i < batch.size(); ++i) {
-        QModelIndex index = _proxyModel->mapFromSource(_model->index(_model->rowCount() - batch.size() + i, 1));
-        if (index.isValid()) {
-            openPersistentEditor(index);
-        }
-    }
 
     updateVisibleRange();
     updatePersistentEditors();

@@ -310,7 +310,7 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
     });
     QPushButton* saveBtn = new QPushButton("保存");
     saveBtn->setFixedSize(60, 28);
-    connect(saveBtn, &QPushButton::click, this, [this] {
+    connect(saveBtn, &QPushButton::pressed, this, [this] {
         LocalDataManager::GetInstance()->setEQValues(_eqValues);
     });
 
@@ -358,6 +358,7 @@ QWidget* AudioEffectDialog::createEqualizerPage() {
         _eqWidgets.append(widget);
         ++index;
     }
+    setEQValues(_eqValues);     // set initialize value
     layout->addLayout(eqContainer);
 
     // --- Bottom Controls ---
