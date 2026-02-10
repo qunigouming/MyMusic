@@ -1,5 +1,5 @@
 #include "Encrypt.h"
-#include "LogManager.h"
+#include "../LogManager.h"
 
 using namespace CryptoPP;
 
