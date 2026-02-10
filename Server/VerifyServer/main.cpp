@@ -28,6 +28,7 @@ void RunServer() {
 		}
 	});
 
+
 	std::thread([&io_service]() {
 		io_service.run();
 	}).detach();

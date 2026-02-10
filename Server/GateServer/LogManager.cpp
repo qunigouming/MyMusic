@@ -1,5 +1,6 @@
 #include "LogManager.h"
 #include <mutex>
+#include <boost/filesystem.hpp>
 #include <filesystem>
 #include <iostream>
 
@@ -8,9 +9,9 @@ void LogManager::InitGlog(const char* argv, std::string logPath)
     static std::once_flag flag;
     std::call_once(flag, [&] {
         // 检查路径是否存在
-        std::error_code ec;
-        if (!std::filesystem::exists(logPath)) {
-            if (!std::filesystem::create_directories(logPath, ec)) {
+        boost::system::error_code ec;
+        if (!boost::filesystem::exists(logPath)) {
+            if (!boost::filesystem::create_directories(logPath, ec)) {
                 std::cerr << "Create directories failed: " << logPath
                     << " Error: " << ec.message() << std::endl;
                 return;

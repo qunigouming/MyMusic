@@ -8,7 +8,7 @@ FileInspectorImp::FileInspectorImp(QObject* parent)
     QThread* workerThread = new QThread(this);
     m_worker->moveToThread(workerThread);
     workerThread->start();
-
+    qRegisterMetaType<QList<FileInfo>>();
     connect(m_worker, &FileScannerWorker::filesFound, this, [this](const QList<FileInfo>& files){ emit filesFound(files); }, Qt::QueuedConnection);
     connect(m_worker, &FileScannerWorker::scanFinished, this, [this]{ emit scanFinished(); }, Qt::QueuedConnection);
 }
