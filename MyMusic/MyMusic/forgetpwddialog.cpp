@@ -5,10 +5,12 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFrame>
 
 #include "timerbutton.h"
 #include "httpmanager.h"
@@ -33,16 +35,40 @@ ForgetPwdDialog::~ForgetPwdDialog()
 
 void ForgetPwdDialog::initUi()
 {
-    setWindowTitle("找回密码");
-    setFixedSize(420, 360);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    setFixedSize(420, 420);
 
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(24, 20, 24, 20);
-    mainLayout->setSpacing(10);
+    auto* rootLayout = new QVBoxLayout(this);
+    rootLayout->setContentsMargins(0, 0, 0, 0);
+    rootLayout->setSpacing(0);
 
-    auto* title = new QLabel("找回密码", this);
-    title->setStyleSheet("font-size: 18px; font-weight: 600;");
-    mainLayout->addWidget(title);
+    _titleWidget = new QWidget(this);
+    _titleWidget->setObjectName("titleWidget");
+    _titleWidget->setFixedHeight(36);
+    _titleWidget->installEventFilter(this);
+
+    auto* titleLayout = new QHBoxLayout(_titleWidget);
+    titleLayout->setContentsMargins(12, 0, 8, 0);
+    titleLayout->setSpacing(0);
+    auto* title = new QLabel("找回密码", _titleWidget);
+    title->setObjectName("titleLabel");
+    titleLayout->addWidget(title);
+    titleLayout->addStretch();
+
+    _minimizeBtn = new QPushButton(QChar(0xe650), _titleWidget);
+    _minimizeBtn->setObjectName("minimizeBtn");
+    _minimizeBtn->setFixedSize(24, 24);
+    _closeBtn = new QPushButton(QChar(0xe67d), _titleWidget);
+    _closeBtn->setObjectName("closeBtn");
+    _closeBtn->setFixedSize(24, 24);
+    titleLayout->addWidget(_minimizeBtn);
+    titleLayout->addWidget(_closeBtn);
+
+    auto* content = new QFrame(this);
+    content->setObjectName("contentFrame");
+    auto* mainLayout = new QVBoxLayout(content);
+    mainLayout->setContentsMargins(24, 18, 24, 20);
+    mainLayout->setSpacing(8);
 
     _emailLineE = new QLineEdit(this);
     _emailLineE->setPlaceholderText("输入登录邮箱");
@@ -122,10 +148,22 @@ void ForgetPwdDialog::initUi()
 
     mainLayout->addSpacing(6);
     mainLayout->addWidget(_resetPwdBtn);
+
+    rootLayout->addWidget(_titleWidget);
+    rootLayout->addWidget(content);
+
+    setStyleSheet(
+        "#titleWidget { background-color: #f6f7fa; }"
+        "#titleLabel { font-size: 14px; font-weight: 600; color: #333; }"
+        "#minimizeBtn, #closeBtn { border: none; color: #666; background: transparent; }"
+        "#minimizeBtn:hover, #closeBtn:hover { color: #111; }"
+        "#contentFrame { background: white; border: 1px solid #ececec; border-top: none; }");
 }
 
 void ForgetPwdDialog::initConnections()
 {
+    connect(_minimizeBtn, &QPushButton::clicked, this, &ForgetPwdDialog::showMinimized);
+    connect(_closeBtn, &QPushButton::clicked, this, &ForgetPwdDialog::close);
     connect(_sendVerifyBtn, &QPushButton::clicked, this, &ForgetPwdDialog::onSendVerifyCode);
     connect(_resetPwdBtn, &QPushButton::clicked, this, &ForgetPwdDialog::onResetPassword);
 
@@ -136,6 +174,36 @@ void ForgetPwdDialog::initConnections()
         checkConfirmPasswordValid();
     });
     connect(_confirmPwdLineE, &QLineEdit::textChanged, this, [this] { checkConfirmPasswordValid(); });
+}
+
+bool ForgetPwdDialog::eventFilter(QObject* obj, QEvent* event)
+{
+    static QPoint dragPosition;
+    if (obj == _titleWidget) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto* e = static_cast<QMouseEvent*>(event);
+            if (e->buttons() == Qt::LeftButton) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                dragPosition = e->globalPos() - frameGeometry().topLeft();
+#else
+                dragPosition = e->globalPosition().toPoint() - frameGeometry().topLeft();
+#endif
+                return true;
+            }
+        }
+        if (event->type() == QEvent::MouseMove) {
+            auto* e = static_cast<QMouseEvent*>(event);
+            if (e->buttons() == Qt::LeftButton) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                move(e->globalPos() - dragPosition);
+#else
+                move(e->globalPosition().toPoint() - dragPosition);
+#endif
+                return true;
+            }
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 void ForgetPwdDialog::initHttpReqHandler()
@@ -303,7 +371,7 @@ void ForgetPwdDialog::onSendVerifyCode()
 
     QJsonObject json;
     json["email"] = _emailLineE->text();
-    HttpManager::GetInstance()->PostRequest(QUrl(gate_url_prefix + "/get_verifycode"),
+    HttpManager::GetInstance()->PostRequest(QUrl(gate_url_prefix + "/get_reset_verifycode"),
                                             json, ReqID::ID_GET_VARIFY_CODE, Modules::REGISTERMOD);
 }
 

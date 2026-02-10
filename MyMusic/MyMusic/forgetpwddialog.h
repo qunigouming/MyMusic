@@ -11,6 +11,7 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class TimerButton;
+class QWidget;
 
 class ForgetPwdDialog : public QDialog
 {
@@ -19,6 +20,9 @@ class ForgetPwdDialog : public QDialog
 public:
     explicit ForgetPwdDialog(QWidget* parent = nullptr);
     ~ForgetPwdDialog();
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event) override;
 
 private slots:
     void onSendVerifyCode();
@@ -48,6 +52,9 @@ private:
 
     TimerButton* _sendVerifyBtn = nullptr;
     QPushButton* _resetPwdBtn = nullptr;
+    QWidget* _titleWidget = nullptr;
+    QPushButton* _minimizeBtn = nullptr;
+    QPushButton* _closeBtn = nullptr;
 
     QMap<ReqID, std::function<void(const QJsonObject&)>> _handlers;
 };

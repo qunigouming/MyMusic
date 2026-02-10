@@ -11,7 +11,7 @@ public:
 	Email();
 	~Email();
 
-	void sendVerifyCode(std::string recipient, std::string verify_code);
+	void sendVerifyCode(std::string recipient, std::string verify_code, bool is_reset = false);
 private:
 	std::unique_ptr<Poco::Net::SecureSMTPClientSession> m_session;
 };

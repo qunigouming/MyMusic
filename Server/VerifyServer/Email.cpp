@@ -41,14 +41,22 @@ Email::~Email()
 	Poco::Net::uninitializeSSL();
 }
 
-void Email::sendVerifyCode(std::string recipient, std::string verify_code)
+void Email::sendVerifyCode(std::string recipient, std::string verify_code, bool is_reset)
 {
 	auto& config = ConfigManager::GetInstance();
 	Poco::Net::MailMessage message;
 	message.setSender(config["Email"]["User"]);
 	message.addRecipient(Poco::Net::MailRecipient(Poco::Net::MailRecipient::PRIMARY_RECIPIENT, recipient));
-	message.setSubject("MyMusic");
-	message.setContent("Your verify code is " + verify_code);
+	if (is_reset) {
+		message.setSubject("MyMusic 重置密码验证码");
+		message.setContent("您正在进行 MyMusic 密码重置，验证码为：" + verify_code + "。10分钟
+有效，如非本人操作请忽略。");
+	}
+	else {
+		message.setSubject("MyMusic 注册验证码");
+		message.setContent("您正在进行 MyMusic 注册，验证码为：" + verify_code + "。10分钟
+有效。");
+	}
     m_session->sendMessage(message);
     LOG(INFO) << "Genarate Verify code: " << verify_code << " send to:" << recipient;
 }

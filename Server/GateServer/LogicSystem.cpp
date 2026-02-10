@@ -58,10 +58,35 @@ LogicSystem::LogicSystem()
 		}
 
 		auto email = src_root["email"].asString();
-		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email);
+		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email, false);
 		LOG(INFO) << "email is :" << email;
 		root["error"] = reply.error();
 		root["email"] = src_root["email"];
+		std::string jsonstr = root.toStyledString();
+		beast::ostream(connection->_response.body()) << jsonstr;
+		return true;
+	});
+
+	RegisterPost("/get_reset_verifycode", [](std::shared_ptr<HttpConnection> connection) {
+		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
+		LOG(INFO) << "receive body is " << body_str;
+		connection->_response.set(http::field::content_type, "text/json");
+		Json::Value root;
+		Json::Reader reader;
+		Json::Value src_root;
+		bool parse_success = reader.parse(body_str, src_root);
+		if (!parse_success || !src_root.isMember("email")) {
+			LOG(ERROR) << "Failed to parse JSON data!";
+			root["error"] = ErrorCodes::Error_Json;
+			std::string jsonstr = root.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+			return false;
+		}
+
+		auto email = src_root["email"].asString();
+		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email, true);
+		root["error"] = reply.error();
+		root["email"] = email;
 		std::string jsonstr = root.toStyledString();
 		beast::ostream(connection->_response.body()) << jsonstr;
 		return true;
@@ -191,6 +216,46 @@ LogicSystem::LogicSystem()
 		retJson["token"] = reply.token();
 		retJson["host"] = reply.host();
 		retJson["port"] = reply.port();
+		return true;
+	});
+
+	RegisterPost("/reset_password", [](std::shared_ptr<HttpConnection> connection) {
+		auto body_str = beast::buffers_to_string(connection->_request.body().data());
+		LOG(INFO) << "receive body is " << body_str;
+		connection->_response.set(http::field::content_type, "text/json");
+		Json::Value value;
+		Json::Reader reader;
+		Json::Value retJson;
+		Defer defer([&connection, &retJson] {
+			std::string jsonstr = retJson.toStyledString();
+			beast::ostream(connection->_response.body()) << jsonstr;
+		});
+
+		bool parse_success = reader.parse(body_str, value);
+		if (!parse_success) {
+			retJson["error"] = ErrorCodes::Error_Json;
+			return false;
+		}
+
+		auto email = value["email"].asString();
+		auto passwd_hash = value["passwd_hash"].asString();
+		auto passwd_salt = value["passwd_salt"].asString();
+
+		if (passwd_hash.empty() || passwd_salt.empty()) {
+			retJson["error"] = ErrorCodes::PasswdInvalid;
+			return false;
+		}
+
+		std::string verify_code;
+		bool b_get_success = RedisManager::GetInstance()->Get(RESET_CODEPREFIX + email, verify_code);
+		if (!b_get_success || verify_code != value["verifycode"].asString()) {
+			retJson["error"] = ErrorCodes::VerifyCodeErr;
+			return false;
+		}
+
+		int ecode = MysqlManager::GetInstance()->ResetPasswordByEmail(email, passwd_hash, passwd_salt);
+		retJson["error"] = ecode;
+		retJson["email"] = email;
 		return true;
 	});
 }

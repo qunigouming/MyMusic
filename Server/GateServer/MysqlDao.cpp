@@ -107,3 +107,42 @@ bool MysqlDao::GetPasswdSalt(const std::string& name, std::string& salt)
 		return false;
 	}
 }
+
+bool MysqlDao::CheckEmailExist(const std::string& email)
+{
+	auto conn = _pool->getConnection();
+	if (!conn) return false;
+	Defer defer([this, &conn] { _pool->returnConnection(std::move(conn)); });
+	try {
+		std::unique_ptr<sql::PreparedStatement> stmp(conn->_con->prepareStatement("select id from user where email = ?"));
+		stmp->setString(1, email);
+		std::unique_ptr<sql::ResultSet> res(stmp->executeQuery());
+		return res->next();
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << "(MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return false;
+	}
+}
+
+bool MysqlDao::UpdatePasswordByEmail(const std::string& email, const std::string& passwd_hash, const std::string& passwd_salt)
+{
+	auto conn = _pool->getConnection();
+	if (!conn) return false;
+	Defer defer([this, &conn] { _pool->returnConnection(std::move(conn)); });
+	try {
+		std::unique_ptr<sql::PreparedStatement> stmp(conn->_con->prepareStatement("update user set password_hash = ?, password_salt = ? where email = ?"));
+		stmp->setString(1, passwd_hash);
+		stmp->setString(2, passwd_salt);
+		stmp->setString(3, email);
+		return stmp->executeUpdate() > 0;
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQLException: " << e.what();
+		std::cerr << "(MySQL error code: " << e.getErrorCode();
+		std::cerr << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		return false;
+	}
+}
