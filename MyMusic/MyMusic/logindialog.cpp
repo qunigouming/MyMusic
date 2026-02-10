@@ -19,6 +19,8 @@ LoginDialog::LoginDialog(QWidget *parent)
     ui->closeBtn->setText(QChar(0xe67d));
     ui->TitleWidget->installEventFilter(this);
     ui->loginBtn->installEventFilter(this);
+    ui->forgetLb->installEventFilter(this);
+    ui->forgetLb->setCursor(Qt::PointingHandCursor);
     ui->loginBtn->setVisible(true);
     connect(HttpManager::GetInstance().get(), &HttpManager::sig_login_mod_finish, this, &LoginDialog::slot_login_mod_finish);
     connect(this, &LoginDialog::sig_con_tcpserver, TcpManager::GetInstance().get(), &TcpManager::slot_tcp_connect);
@@ -108,6 +110,16 @@ bool LoginDialog::eventFilter(QObject *obj, QEvent *event)
         return false;
     }
 
+    if (obj == ui->forgetLb) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            auto* forgetPwdDlg = new ForgetPwdDialog(this);
+            forgetPwdDlg->setAttribute(Qt::WA_DeleteOnClose);
+            forgetPwdDlg->show();
+            return true;
+        }
+        return false;
+    }
+
     return QWidget::eventFilter(obj,event);
 }
 
@@ -154,7 +166,7 @@ void LoginDialog::on_loginBtn_clicked()
     if (LocalDataManager::GetInstance()->isAutoFillIn()) {
         LocalDataManager::GetInstance()->setUserPwd(ui->userLineE->text(), ui->pwdLineE->text());
     }
-    
+
     QJsonObject json;
     json["name"] = ui->userLineE->text();
     HttpManager::GetInstance()->PostRequest(gate_url_prefix + "/get_password_salt", json, ReqID::ID_GET_PWD_SALT, Modules::LOGINMOD);

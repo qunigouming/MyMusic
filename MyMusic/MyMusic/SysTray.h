@@ -15,6 +15,7 @@ public:
 private:
 	void initSysTray();
 	void initMenu();
+    void cleanupTray();
 
 private:
     QWidget* _parent;

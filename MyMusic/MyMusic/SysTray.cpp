@@ -11,12 +11,21 @@ SysTray::SysTray(QWidget*parent) : QSystemTrayIcon(parent), _parent(parent)
 
 SysTray::~SysTray()
 {
-	hide();
-	if (_menu) {
-		_menu->deleteLater();
+    cleanupTray();
+}
+
+void SysTray::cleanupTray()
+{
+    hide();
+    setVisible(false);
+    setContextMenu(nullptr);
+
+    if (_menu) {
+        _menu->deleteLater();
         _menu = nullptr;
-	}
-	setContextMenu(nullptr);
+    }
+
+    qApp->processEvents();
 }
 
 void SysTray::initSysTray()
@@ -36,11 +45,7 @@ void SysTray::initMenu()
 {
 	_menu = new QMenu(_parent);
     _menu->addAction("退出", [this]() {
-		hide();
-		if (_menu) {
-			_menu->deleteLater();
-            _menu = nullptr;
-		}
+        cleanupTray();
         QApplication::quit();
     });
 

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "registerdialog.h"
+#include "forgetpwddialog.h"
 
 /******************************************************************************
  *
