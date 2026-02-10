@@ -59,6 +59,9 @@ void AIChatClient::sendMessageStream(const QString& message, const QJsonArray& h
 	if (!history.isEmpty()) {
 		_conversationHistory = history;
 	}
+	_currentStreamResponse.clear();
+	_streamBuffer.clear();
+	_hasReceivedRole = false;
 
 	// 添加用户消息到历史
 	QJsonObject userMessage;
@@ -321,28 +324,17 @@ void AIChatClient::processStreamData(const QByteArray& data)
 QStringList AIChatClient::parseSSE(const QByteArray& data)
 {
 	QStringList events;
-	QString buffer = QString::fromUtf8(data);
+	_streamBuffer += QString::fromUtf8(data);
+	_streamBuffer.replace("\r\n", "\n");
 
-	QStringList lines = buffer.split("\n");
-	QString currentEvent;
-
-	for (const QString& line : lines) {
-		if (line.isEmpty()) {
-			if (!currentEvent.isEmpty()) {
-				events.append(currentEvent);
-				currentEvent.clear();
-			}
+	int separatorIndex = _streamBuffer.indexOf("\n\n");
+	while (separatorIndex != -1) {
+		QString event = _streamBuffer.left(separatorIndex);
+		if (!event.isEmpty()) {
+			events.append(event);
 		}
-		else {
-			if (!currentEvent.isEmpty()) {
-				currentEvent += "\n";
-			}
-			currentEvent += line;
-		}
-	}
-
-	if (!currentEvent.isEmpty()) {
-		events.append(currentEvent);
+		_streamBuffer.remove(0, separatorIndex + 2);
+		separatorIndex = _streamBuffer.indexOf("\n\n");
 	}
 
 	return events;

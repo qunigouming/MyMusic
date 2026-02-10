@@ -67,7 +67,7 @@ enum ErrorCode {
     PasswdInvalid = 1010,		//密码无效
     UserNameInvalid = 1011,		//用户名无效
     ERR_UPLOAD_FAILED = 1012,  //文件上传失败
-    EtherInvalid = 0x777        //Ether错误
+    EtherInvalid = 0x7777        //Ether错误
 };
 
 struct ServerInfo {

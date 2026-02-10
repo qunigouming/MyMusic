@@ -3,6 +3,7 @@
 #include "ConfigManager.h"
 #include <Poco/Net/AcceptCertificateHandler.h>
 #include <Poco/Net/SSLManager.h>
+#include "LogManager.h"
 Email::Email()
 {
 	auto& config = ConfigManager::GetInstance();
@@ -18,18 +19,18 @@ Email::Email()
 	try {
 		m_session->login();
 		if (m_session->startTLS(ptrContext)) {
-			std::cout << "TLS connection established." << std::endl;
+			LOG(INFO) << "TLS connection established.";
 		}
 	}
 	catch (Poco::Net::SMTPException& e) {
-		std::cout << e.message() << std::endl;
+		LOG(INFO) << e.message();
 	}
 	try {
-		std::cout << "Connecting to smtp.qq.com..." << config["Email"]["User"] << " " << config["Email"]["Passwd"] << std::endl;
+		LOG(INFO) << "Connecting to smtp.qq.com..." << config["Email"]["User"] << " " << config["Email"]["Passwd"];
 		m_session->login(Poco::Net::SecureSMTPClientSession::AUTH_LOGIN, config["Email"]["User"], config["Email"]["Passwd"]);
 	}
 	catch (Poco::Net::SMTPException& e) {
-		std::cout << e.message() << std::endl;
+		LOG(INFO) << e.message();
 	}
 }
 
@@ -49,5 +50,5 @@ void Email::sendVerifyCode(std::string recipient, std::string verify_code)
 	message.setSubject("MyMusic");
 	message.setContent("Your verify code is " + verify_code);
     m_session->sendMessage(message);
-    std::cout << "Genarate Verify code: " << verify_code << " send to:" << recipient << std::endl;
+    LOG(INFO) << "Genarate Verify code: " << verify_code << " send to:" << recipient;
 }

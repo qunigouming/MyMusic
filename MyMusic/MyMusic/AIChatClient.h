@@ -45,6 +45,7 @@ private:
 	QJsonArray _conversationHistory;
 
 	QString _currentStreamResponse;
+	QString _streamBuffer;
 	bool _hasReceivedRole;
 };
 

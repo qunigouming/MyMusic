@@ -3,6 +3,7 @@
 #include "RedisManager.h"
 #include "MysqlManager.h"
 #include "StatusGrpcClient.h"
+#include "LogManager.h"
 
 void LogicSystem::RegisterPost(std::string url, HttpTask task)
 {
@@ -32,7 +33,7 @@ LogicSystem::LogicSystem()
 {
 	RegisterPost("/get_verifycode", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = boost::beast::buffers_to_string(connection->_request.body().data());
-		std::cout << "receive body is " << body_str << std::endl;
+		LOG(INFO) << "receive body is " << body_str;
 		connection->_response.set(http::field::content_type, "text/json");
 		Json::Value root;
 		Json::Reader reader;
@@ -40,7 +41,7 @@ LogicSystem::LogicSystem()
 		bool parse_success = reader.parse(body_str, src_root);
 		//解析错误
 		if (!parse_success) {
-			std::cout << "Failed to parse JSON data!" << std::endl;
+			LOG(ERROR) << "Failed to parse JSON data!";
 			root["error"] = ErrorCodes::Error_Json;
 			std::string jsonstr = root.toStyledString();
 			beast::ostream(connection->_response.body()) << jsonstr;
@@ -49,7 +50,7 @@ LogicSystem::LogicSystem()
 
 		//Json格式错误
 		if (!src_root.isMember("email")) {
-			std::cout << "Failed to parse JSON data!" << std::endl;
+			LOG(ERROR) << "Failed to parse JSON data!";
 			root["error"] = ErrorCodes::Error_Json;
 			std::string jsonstr = root.toStyledString();
 			beast::ostream(connection->_response.body()) << jsonstr;
@@ -58,7 +59,7 @@ LogicSystem::LogicSystem()
 
 		auto email = src_root["email"].asString();
 		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email);
-		std::cout << "email is :" << email << std::endl;
+		LOG(INFO) << "email is :" << email;
 		root["error"] = reply.error();
 		root["email"] = src_root["email"];
 		std::string jsonstr = root.toStyledString();
@@ -68,7 +69,7 @@ LogicSystem::LogicSystem()
 
 	RegisterPost("/user_register", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = beast::buffers_to_string(connection->_request.body().data());
-		std::cout << "receive body is " << body_str << std::endl;
+		LOG(INFO) << "receive body is " << body_str;
 		connection->_response.set(http::field::content_type, "text/json");
 		Json::Value value;
 		Json::Reader reader;
@@ -80,7 +81,7 @@ LogicSystem::LogicSystem()
 		//解析Json
 		bool parse_success = reader.parse(body_str, value);
 		if (!parse_success) {
-			std::cout << "Failed to parse Json data!" << std::endl;
+			LOG(ERROR) << "Failed to parse Json data!";
 			retJson["error"] = ErrorCodes::Error_Json;
 			return false;
 		}
@@ -93,20 +94,20 @@ LogicSystem::LogicSystem()
 		std::string verify_code;
 		bool b_get_success = RedisManager::GetInstance()->Get(CODEPREFIX + email, verify_code);
 		if (!b_get_success) {
-			std::cout << "verify code are expired" << std::endl;
+			LOG(INFO) << "verify code are expired";
 			retJson["error"] = ErrorCodes::VerifyCodeErr;
 			return false;
 		}
 
 		if (verify_code != value["verifycode"].asString()) {
-			std::cout << "verify code error" << verify_code << std::endl;
+			LOG(ERROR) << "verify code error" << verify_code;
 			retJson["error"] = ErrorCodes::VerifyCodeErr;
 			return false;
 		}
 
 		//注册用户
 		int ecode = MysqlManager::GetInstance()->RegUser(name, passwd_hash, passwd_salt, email);
-		std::cout << "register code is: " << ecode << std::endl;
+		LOG(INFO) << "register code is: " << ecode;
 		retJson["error"] = ecode;
 		retJson["email"] = email;
 		retJson["user"] = name;
@@ -117,7 +118,7 @@ LogicSystem::LogicSystem()
 	// out passwd_salt error
 	RegisterPost("/get_password_salt", [](std::shared_ptr<HttpConnection> connection) {
         auto body_str = beast::buffers_to_string(connection->_request.body().data());
-        std::cout << "receive body is " << body_str << std::endl;
+        LOG(INFO) << "receive body is " << body_str;
         connection->_response.set(http::field::content_type, "text/json");
         Json::Value retJson;
         Defer defer([&connection, &retJson] {
@@ -128,7 +129,7 @@ LogicSystem::LogicSystem()
         Json::Reader reader;
 		bool parse_success = reader.parse(body_str, value);
         if (!parse_success) {
-            std::cout << "Failed to parse Json data!" << std::endl;
+            LOG(ERROR) << "Failed to parse Json data!";
             retJson["error"] = ErrorCodes::Error_Json;
             return false;
         }
@@ -136,7 +137,7 @@ LogicSystem::LogicSystem()
 		std::string passwd_salt;
         bool get_success = MysqlManager::GetInstance()->GetPasswdSalt(name, passwd_salt);
         if (!get_success) {
-            std::cout << "Failed to get passwd salt" << std::endl;
+            LOG(ERROR) << "Failed to get passwd salt";
 			if (passwd_salt.empty()) retJson["error"] = ErrorCodes::UserNameInvalid;
 			else retJson["error"] = ErrorCodes::OtherError;
             return false;
@@ -150,7 +151,7 @@ LogicSystem::LogicSystem()
 	// out error
 	RegisterPost("/get_server", [](std::shared_ptr<HttpConnection> connection) {
 		auto body_str = beast::buffers_to_string(connection->_request.body().data());
-		std::cout << "receive body is " << body_str << std::endl;
+		LOG(INFO) << "receive body is " << body_str;
 		connection->_response.set(http::field::content_type, "text/json");
 		Json::Value value;
 		Json::Reader reader;
@@ -161,7 +162,7 @@ LogicSystem::LogicSystem()
 		});
 		bool parse_success = reader.parse(body_str, value);
 		if (!parse_success) {
-			std::cout << "Failed to parse Json data!" << std::endl;
+			LOG(ERROR) << "Failed to parse Json data!";
 			retJson["error"] = ErrorCodes::Error_Json;
 			return false;
 		}
@@ -179,12 +180,12 @@ LogicSystem::LogicSystem()
 		//获取聊天服务器的端口地址
 		auto reply = StatusGrpcClient::GetInstance()->GetChatServer(id);
 		if (reply.error()) {
-			std::cout << "grpc get chat server failed, error is " << reply.error() << std::endl;
+			LOG(ERROR) << "grpc get chat server failed, error is " << reply.error();
 			retJson["error"] = ErrorCodes::RPCFailed;
 			return true;
 		}
 
-		std::cout << "user login successs, id is: " << id << std::endl;
+		LOG(INFO) << "user login successs, id is: " << id;
 		retJson["error"] = 0;
 		retJson["id"] = id;
 		retJson["token"] = reply.token();

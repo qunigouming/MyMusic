@@ -7,6 +7,7 @@
 #include <jdbc/cppconn/resultset.h>
 #include <jdbc/cppconn/statement.h>
 #include <jdbc/cppconn/exception.h>
+#include "LogManager.h"
 
 class MySqlConnection {
 public:
@@ -38,7 +39,7 @@ public:
 			_check_thread.detach();
 		}
 		catch(sql::SQLException& e) {
-			std::cout << e.what() << std::endl;
+			LOG(ERROR) << e.what();
 		}
 	}
 
@@ -64,7 +65,7 @@ public:
 				std::unique_ptr<sql::Statement> stmt(con->_con->createStatement());
 				stmt->executeQuery("select 1");
 				con->_last_opt_time = timestamp;
-				std::cout << "execute timer alive query, current is " << timestamp << std::endl;
+				LOG(INFO) << "execute timer alive query, current is " << timestamp;
 			}
 			catch (sql::SQLException& e) {
 				sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
@@ -72,7 +73,7 @@ public:
 				newcon->setSchema(_schema);
 				con->_con.reset(newcon);
 				con->_last_opt_time = timestamp;
-				std::cout << "keeping connection alive failed: " << e.what() << std::endl;
+				LOG(ERROR) << "keeping connection alive failed: " << e.what();
 			}
 		}
 	}

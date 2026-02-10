@@ -16,13 +16,13 @@ void RunServer() {
 	builder.RegisterService(&service);
 
 	std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-	std::cout << "VerifyServer listening on " << server_address << std::endl;
+	LOG(INFO) << "VerifyServer listening on " << server_address;
 
 	boost::asio::io_context io_service;
 	boost::asio::signal_set signals(io_service, SIGINT, SIGTERM);
 	signals.async_wait([&server, &io_service](const boost::system::error_code& error, int signal_number) {
 		if (!error) {
-			std::cout << "Signal " << signal_number << " received. Shutting down..." << std::endl;
+			LOG(INFO) << "Signal " << signal_number << " received. Shutting down...";
 			server->Shutdown();
 			io_service.stop();
 		}
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 		RunServer();
 		RedisManager::GetInstance()->Close();
 	} catch (std::exception& e) {
-		std::cout << "Exception: " << e.what() << std::endl;
+		LOG(ERROR) << "Exception: " << e.what();
 		RedisManager::GetInstance()->Close();
 		return EXIT_FAILURE;
 	}

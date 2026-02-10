@@ -1,6 +1,7 @@
 #include "MysqlDao.h"
 #include "ConfigManager.h"
 #include "Encrypt/Encrypt.h"
+#include "LogManager.h"
 
 MysqlDao::MysqlDao()
 {
@@ -27,7 +28,7 @@ int MysqlDao::RegUser(const std::string& name, const std::string& passwd_hash, c
 	try {
 		if (!con)	return false;
 		std::unique_ptr<sql::PreparedStatement> stmt(con->_con->prepareStatement("call reg_user(?, ?, ?, ?, @result)"));
-		std::cout << "user name is: " << name << std::endl;
+		LOG(INFO) << "user name is: " << name;
 		stmt->setString(1, name);
 		stmt->setString(2, email);
 		stmt->setString(3, passwd_salt);
@@ -37,7 +38,7 @@ int MysqlDao::RegUser(const std::string& name, const std::string& passwd_hash, c
 		std::unique_ptr<sql::ResultSet> res(state->executeQuery("select @result as result"));
 		if (res->next()) {
 			int result = res->getInt("result");
-			std::cout << "Result: " << result << std::endl;
+			LOG(INFO) << "Result: " << result;
 			_pool->returnConnection(std::move(con));
 			return result;
 		}
@@ -68,7 +69,7 @@ bool MysqlDao::LoginValid(const std::string& name, const std::string& passwd_has
 		std::string password_hash = "";
 		if (res->next()) {
             password_hash = res->getString("password_hash");
-			//std::cout << "Password is: " << password_hash << std::endl;
+			//LOG(INFO) << "Password is: " << password_hash;
 		}
 		if (password_hash.empty())	return false;
 		// 解密

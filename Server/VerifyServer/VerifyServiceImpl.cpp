@@ -6,6 +6,7 @@
 #include <boost/algorithm/string.hpp>
 #include "global.h"
 #include "RedisManager.h"
+#include "LogManager.h"
 
 std::string generateVerifyCode()
 {
@@ -28,17 +29,17 @@ Status VerifyServiceImpl::GetVerifyCode(ServerContext* context, const GetVerifyR
 	if (!get_success) {
 		// 未获取到验证码，说明验证码过期或未被创建，直接生成一个
 		verify_code = generateVerifyCode();
-		std::cout << "generate verify code: " << verify_code << std::endl;
+		LOG(INFO) << "generate verify code: " << verify_code;
 		// 存储验证码
 		bool res = RedisManager::GetInstance()->Set(CODEPREFIX + email, verify_code);
         if (!res) {
-			std::cout << "RedisManager::Set failed" << std::endl;
+			LOG(ERROR) << "RedisManager::Set failed";
             response->set_error(ErrorCodes::OtherError);
             return Status::OK;
         }
 		res = RedisManager::GetInstance()->Expire(CODEPREFIX + email, 60 * 10);
 		if (!res) {
-            std::cout << "RedisManager::Expire failed" << std::endl;
+            LOG(ERROR) << "RedisManager::Expire failed";
             response->set_error(ErrorCodes::OtherError);
             return Status::OK;
 		}
@@ -46,7 +47,7 @@ Status VerifyServiceImpl::GetVerifyCode(ServerContext* context, const GetVerifyR
 
 	Email email_sender;
 	email_sender.sendVerifyCode(email, verify_code);
-	std::cout << "send verify code to " << email << std::endl;
+	LOG(INFO) << "send verify code to " << email;
 	// 设置回复内容
 	response->set_email(email);
 	response->set_code(verify_code);
