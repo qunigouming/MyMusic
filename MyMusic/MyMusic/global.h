@@ -45,6 +45,7 @@ enum ReqID {
     ID_GET_COLLECT_SONG_LIST_REQ = 1019,    // 获取收藏歌单歌曲列表请求 Tcp
     ID_GET_COLLECT_SONG_LIST_RSP = 1020,    // 获取收藏歌单歌曲列表回复 Tcp
     ID_UPLOAD_FILE = 1021,                  // 上传文件           Http
+    ID_RESET_PWD = 1022,                    // 重置密码           Http
 };
 
 enum Modules {
@@ -67,7 +68,7 @@ enum ErrorCode {
     PasswdInvalid = 1010,		//密码无效
     UserNameInvalid = 1011,		//用户名无效
     ERR_UPLOAD_FAILED = 1012,  //文件上传失败
-    EtherInvalid = 0x777        //Ether错误
+    EtherInvalid = 0x7777        //Ether错误
 };
 
 struct ServerInfo {

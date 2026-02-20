@@ -11,6 +11,7 @@ public:
 	int RegUser(const std::string& name, const std::string& passwd_hash, const std::string& passwd_salt, const std::string& email);
 	bool LoginValid(const std::string& name, const std::string& passwd_hash, int& id);
 	bool GetPasswdSalt(const std::string& name, std::string& salt);
+	int ResetPasswordByEmail(const std::string& email, const std::string& passwd_hash, const std::string& passwd_salt);
 private:
 	MysqlManager() = default;
 	MysqlDao _dao;

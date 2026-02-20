@@ -110,6 +110,9 @@
     <ClCompile Include="global.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="forgetpwddialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="httpmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -314,6 +317,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="registerdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="forgetpwddialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="selectlocmusic_dlg.h">

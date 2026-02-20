@@ -2,6 +2,7 @@
 #include "global.h"
 #include "hiredis.h"
 #include "Singleton.h"
+#include "LogManager.h"
 
 class RedisConPool {
 public:
@@ -14,14 +15,14 @@ public:
 			}
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
-				std::cout << "Redis认证失败" << std::endl;
+				LOG(ERROR) << "Redis认证失败";
 				freeReplyObject(reply);
 				continue;
 			}
 
 			//创建连接成功，释放其他资源
 			freeReplyObject(reply);
-			std::cout << "Redis 认证成功" << std::endl;
+			LOG(INFO) << "Redis 认证成功";
 			_connections.push(context);
 		}
 
@@ -103,7 +104,7 @@ private:
 			try {
 				reply = (redisReply*)redisCommand(context, "PING");
 				if (context->err) {
-					std::cout << "Connection error:" << context->err << std::endl;
+					LOG(ERROR) << "Connection error:" << context->err;
 					if (reply) freeReplyObject(reply);
 
 					redisFree(context);
@@ -112,7 +113,7 @@ private:
 				}
 
 				if (!reply || reply->type == REDIS_REPLY_ERROR) {
-					std::cout << "reply is null,  redis ping failed: " << std::endl;
+					LOG(ERROR) << "reply is null,  redis ping failed";
 					if (reply)	freeReplyObject(reply);
 					redisFree(context);
 					_fail_count++;
@@ -147,14 +148,14 @@ private:
 
 		auto reply = (redisReply*)redisCommand(context, "AUTH %s", _pwd);
 		if (reply->type == REDIS_REPLY_ERROR) {
-            std::cout << "Redis认证失败" << std::endl;
+            LOG(ERROR) << "Redis认证失败";
             freeReplyObject(reply);
             redisFree(context);
 			return false;
 		}
 
         freeReplyObject(reply);
-        std::cout << "Redis 认证成功" << std::endl;
+        LOG(INFO) << "Redis 认证成功";
         returnConnection(context);
 		return true;
 	}

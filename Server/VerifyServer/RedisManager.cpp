@@ -1,5 +1,6 @@
 #include "RedisManager.h"
 #include "ConfigManager.h"
+#include "LogManager.h"
 
 RedisManager::~RedisManager()
 {
@@ -15,12 +16,12 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 	if (!connect) return false;
 	auto reply = (redisReply*)redisCommand(connect.get(), "GET %s", key.c_str());
 	if (!reply) {
-		std::cout << "[ Get " << key << " ] failed" << std::endl;
+		LOG(ERROR) << "[ Get " << key << " ] failed";
 		freeReplyObject(reply);
 		return false;
 	}
 	if (reply->type != REDIS_REPLY_STRING) {
-		std::cout << "[ Get " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Get " << key << "] failed";
 		freeReplyObject(reply);
 		return false;
 	}
@@ -38,12 +39,12 @@ bool RedisManager::Set(const std::string& key, const std::string& value)
 	if (!connect) return false;
 	auto reply = (redisReply*)redisCommand(connect.get(), "SET %s %s", key.c_str(), value.c_str());
 	if (!reply) {
-		std::cout << "[ Set " << key << " ] failed" << std::endl;
+		LOG(ERROR) << "[ Set " << key << " ] failed";
 		freeReplyObject(reply);
 		return false;
 	}
 	if (!(reply->type == REDIS_REPLY_STATUS && (strcmp(reply->str, "OK") == 0 || strcmp(reply->str, "ok") == 0))) {
-		std::cout << "[ Set " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Set " << key << "] failed";
 		freeReplyObject(reply);
 		return false;
 	}
@@ -60,7 +61,7 @@ bool RedisManager::Auth(const std::string& password)
 	if (!connect) return false;
 	auto reply = (redisReply*)redisCommand(connect.get(), "AUTH %s", password.c_str());
 	if (reply->type == REDIS_REPLY_ERROR) {
-		std::cout << "Redis verify failed!!!" << std::endl;
+		LOG(ERROR) << "Redis verify failed!!!";
 		freeReplyObject(reply);
 		return false;
 	}
@@ -78,12 +79,12 @@ bool RedisManager::Expire(const std::string& key, int seconds)
 	auto reply = (redisReply*)redisCommand(connect.get(), "EXPIRE %s %d", key.c_str(), seconds);
 	// 错误处理
     if (!reply) {
-		std::cout << "[ Expire " << key << " ] failed" << std::endl;
+		LOG(ERROR) << "[ Expire " << key << " ] failed";
 		freeReplyObject(reply);
 		return false;
 	}
     if (reply->type != REDIS_REPLY_INTEGER || reply->integer != 1) {
-		std::cout << "[ Expire " << key << "] failed" << std::endl;
+		LOG(ERROR) << "[ Expire " << key << "] failed";
 		freeReplyObject(reply);
 		return false;
 	}

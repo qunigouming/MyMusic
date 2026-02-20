@@ -2,6 +2,7 @@
 #include "global.h"
 #include "hiredis.h"
 #include "Singleton.h"
+#include "LogManager.h"
 
 class RedisConPool {
 public:
@@ -14,7 +15,7 @@ public:
 			}
 			auto reply = (redisReply*)redisCommand(context, "AUTH %s", pwd);
 			if (reply->type == REDIS_REPLY_ERROR) {
-				std::cout << "Redis认证失败" << std::endl;
+				LOG(ERROR) << "Redis认证失败";
 				freeReplyObject(reply);
 				continue;
 			}

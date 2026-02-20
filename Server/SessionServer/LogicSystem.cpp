@@ -137,6 +137,8 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 		rspJson["error"] = ErrorCodes::TokenInvalid;
 		return;
 	}
+	// token 只允许使用一次，防止重放
+	RedisManager::GetInstance()->Del(token_key);
 	rspJson["error"] = ErrorCodes::Success;
 
 	// 获取用户初始登录信息

@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
     LogManager::InitGlog(argv[0]);
 	auto& cfgMgr = ConfigManager::GetInstance();
 	std::string gate_port = cfgMgr["GateServer"]["Port"];
-	std::cout << gate_port << std::endl;
+	LOG(INFO) << gate_port;
 	unsigned short port = static_cast<unsigned short>(atoi(gate_port.c_str()));
 	try {
 		boost::asio::io_context ioc{ 1 };
@@ -16,11 +16,11 @@ int main(int argc, char* argv[]) {
 			ioc.stop();
 		});
 		std::make_shared<GateService>(ioc, port)->Start();
-		std::cout << "GateServer listen on port" << port << std::endl;
+		LOG(INFO) << "GateServer listen on port" << port;
 		ioc.run();
 	}
 	catch (std::exception& exp) {
-		std::cout << "Error: " << exp.what() << std::endl;
+		LOG(ERROR) << "Error: " << exp.what();
 		return EXIT_FAILURE;
 	}
 }

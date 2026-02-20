@@ -13,6 +13,7 @@
 #include <json/reader.h>
 
 #define CODEPREFIX "code_"
+#define RESET_CODEPREFIX "reset_code_"
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -27,11 +28,13 @@ enum ErrorCodes {
 	UserExist = 1005,			//用户已经存在
 	EmailExist = 1006,			//邮箱已经存在
 	PasswdErr = 1007,			//密码错误
-	EmailNotMatch = 1008,		//邮箱不匹配
+	EmailNotMatch = 1008,		//邮箱不匹
+
 	PasswdUpFailed = 1009,		//更新密码失败
 	PasswdInvalid = 1010,		//密码无效
 	UserNameInvalid = 1011,		//用户名无效
-	OtherError					//其他错误
+	OtherError					//
+他错误
 };
 
 class Defer {

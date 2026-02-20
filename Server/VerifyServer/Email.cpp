@@ -3,6 +3,7 @@
 #include "ConfigManager.h"
 #include <Poco/Net/AcceptCertificateHandler.h>
 #include <Poco/Net/SSLManager.h>
+#include "LogManager.h"
 Email::Email()
 {
 	auto& config = ConfigManager::GetInstance();
@@ -18,18 +19,18 @@ Email::Email()
 	try {
 		m_session->login();
 		if (m_session->startTLS(ptrContext)) {
-			std::cout << "TLS connection established." << std::endl;
+			LOG(INFO) << "TLS connection established.";
 		}
 	}
 	catch (Poco::Net::SMTPException& e) {
-		std::cout << e.message() << std::endl;
+		LOG(INFO) << e.message();
 	}
 	try {
-		std::cout << "Connecting to smtp.qq.com..." << config["Email"]["User"] << " " << config["Email"]["Passwd"] << std::endl;
+		LOG(INFO) << "Connecting to smtp.qq.com..." << config["Email"]["User"] << " " << config["Email"]["Passwd"];
 		m_session->login(Poco::Net::SecureSMTPClientSession::AUTH_LOGIN, config["Email"]["User"], config["Email"]["Passwd"]);
 	}
 	catch (Poco::Net::SMTPException& e) {
-		std::cout << e.message() << std::endl;
+		LOG(INFO) << e.message();
 	}
 }
 
@@ -40,14 +41,22 @@ Email::~Email()
 	Poco::Net::uninitializeSSL();
 }
 
-void Email::sendVerifyCode(std::string recipient, std::string verify_code)
+void Email::sendVerifyCode(std::string recipient, std::string verify_code, bool is_reset)
 {
 	auto& config = ConfigManager::GetInstance();
 	Poco::Net::MailMessage message;
 	message.setSender(config["Email"]["User"]);
 	message.addRecipient(Poco::Net::MailRecipient(Poco::Net::MailRecipient::PRIMARY_RECIPIENT, recipient));
-	message.setSubject("MyMusic");
-	message.setContent("Your verify code is " + verify_code);
+	if (is_reset) {
+		message.setSubject("MyMusic 重置密码验证码");
+		message.setContent("您正在进行 MyMusic 密码重置，验证码为：" + verify_code + "。10分钟
+有效，如非本人操作请忽略。");
+	}
+	else {
+		message.setSubject("MyMusic 注册验证码");
+		message.setContent("您正在进行 MyMusic 注册，验证码为：" + verify_code + "。10分钟
+有效。");
+	}
     m_session->sendMessage(message);
-    std::cout << "Genarate Verify code: " << verify_code << " send to:" << recipient << std::endl;
+    LOG(INFO) << "Genarate Verify code: " << verify_code << " send to:" << recipient;
 }

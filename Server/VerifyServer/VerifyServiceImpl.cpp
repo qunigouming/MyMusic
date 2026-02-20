@@ -6,6 +6,7 @@
 #include <boost/algorithm/string.hpp>
 #include "global.h"
 #include "RedisManager.h"
+#include "LogManager.h"
 
 std::string generateVerifyCode()
 {
@@ -22,32 +23,41 @@ std::string generateVerifyCode()
 Status VerifyServiceImpl::GetVerifyCode(ServerContext* context, const GetVerifyReq* request, GetVerifyRsp* response)
 {
     std::string email = request->email();
+    bool is_reset = false;
+    const std::string reset_prefix = "reset:";
+    if (email.rfind(reset_prefix, 0) == 0) {
+        is_reset = true;
+        email = email.substr(reset_prefix.length());
+    }
+
+    const std::string redis_key = (is_reset ? RESET_CODEPREFIX : CODEPREFIX) + email;
 
 	std::string verify_code;
-	bool get_success = RedisManager::GetInstance()->Get(CODEPREFIX + email, verify_code);
+	bool get_success = RedisManager::GetInstance()->Get(redis_key, verify_code);
 	if (!get_success) {
 		// 未获取到验证码，说明验证码过期或未被创建，直接生成一个
 		verify_code = generateVerifyCode();
-		std::cout << "generate verify code: " << verify_code << std::endl;
+		LOG(INFO) << "generate verify code: " << verify_code;
 		// 存储验证码
-		bool res = RedisManager::GetInstance()->Set(CODEPREFIX + email, verify_code);
+		bool res = RedisManager::GetInstance()->Set(redis_key, verify_code);
         if (!res) {
-			std::cout << "RedisManager::Set failed" << std::endl;
+			LOG(ERROR) << "RedisManager::Set failed";
             response->set_error(ErrorCodes::OtherError);
             return Status::OK;
         }
-		res = RedisManager::GetInstance()->Expire(CODEPREFIX + email, 60 * 10);
+		res = RedisManager::GetInstance()->Expire(redis_key, 60 * 10);
 		if (!res) {
-            std::cout << "RedisManager::Expire failed" << std::endl;
+            LOG(ERROR) << "RedisManager::Expire failed";
             response->set_error(ErrorCodes::OtherError);
             return Status::OK;
 		}
 	}
 
 	Email email_sender;
-	email_sender.sendVerifyCode(email, verify_code);
-	std::cout << "send verify code to " << email << std::endl;
-	// 设置回复内容
+	email_sender.sendVerifyCode(email, verify_code, is_reset);
+	LOG(INFO) << "send verify code to " << email;
+	// 设置回复
+容
 	response->set_email(email);
 	response->set_code(verify_code);
 	response->set_error(ErrorCodes::Success);

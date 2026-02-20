@@ -18,3 +18,16 @@ bool MysqlManager::GetPasswdSalt(const std::string& name, std::string& salt)
 {
 	return _dao.GetPasswdSalt(name, salt);
 }
+
+int MysqlManager::ResetPasswordByEmail(const std::string& email, const std::string& passwd_hash, const std::string& passwd_salt)
+{
+	if (!_dao.CheckEmailExist(email)) {
+		return ErrorCodes::EmailNotMatch;
+	}
+
+	if (_dao.UpdatePasswordByEmail(email, passwd_hash, passwd_salt)) {
+		return ErrorCodes::Success;
+	}
+
+	return ErrorCodes::PasswdUpFailed;
+}

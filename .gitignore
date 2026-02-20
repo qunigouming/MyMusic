@@ -20,3 +20,6 @@ vcpkg_installed/
 out/
 
 logs/
+
+.claude/
+CLAUDE.md

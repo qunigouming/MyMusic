@@ -123,6 +123,7 @@
     <ClCompile Include="FFPlayer\VideoDecoder.cpp" />
     <ClCompile Include="funclistwidgetitem.cpp" />
     <ClCompile Include="global.cpp" />
+    <ClCompile Include="forgetpwddialog.cpp" />
     <ClCompile Include="httpmanager.cpp" />
     <ClCompile Include="NetworkImageLabel.cpp" />
     <ClCompile Include="LocalDataManager.cpp" />
@@ -242,6 +243,7 @@
     <QtMoc Include="tcpmanager.h" />
     <QtMoc Include="selectlocmusic_dlg.h" />
     <QtMoc Include="registerdialog.h" />
+    <QtMoc Include="forgetpwddialog.h" />
     <QtMoc Include="mainwindow.h" />
     <QtMoc Include="logindialog.h" />
     <QtMoc Include="httpmanager.h" />

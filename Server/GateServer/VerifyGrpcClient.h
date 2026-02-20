@@ -63,17 +63,20 @@ class VerifyGrpcClient : public Singleton<VerifyGrpcClient>
 {
 	friend class Singleton<VerifyGrpcClient>;
 public:
-	GetVerifyRsp GetVerifyCode(std::string email) {
+	GetVerifyRsp GetVerifyCode(std::string email, bool is_reset = false) {
 		ClientContext context;
 		GetVerifyRsp reply;
 		GetVerifyReq request;
+		if (is_reset) {
+			email = "reset:" + email;
+		}
 		request.set_email(email);
 		auto stub = _pool->GetConnection();
 		Status status = stub->GetVerifyCode(&context, request, &reply);
 
-		_pool->returnConnection(std::move(stub));		//¹é»¹Á¬½Ó¸øÁ¬½Ó³Ø
+		_pool->returnConnection(std::move(stub));		//é»¹Ó¸Ó³
 		if (!status.ok()) {
-			reply.set_error(ErrorCodes::RPCFailed);		//ÉèÖÃÎªRPC´íÎó
+			reply.set_error(ErrorCodes::RPCFailed);		//ÎªRPC
 		}
 		return reply;
 	}

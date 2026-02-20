@@ -1,4 +1,5 @@
 #include "Encrypt.h"
+#include "../LogManager.h"
 
 using namespace CryptoPP;
 
@@ -13,7 +14,7 @@ Encrypt::Encrypt(const std::string& password)
 
 	// 将随机盐转换为Base64
 	StringSource ss_salt(randomSalt, randomSalt.size(), true, new Base64Encoder(new StringSink(_password_salt), false));
-	std::cout << "Generated Salt (Base64): " << _password_salt << std::endl;
+	LOG(INFO) << "Generated Salt (Base64): " << _password_salt;
 
 	// 生成密钥
     PKCS5_PBKDF2_HMAC<SHA256> pbkdf2;
@@ -31,7 +32,7 @@ Encrypt::Encrypt(const std::string& password)
 
 	// 将密钥转换为Base64
 	StringSource ss_key(derivedKey, derivedKey.size(), true, new Base64Encoder(new StringSink(_password_hash), false));
-	std::cout << "Derived Hash (Base64): " << _password_hash << std::endl;
+	LOG(INFO) << "Derived Hash (Base64): " << _password_hash;
 }
 
 std::string Encrypt::getPasswordHash()
