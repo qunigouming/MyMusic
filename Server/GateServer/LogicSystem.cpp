@@ -58,7 +58,7 @@ LogicSystem::LogicSystem()
 		}
 
 		auto email = src_root["email"].asString();
-		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email, false);
+		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email);
 		LOG(INFO) << "email is :" << email;
 		root["error"] = reply.error();
 		root["email"] = src_root["email"];
@@ -84,7 +84,7 @@ LogicSystem::LogicSystem()
 		}
 
 		auto email = src_root["email"].asString();
-		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email, true);
+		GetVerifyRsp reply = VerifyGrpcClient::GetInstance()->GetVerifyCode(email, VerifyPurpose::RESET_PASSWORD);
 		root["error"] = reply.error();
 		root["email"] = email;
 		std::string jsonstr = root.toStyledString();

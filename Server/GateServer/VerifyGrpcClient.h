@@ -4,6 +4,11 @@
 #include "global.h"
 #include "message.grpc.pb.h"
 
+enum class VerifyPurpose {
+	REGISTER = 0,
+	RESET_PASSWORD = 1
+};
+
 using grpc::Channel;
 using grpc::Status;
 using grpc::ClientContext;
@@ -63,20 +68,18 @@ class VerifyGrpcClient : public Singleton<VerifyGrpcClient>
 {
 	friend class Singleton<VerifyGrpcClient>;
 public:
-	GetVerifyRsp GetVerifyCode(std::string email, bool is_reset = false) {
+	GetVerifyRsp GetVerifyCode(std::string email, VerifyPurpose purpose = VerifyPurpose::REGISTER) {
 		ClientContext context;
 		GetVerifyRsp reply;
 		GetVerifyReq request;
-		if (is_reset) {
-			email = "reset:" + email;
-		}
 		request.set_email(email);
+		request.set_purpose(static_cast<::message::VerifyPurpose>(purpose));
 		auto stub = _pool->GetConnection();
 		Status status = stub->GetVerifyCode(&context, request, &reply);
 
-		_pool->returnConnection(std::move(stub));		//黹Ӹӳ
+		_pool->returnConnection(std::move(stub));
 		if (!status.ok()) {
-			reply.set_error(ErrorCodes::RPCFailed);		//ΪRPC
+			reply.set_error(ErrorCodes::RPCFailed);
 		}
 		return reply;
 	}

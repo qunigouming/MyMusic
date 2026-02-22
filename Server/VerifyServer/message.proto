@@ -6,8 +6,14 @@ service VerifyService {
   rpc GetVerifyCode (GetVerifyReq) returns (GetVerifyRsp) {}
 }
 
+enum VerifyPurpose {
+  REGISTER = 0;
+  RESET_PASSWORD = 1;
+}
+
 message GetVerifyReq {
   string email = 1;
+  VerifyPurpose purpose = 2;
 }
 
 message GetVerifyRsp {

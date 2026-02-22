@@ -35,8 +35,13 @@ ForgetPwdDialog::~ForgetPwdDialog()
 
 void ForgetPwdDialog::initUi()
 {
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    setFixedSize(420, 420);
+    setWindowFlags(windowFlags() | Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    setFixedSize(360, 420);
+    setObjectName("forgetPwdDialog");
+
+    setStyleSheet(R"(
+        #forgetPwdDialog {background-color: qlineargradient(spread:pad, x1:0.469, y1:0.188409, x2:0.598, y2:0.971682, stop:0 rgba(253, 234, 253, 255), stop:0.24581 rgba(200, 241, 254, 255), stop:0.692737 rgba(207, 255, 254, 255), stop:1 rgba(255, 255, 255, 255));}
+    )");
 
     auto* rootLayout = new QVBoxLayout(this);
     rootLayout->setContentsMargins(0, 0, 0, 0);
@@ -58,9 +63,30 @@ void ForgetPwdDialog::initUi()
     _minimizeBtn = new QPushButton(QChar(0xe650), _titleWidget);
     _minimizeBtn->setObjectName("minimizeBtn");
     _minimizeBtn->setFixedSize(24, 24);
+    _minimizeBtn->setStyleSheet(R"(
+        #minimizeBtn {
+            font-family: "windowfont";
+            border: none;
+            font-size: 16px;
+        }
+        #minimizeBtn:hover {
+            color: rgb(190, 190, 190);
+            
+        }
+    )");
     _closeBtn = new QPushButton(QChar(0xe67d), _titleWidget);
     _closeBtn->setObjectName("closeBtn");
     _closeBtn->setFixedSize(24, 24);
+    _closeBtn->setStyleSheet(R"(
+        #closeBtn {
+            font-family: "windowfont";
+            border: none;
+            font-size: 16px;
+        }
+        #closeBtn:hover {
+            color: rgb(190, 0, 0);
+        }
+    )");
     titleLayout->addWidget(_minimizeBtn);
     titleLayout->addWidget(_closeBtn);
 
@@ -68,7 +94,7 @@ void ForgetPwdDialog::initUi()
     content->setObjectName("contentFrame");
     auto* mainLayout = new QVBoxLayout(content);
     mainLayout->setContentsMargins(24, 18, 24, 20);
-    mainLayout->setSpacing(8);
+    mainLayout->setSpacing(4);
 
     _emailLineE = new QLineEdit(this);
     _emailLineE->setPlaceholderText("输入登录邮箱");
@@ -115,12 +141,13 @@ void ForgetPwdDialog::initUi()
 
     _sendVerifyBtn->setStyleSheet(
         "QPushButton { background-color: #0088ff; color: white; border: none; border-radius: 4px; padding: 8px 12px; }"
-        "QPushButton:disabled { background-color: #7abaf7; }");
+        "QPushButton:disabled { background-color: #7abaf7; }"
+        "QPushButton:hover { background-color: #0074db; }");
     _resetPwdBtn->setStyleSheet(
         "QPushButton { background-color: #0088ff; color: white; border: none; border-radius: 4px; padding: 9px 12px; }"
         "QPushButton:hover { background-color: #0074db; }");
 
-    const QString tipStyle = "QLabel { color: #f56c6c; font-size: 12px; }";
+    const QString tipStyle = "QLabel { color: #f56c6c; font-size: 12px; padding: 0px; margin: 0px; max-height:16px; }";
     _emailTip->setStyleSheet(tipStyle);
     _verifyTip->setStyleSheet(tipStyle);
     _pwdTip->setStyleSheet(tipStyle);

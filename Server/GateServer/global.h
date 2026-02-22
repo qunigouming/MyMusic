@@ -33,8 +33,7 @@ enum ErrorCodes {
 	PasswdUpFailed = 1009,		//更新密码失败
 	PasswdInvalid = 1010,		//密码无效
 	UserNameInvalid = 1011,		//用户名无效
-	OtherError					//
-他错误
+	OtherError					//其他错误
 };
 
 class Defer {

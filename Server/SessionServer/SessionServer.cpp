@@ -25,9 +25,9 @@ int main(int argc, char* argv[])
     try {
         auto pool = AsioIOServicePool::GetInstance();
         // 重置登录数
-        RedisManager::GetInstance()->HSet(LOGINCOUNT, server_name, "0");
+        RedisManager::GetInstance()->InitCount(server_name);
         Defer defer([server_name]() {
-            RedisManager::GetInstance()->HDel(LOGINCOUNT, server_name);
+            RedisManager::GetInstance()->DelCount(server_name);
             RedisManager::GetInstance()->Close();
         });
 

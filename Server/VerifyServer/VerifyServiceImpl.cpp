@@ -23,14 +23,9 @@ std::string generateVerifyCode()
 Status VerifyServiceImpl::GetVerifyCode(ServerContext* context, const GetVerifyReq* request, GetVerifyRsp* response)
 {
     std::string email = request->email();
-    bool is_reset = false;
-    const std::string reset_prefix = "reset:";
-    if (email.rfind(reset_prefix, 0) == 0) {
-        is_reset = true;
-        email = email.substr(reset_prefix.length());
-    }
+    VerifyPurpose purpose = static_cast<VerifyPurpose>(request->purpose());
 
-    const std::string redis_key = (is_reset ? RESET_CODEPREFIX : CODEPREFIX) + email;
+    const std::string redis_key = (purpose == VerifyPurpose::RESET_PASSWORD ? RESET_CODEPREFIX : CODEPREFIX) + email;
 
 	std::string verify_code;
 	bool get_success = RedisManager::GetInstance()->Get(redis_key, verify_code);
@@ -54,10 +49,9 @@ Status VerifyServiceImpl::GetVerifyCode(ServerContext* context, const GetVerifyR
 	}
 
 	Email email_sender;
-	email_sender.sendVerifyCode(email, verify_code, is_reset);
+	email_sender.sendVerifyCode(email, verify_code, purpose);
 	LOG(INFO) << "send verify code to " << email;
-	// 设置回复
-容
+	// 设置回复容
 	response->set_email(email);
 	response->set_code(verify_code);
 	response->set_error(ErrorCodes::Success);

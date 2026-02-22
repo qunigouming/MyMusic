@@ -113,7 +113,6 @@ bool LoginDialog::eventFilter(QObject *obj, QEvent *event)
     if (obj == ui->forgetLb) {
         if (event->type() == QEvent::MouseButtonRelease) {
             auto* forgetPwdDlg = new ForgetPwdDialog(this);
-            forgetPwdDlg->setAttribute(Qt::WA_DeleteOnClose);
             forgetPwdDlg->show();
             return true;
         }

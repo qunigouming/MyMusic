@@ -31,6 +31,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
@@ -76,6 +77,31 @@ template<> ::message::GetVerifyRsp* Arena::CreateMaybeMessage<::message::GetVeri
 PROTOBUF_NAMESPACE_CLOSE
 namespace message {
 
+enum VerifyPurpose : int {
+  REGISTER = 0,
+  RESET_PASSWORD = 1,
+  VerifyPurpose_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  VerifyPurpose_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool VerifyPurpose_IsValid(int value);
+constexpr VerifyPurpose VerifyPurpose_MIN = REGISTER;
+constexpr VerifyPurpose VerifyPurpose_MAX = RESET_PASSWORD;
+constexpr int VerifyPurpose_ARRAYSIZE = VerifyPurpose_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* VerifyPurpose_descriptor();
+template<typename T>
+inline const std::string& VerifyPurpose_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, VerifyPurpose>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function VerifyPurpose_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    VerifyPurpose_descriptor(), enum_t_value);
+}
+inline bool VerifyPurpose_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, VerifyPurpose* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<VerifyPurpose>(
+    VerifyPurpose_descriptor(), name, value);
+}
 // ===================================================================
 
 class GetVerifyReq PROTOBUF_FINAL :
@@ -192,6 +218,7 @@ class GetVerifyReq PROTOBUF_FINAL :
 
   enum : int {
     kEmailFieldNumber = 1,
+    kPurposeFieldNumber = 2,
   };
   // string email = 1;
   void clear_email();
@@ -209,6 +236,15 @@ class GetVerifyReq PROTOBUF_FINAL :
   std::string* _internal_mutable_email();
   public:
 
+  // .message.VerifyPurpose purpose = 2;
+  void clear_purpose();
+  ::message::VerifyPurpose purpose() const;
+  void set_purpose(::message::VerifyPurpose value);
+  private:
+  ::message::VerifyPurpose _internal_purpose() const;
+  void _internal_set_purpose(::message::VerifyPurpose value);
+  public:
+
   // @@protoc_insertion_point(class_scope:message.GetVerifyReq)
  private:
   class _Internal;
@@ -217,6 +253,7 @@ class GetVerifyReq PROTOBUF_FINAL :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr email_;
+  int purpose_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_message_2eproto;
 };
@@ -794,6 +831,26 @@ inline void GetVerifyReq::set_allocated_email(std::string* email) {
   // @@protoc_insertion_point(field_set_allocated:message.GetVerifyReq.email)
 }
 
+// .message.VerifyPurpose purpose = 2;
+inline void GetVerifyReq::clear_purpose() {
+  purpose_ = 0;
+}
+inline ::message::VerifyPurpose GetVerifyReq::_internal_purpose() const {
+  return static_cast< ::message::VerifyPurpose >(purpose_);
+}
+inline ::message::VerifyPurpose GetVerifyReq::purpose() const {
+  // @@protoc_insertion_point(field_get:message.GetVerifyReq.purpose)
+  return _internal_purpose();
+}
+inline void GetVerifyReq::_internal_set_purpose(::message::VerifyPurpose value) {
+  
+  purpose_ = value;
+}
+inline void GetVerifyReq::set_purpose(::message::VerifyPurpose value) {
+  _internal_set_purpose(value);
+  // @@protoc_insertion_point(field_set:message.GetVerifyReq.purpose)
+}
+
 // -------------------------------------------------------------------
 
 // GetVerifyRsp
@@ -1189,6 +1246,16 @@ inline void GetChatServerRsp::set_allocated_token(std::string* token) {
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace message
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::message::VerifyPurpose> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::message::VerifyPurpose>() {
+  return ::message::VerifyPurpose_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

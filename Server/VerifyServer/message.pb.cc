@@ -53,7 +53,7 @@ static void InitDefaultsscc_info_GetVerifyRsp_message_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_GetVerifyRsp_message_2eproto}, {}};
 
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_message_2eproto[2];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_message_2eproto = nullptr;
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_message_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_message_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -63,6 +63,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_message_2eproto::offsets[] PRO
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::message::GetVerifyReq, email_),
+  PROTOBUF_FIELD_OFFSET(::message::GetVerifyReq, purpose_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::message::GetVerifyRsp, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -74,7 +75,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_message_2eproto::offsets[] PRO
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::message::GetVerifyReq)},
-  { 6, -1, sizeof(::message::GetVerifyRsp)},
+  { 7, -1, sizeof(::message::GetVerifyRsp)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -83,12 +84,14 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_message_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rmessage.proto\022\007message\"\035\n\014GetVerifyReq"
-  "\022\r\n\005email\030\001 \001(\t\":\n\014GetVerifyRsp\022\r\n\005error"
-  "\030\001 \001(\005\022\r\n\005email\030\002 \001(\t\022\014\n\004code\030\003 \001(\t2P\n\rV"
-  "erifyService\022\?\n\rGetVerifyCode\022\025.message."
-  "GetVerifyReq\032\025.message.GetVerifyRsp\"\000b\006p"
-  "roto3"
+  "\n\rmessage.proto\022\007message\"F\n\014GetVerifyReq"
+  "\022\r\n\005email\030\001 \001(\t\022\'\n\007purpose\030\002 \001(\0162\026.messa"
+  "ge.VerifyPurpose\":\n\014GetVerifyRsp\022\r\n\005erro"
+  "r\030\001 \001(\005\022\r\n\005email\030\002 \001(\t\022\014\n\004code\030\003 \001(\t*1\n\r"
+  "VerifyPurpose\022\014\n\010REGISTER\020\000\022\022\n\016RESET_PAS"
+  "SWORD\020\0012P\n\rVerifyService\022\?\n\rGetVerifyCod"
+  "e\022\025.message.GetVerifyReq\032\025.message.GetVe"
+  "rifyRsp\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_message_2eproto_deps[1] = {
 };
@@ -98,7 +101,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_mes
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_message_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_message_2eproto = {
-  false, false, descriptor_table_protodef_message_2eproto, "message.proto", 205,
+  false, false, descriptor_table_protodef_message_2eproto, "message.proto", 297,
   &descriptor_table_message_2eproto_once, descriptor_table_message_2eproto_sccs, descriptor_table_message_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_message_2eproto::offsets,
   file_level_metadata_message_2eproto, 2, file_level_enum_descriptors_message_2eproto, file_level_service_descriptors_message_2eproto,
@@ -107,6 +110,20 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_messag
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_message_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_message_2eproto)), true);
 namespace message {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* VerifyPurpose_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_message_2eproto);
+  return file_level_enum_descriptors_message_2eproto[0];
+}
+bool VerifyPurpose_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
 
 // ===================================================================
 
@@ -130,12 +147,14 @@ GetVerifyReq::GetVerifyReq(const GetVerifyReq& from)
     email_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_email(),
       GetArena());
   }
+  purpose_ = from.purpose_;
   // @@protoc_insertion_point(copy_constructor:message.GetVerifyReq)
 }
 
 void GetVerifyReq::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GetVerifyReq_message_2eproto.base);
   email_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  purpose_ = 0;
 }
 
 GetVerifyReq::~GetVerifyReq() {
@@ -171,6 +190,7 @@ void GetVerifyReq::Clear() {
   (void) cached_has_bits;
 
   email_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  purpose_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -189,6 +209,14 @@ const char* GetVerifyReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "message.GetVerifyReq.email"));
           CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .message.VerifyPurpose purpose = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_purpose(static_cast<::message::VerifyPurpose>(val));
         } else goto handle_unusual;
         continue;
       default: {
@@ -229,6 +257,13 @@ failure:
         1, this->_internal_email(), target);
   }
 
+  // .message.VerifyPurpose purpose = 2;
+  if (this->purpose() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_purpose(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -250,6 +285,12 @@ size_t GetVerifyReq::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_email());
+  }
+
+  // .message.VerifyPurpose purpose = 2;
+  if (this->purpose() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_purpose());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -286,6 +327,9 @@ void GetVerifyReq::MergeFrom(const GetVerifyReq& from) {
   if (from.email().size() > 0) {
     _internal_set_email(from._internal_email());
   }
+  if (from.purpose() != 0) {
+    _internal_set_purpose(from._internal_purpose());
+  }
 }
 
 void GetVerifyReq::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -310,6 +354,7 @@ void GetVerifyReq::InternalSwap(GetVerifyReq* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   email_.Swap(&other->email_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  swap(purpose_, other->purpose_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetVerifyReq::GetMetadata() const {

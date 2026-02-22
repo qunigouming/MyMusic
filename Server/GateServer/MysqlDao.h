@@ -65,7 +65,7 @@ public:
 				std::unique_ptr<sql::Statement> stmt(con->_con->createStatement());
 				stmt->executeQuery("select 1");
 				con->_last_opt_time = timestamp;
-				LOG(INFO) << "execute timer alive query, current is " << timestamp;
+				LOG_EVERY_N(INFO, 30) << "execute timer alive query, current is " << timestamp;
 			}
 			catch (sql::SQLException& e) {
 				sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();

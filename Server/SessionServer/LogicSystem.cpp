@@ -87,7 +87,7 @@ void LogicSystem::Run()
 		}
 
 		auto msg_node = _msg_que.front();
-		LOG(INFO) << "recv message id is " << msg_node->_message->_msg_id;
+		LOG_IF(INFO, msg_node->_message->_msg_id != ID_HEARTBEAT_REQ) << "recv message id is " << msg_node->_message->_msg_id;
 		auto func = _handler.find(msg_node->_message->_msg_id);
 		if (func == _handler.end()) {
 			_msg_que.pop();
@@ -235,7 +235,7 @@ void LogicSystem::HeartBeatHandler(std::shared_ptr<Session> session, const short
 	Json::Reader reader;
 	reader.parse(msg_data, root);
 	auto uid = root["fromuid"].asInt();
-	LOG(INFO) << "user heartbeat uid is " << uid;
+	LOG_EVERY_N(INFO, 30) << "user heartbeat uid is " << uid;
 	Json::Value rspJson;
     rspJson["error"] = ErrorCodes::Success;
     session->Send(rspJson.toStyledString(), ID_HEARTBEAT_RSP);
