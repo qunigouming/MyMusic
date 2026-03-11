@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMessageBox>
 
 #include "UserManager.h"
 #include "LogManager.h"
@@ -205,9 +206,10 @@ void TcpManager::initHandler()
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Upload Meta Type Failed, error is " << err;
+            emit sig_upload_meta_result(err);
             return;
         }
-
+        emit sig_upload_meta_result(ErrorCode::SUCCESS);
         // 通知UploadWidget上传文件
         emit sig_upload_file();
     });
@@ -226,15 +228,18 @@ void TcpManager::initHandler()
         int err = jsonObj["error"].toInt();
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Upload File Failed, error is " << err;
+            emit sig_upload_file_result(err);
             return;
         }
 
         int total_size = jsonObj["total_size"].toInt();
         int trans_size = jsonObj["trans_size"].toInt();
+        emit sig_upload_file_progress(trans_size, total_size);
 
         LOG(INFO) << jsonObj["total_size"].toInt() << " bytes uploaded." << jsonObj["trans_size"].toInt();
         if (total_size == trans_size) {
             LOG(INFO) << "Upload File Success.";
+            emit sig_upload_file_result(ErrorCode::SUCCESS);
             //emit sig_upload_success();
         }
     });

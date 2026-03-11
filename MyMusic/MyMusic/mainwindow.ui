@@ -1128,31 +1128,31 @@ QPushButton:pressed {
   <customwidget>
    <class>BottomPlayWidget</class>
    <extends>QWidget</extends>
-   <header>bottomplaywidget.h</header>
+   <header>BottomPlayWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SidebarWidget</class>
    <extends>QWidget</extends>
-   <header>sidebarwidget.h</header>
+   <header>SidebarWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SongListPage</class>
    <extends>QWidget</extends>
-   <header>songlistpage.h</header>
+   <header>SongListPage.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SearchLine</class>
    <extends>QWidget</extends>
-   <header>searchline.h</header>
+   <header>SearchLine.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>
-   <header>chatwidget.h</header>
+   <header>ChatWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

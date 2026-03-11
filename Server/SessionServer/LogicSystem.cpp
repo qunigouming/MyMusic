@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <codecvt>
+#include <iomanip>
+#include <openssl/md5.h>
+#include <filesystem>
 #include "UserManager.h"
 #include "Server.h"
 #include "SessionGrpcClient.h"
@@ -246,6 +249,7 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
     Json::Value root;
     Json::Reader reader;
     reader.parse(msg_data, root);
+	auto client_md5 = root["md5"].asString();
 
 	// 将文件保存
 	auto data = root["data"].asString();
@@ -259,25 +263,27 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 	auto name = root["name"].asString();
 	auto total_size = root["total_size"].asInt();
 	auto trans_size = root["trans_size"].asInt();
-	auto file_path = ConfigManager::GetInstance()["Store"]["MusicPath"] + name;
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	std::wstring wide_path = converter.from_bytes(file_path);
+	std::filesystem::path file_path = std::filesystem::path(ConfigManager::GetInstance()["Store"]["MusicPath"]) / std::filesystem::u8path(name);
+	//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	//std::wstring wide_path = converter.from_bytes(file_path);
 	LOG(INFO) << "file path is " << file_path;
 	std::ofstream outfile;
 	if (seq == 1) {
-		outfile.open(wide_path, std::ios::out | std::ios::binary | std::ios::trunc);
+		outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
 	}
 	else {
-        outfile.open(wide_path, std::ios::out | std::ios::binary | std::ios::app);
+        outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::app);
 	}
 
 	if (!outfile) {
 		LOG(ERROR) << "open file failed";
+		retValue["error"] = ErrorCodes::EtherInvalid;
 		return;
 	}
 	outfile.write(decoded.c_str(), decoded.size());
 	if (!outfile) {
 		LOG(ERROR) << "write file failed";
+		retValue["error"] = ErrorCodes::EtherInvalid;
 		return;
 	}
 

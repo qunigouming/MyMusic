@@ -3,6 +3,7 @@
 
 #include "Singleton.h"
 #include <map>
+#include <string>
 
 class SectionInfo {
 public:

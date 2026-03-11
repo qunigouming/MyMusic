@@ -7,7 +7,7 @@ if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
 endif()
 
-set(CMAKE_TOOLCHAIN_FILE "/home/mian/GitProject/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE PATH "Vcpkg toolchain file")
+set(CMAKE_TOOLCHAIN_FILE "/home/main/GitProject/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE PATH "Vcpkg toolchain file")
 
 project ("StorageServer" VERSION 0.1 LANGUAGES CXX C)
 

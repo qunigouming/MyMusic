@@ -45,6 +45,7 @@ UploadImageResponse StorageGrpcClient::UploadImage(std::string file_name, std::s
 UploadImageResponse StorageGrpcClient::UploadImage(std::string file_name, std::string file_data, std::string mime_type)
 {
 	UploadImageResponse rsp;
+	rsp.set_error(ErrorCodes::Success);
 	auto stub = _pool->getConnection();
 	Defer defer([this, &stub, &rsp] {
 		_pool->returnConnection(std::move(stub));
@@ -76,7 +77,7 @@ UploadImageResponse StorageGrpcClient::UploadImage(std::string file_name, std::s
 	if (!status.ok()) {
 		rsp.set_error(ErrorCodes::RPCFailed);
 	}
-	rsp.set_error(ErrorCodes::Success);
+
 	return rsp;
 }
 

@@ -6,19 +6,20 @@
 #include "message.grpc.pb.h"
 
 #include <functional>
-#include <grpcpp/impl/codegen/async_stream.h>
-#include <grpcpp/impl/codegen/async_unary_call.h>
-#include <grpcpp/impl/codegen/channel_interface.h>
-#include <grpcpp/impl/codegen/client_unary_call.h>
-#include <grpcpp/impl/codegen/client_callback.h>
-#include <grpcpp/impl/codegen/message_allocator.h>
-#include <grpcpp/impl/codegen/method_handler.h>
-#include <grpcpp/impl/codegen/rpc_service_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
-#include <grpcpp/impl/codegen/server_callback_handlers.h>
-#include <grpcpp/impl/codegen/server_context.h>
-#include <grpcpp/impl/codegen/service_type.h>
-#include <grpcpp/impl/codegen/sync_stream.h>
+#include <grpcpp/support/async_stream.h>
+#include <grpcpp/support/async_unary_call.h>
+#include <grpcpp/impl/channel_interface.h>
+#include <grpcpp/impl/client_unary_call.h>
+#include <grpcpp/support/client_callback.h>
+#include <grpcpp/support/message_allocator.h>
+#include <grpcpp/support/method_handler.h>
+#include <grpcpp/impl/rpc_service_method.h>
+#include <grpcpp/support/server_callback.h>
+#include <grpcpp/impl/server_callback_handlers.h>
+#include <grpcpp/server_context.h>
+#include <grpcpp/impl/service_type.h>
+#include <grpcpp/support/sync_stream.h>
+#include <grpcpp/ports_def.inc>
 namespace message {
 
 static const char* StorageService_method_names[] = {
@@ -27,19 +28,19 @@ static const char* StorageService_method_names[] = {
 
 std::unique_ptr< StorageService::Stub> StorageService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
   (void)options;
-  std::unique_ptr< StorageService::Stub> stub(new StorageService::Stub(channel));
+  std::unique_ptr< StorageService::Stub> stub(new StorageService::Stub(channel, options));
   return stub;
 }
 
-StorageService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_UploadImage_(StorageService_method_names[0], ::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
+StorageService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_UploadImage_(StorageService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
   {}
 
 ::grpc::ClientWriter< ::message::UploadImageRequest>* StorageService::Stub::UploadImageRaw(::grpc::ClientContext* context, ::message::UploadImageResponse* response) {
   return ::grpc::internal::ClientWriterFactory< ::message::UploadImageRequest>::Create(channel_.get(), rpcmethod_UploadImage_, context, response);
 }
 
-void StorageService::Stub::experimental_async::UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::experimental::ClientWriteReactor< ::message::UploadImageRequest>* reactor) {
+void StorageService::Stub::async::UploadImage(::grpc::ClientContext* context, ::message::UploadImageResponse* response, ::grpc::ClientWriteReactor< ::message::UploadImageRequest>* reactor) {
   ::grpc::internal::ClientCallbackWriterFactory< ::message::UploadImageRequest>::Create(stub_->channel_.get(), stub_->rpcmethod_UploadImage_, context, response, reactor);
 }
 
@@ -76,4 +77,5 @@ StorageService::Service::~Service() {
 
 
 }  // namespace message
+#include <grpcpp/ports_undef.inc>
 

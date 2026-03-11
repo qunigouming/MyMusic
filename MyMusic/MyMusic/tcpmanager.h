@@ -40,6 +40,9 @@ signals:
     void sig_send_data(ReqID reqId, QByteArray data);
     void sig_switch_mainwindow();
     void sig_upload_file();
+    void sig_upload_meta_result(int error);
+    void sig_upload_file_progress(int transSize, int totalSize);
+    void sig_upload_file_result(int error);
     void sig_notify_off_line();
 
     void sig_song_list_page_info(std::shared_ptr<SongListPageInfo> pageinfo);

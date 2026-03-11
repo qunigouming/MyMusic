@@ -56,8 +56,8 @@ enum Modules {
 
 enum ErrorCode {
     SUCCESS = 0,
-    ERR_JSON = 1,
-    ERR_NETWORK = 2,
+    ERR_JSON = 1001,
+    ERR_NETWORK = 1002,
     VerifyExpired = 1003,		//验证码过期
     VerifyCodeErr = 1004,		//验证码错误
     UserExist = 1005,			//用户已经存在

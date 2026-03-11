@@ -27,6 +27,9 @@ FdfsClient::FdfsClient()
 
 bool FdfsClient::uploadFile(const char* buffer, int64_t buffer_size, const std::string extension, FastDFSFileInfo& fileinfo)
 {
+	if (_trackerServer == nullptr) {
+		return false;
+	}
 	char group_name[FDFS_GROUP_NAME_MAX_LEN + 1] = { 0 };
 	int store_path_index;
 	ConnectionInfo storageServer;

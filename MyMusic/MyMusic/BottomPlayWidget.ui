@@ -642,12 +642,12 @@ QSlider::groove:horizontal:hover {
   <customwidget>
    <class>RotationLabel</class>
    <extends>QLabel</extends>
-   <header>rotationlabel.h</header>
+   <header>RotationLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ProgressBar</class>
    <extends>QSlider</extends>
-   <header>progressbar.h</header>
+   <header>ProgressBar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

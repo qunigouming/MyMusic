@@ -49,6 +49,7 @@ enum ErrorCodes {
 	PasswdInvalid = 1009,   //密码更新失败
 	TokenInvalid = 1010,   //Token失效
 	UidInvalid = 1011,  //uid无效
+	UploadFileMd5Mismatch = 1012,  //文件校验失败
 	EtherInvalid = 0x7777,  //Ether错误
 };
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QWidget>
+#include <QPointer>
+#include <QProgressDialog>
 #include "ui_UploadWidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -16,7 +18,13 @@ public:
 	~UploadWidget();
 
 private:
+	void ShowUploadProgressDialog();
+	void UpdateUploadProgressDialog(int transSize, int totalSize);
+	void CloseUploadProgressDialog();
+
+private:
 	Ui::UploadWidgetClass *ui;
 	QString _file_path;
+	QPointer<QProgressDialog> _upload_progress_dlg;
 };
 
