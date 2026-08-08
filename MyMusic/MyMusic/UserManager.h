@@ -18,6 +18,7 @@ public:
     const QList<std::shared_ptr<MusicInfo>> getMusicList() const;
 
     void setToken(QString token);
+    QString getToken();
     int getUid();
     QString getName();
     QString getIcon();

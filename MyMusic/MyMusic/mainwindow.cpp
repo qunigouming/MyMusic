@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
         jsonObj["song_id"] = id;
         jsonObj["status"] = status; // 0:取消收藏 1:收藏
         jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;     // 默认收藏歌单or其他类型歌单
+        jsonObj["token"] = UserManager::GetInstance()->getToken();
         QJsonDocument doc(jsonObj);
         emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_COLLECT_SONG_REQ, doc.toJson());
     });
@@ -88,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
         auto userInfo = UserManager::GetInstance()->getUserInfo();
         QJsonObject jsonObj;
         jsonObj["fromuid"] = userInfo->uid;
+        jsonObj["token"] = UserManager::GetInstance()->getToken();
         QJsonDocument doc(jsonObj);
         QByteArray data = doc.toJson(QJsonDocument::Compact);
         emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_HEARTBEAT_REQ, data);
@@ -193,6 +195,7 @@ void MainWindow::initBaseFuncLWg()
             QJsonObject jsonObj;
             jsonObj["fromUid"] = UserManager::GetInstance()->getUid();
             jsonObj["flag"] = DEFAULT_COLLECT_SONGLIST;
+            jsonObj["token"] = UserManager::GetInstance()->getToken();
             QJsonDocument doc(jsonObj);
             TcpManager::GetInstance()->sig_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_INFO_REQ, doc.toJson());
             // 喜欢的音乐

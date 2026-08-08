@@ -236,11 +236,19 @@ void LogicSystem::HeartBeatHandler(std::shared_ptr<Session> session, const short
 {
 	Json::Value root;
 	Json::Reader reader;
+	Json::Value rspJson;
+	rspJson["error"] = ErrorCodes::Success;
+
 	reader.parse(msg_data, root);
 	auto uid = root["fromuid"].asInt();
+	auto token = root["token"].asString();
+	if (uid <= 0 || uid != session->GetUserUid() || !CheckToken(uid, token)) {
+		rspJson["error"] = ErrorCodes::TokenInvalid;
+		session->Send(rspJson.toStyledString(), ID_HEARTBEAT_RSP);
+		return;
+	}
+	RedisManager::GetInstance()->Expire(USERTOKENPREFIX + std::to_string(uid), TOKEN_EXPIRE_TIME);
 	LOG_EVERY_N(INFO, 30) << "user heartbeat uid is " << uid;
-	Json::Value rspJson;
-    rspJson["error"] = ErrorCodes::Success;
     session->Send(rspJson.toStyledString(), ID_HEARTBEAT_RSP);
 }
 
@@ -248,16 +256,26 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 {
     Json::Value root;
     Json::Reader reader;
-    reader.parse(msg_data, root);
-	auto client_md5 = root["md5"].asString();
-
-	// 将文件保存
-	auto data = root["data"].asString();
 	Json::Value retValue;
 	Defer defer([this, &retValue, session] {
 		std::string str = retValue.toStyledString();
 		session->Send(str, ID_UPLOAD_FILE_RSP);
 	});
+    reader.parse(msg_data, root);
+
+	// 验证token是否合法
+	auto uid = session->GetUserUid();
+	auto token = root["token"].asString();
+
+	if (!CheckToken(uid, token)) {
+		retValue["error"] = ErrorCodes::TokenInvalid;
+		return;
+	}
+	auto client_md5 = root["md5"].asString();
+
+	// 将文件保存
+	auto data = root["data"].asString();
+
 	std::string decoded = decode_base64(data);
 	auto seq = root["seq"].asInt();
 	auto name = root["name"].asString();
@@ -377,6 +395,15 @@ void LogicSystem::UploadMetaTypeHandler(std::shared_ptr<Session> session, const 
 		session->Send(str, ID_UPLOAD_META_TYPE_RSP);
 	});
 
+	// 验证token是否合法
+	auto uid = session->GetUserUid();
+	auto token = root["token"].asString();
+
+	if (!CheckToken(uid, token)) {
+		retValue["error"] = ErrorCodes::TokenInvalid;
+		return;
+	}
+
 	// 将专辑信息存储到数据库中
 	// 插入专辑
 	Album album;
@@ -432,6 +459,15 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
 		session->Send(str, ID_COLLECT_SONG_RSP);
 	});
 
+	// 验证token是否合法
+	auto uid = session->GetUserUid();
+	auto token = root["token"].asString();
+
+	if (!CheckToken(uid, token)) {
+		retValue["error"] = ErrorCodes::TokenInvalid;
+		return;
+	}
+
 	if (root["flag"].asBool()) {
 		// 其他类型歌单
 	}
@@ -476,6 +512,15 @@ void LogicSystem::GetCollectSongListHandler(std::shared_ptr<Session> session, co
 		session->Send(str, ID_GET_COLLECT_SONG_LIST_INFO_RSP);
 	});
 
+	// 验证token是否合法
+	auto uid = session->GetUserUid();
+	auto token = root["token"].asString();
+
+	if (!CheckToken(uid, token)) {
+		retValue["error"] = ErrorCodes::TokenInvalid;
+		return;
+	}
+
 	if (root["flag"].asBool()) {
 
 	}
@@ -506,6 +551,15 @@ void LogicSystem::GetSongListPageInfoHandler(std::shared_ptr<Session> session, c
 		std::string str = retValue.toStyledString();
 		session->Send(str, ID_GET_COLLECT_SONG_LIST_RSP);
 	});
+
+	// 验证token是否合法
+	auto uid = session->GetUserUid();
+	auto token = root["token"].asString();
+
+	if (!CheckToken(uid, token)) {
+		retValue["error"] = ErrorCodes::TokenInvalid;
+		return;
+	}
 
 	MusicInfoListPtr playlistsongs = MysqlManager::GetInstance()->getPlaylistSongs(session->GetUserUid(), root["playlist_name"].asString());
 	if (playlistsongs.empty()) {
@@ -562,4 +616,13 @@ bool LogicSystem::GetBaseInfo(std::string base_key, int uid, std::shared_ptr<Use
 		RedisManager::GetInstance()->Set(base_key, redis_root.toStyledString());
 	}
 	return true;
+}
+
+bool LogicSystem::CheckToken(int uid, const std::string& token)
+{
+	if (uid <= 0 || token.empty()) return false;
+	std::string token_key = USERTOKENPREFIX + std::to_string(uid);
+	std::string token_value;
+	if (!RedisManager::GetInstance()->Get(token_key, token_value))	return false;
+	return token_value == token;
 }

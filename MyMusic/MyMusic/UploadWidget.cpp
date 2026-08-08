@@ -11,6 +11,7 @@
 
 #include "tcpmanager.h"
 #include "MetaTag.h"
+#include "UserManager.h"
 
 #define MAX_FILE_LEN 1024 * 32          // 文件分片大小，最大不能超过16位(服务器限制，除非消息长度类型改为int)
 
@@ -82,6 +83,7 @@ UploadWidget::UploadWidget(QWidget *parent)
         metaJson["description"] = ui->album_desc->toPlainText();
         metaJson["icon"] = QString(coverData.toBase64());
         metaJson["release_date"] = ui->birthday_LineE->text();
+        metaJson["token"] = UserManager::GetInstance()->getToken();
 		QJsonDocument metaDoc(metaJson);
         emit TcpManager::GetInstance()->sig_send_data(ID_UPLOAD_META_TYPE_REQ, metaDoc.toJson());
 	});
@@ -149,6 +151,7 @@ UploadWidget::UploadWidget(QWidget *parent)
             }
             jsonObj["data"] = QString(buffer.toBase64());
             jsonObj["last_seq"] = last_seq;
+            jsonObj["token"] = UserManager::GetInstance()->getToken();
             QJsonDocument doc(jsonObj);
             QByteArray data = doc.toJson();
             emit TcpManager::GetInstance()->sig_send_data(ReqID::ID_UPLOAD_FILE_REQ, data);

@@ -88,7 +88,8 @@ void Session::AsyncReadHead(int total_len)
 	AsyncReadFull(HEAD_TOTAL_LEN, [self](const boost::system::error_code& error, std::size_t byte_transfered) {
 		try {
 			if (error) {
-				LOG(ERROR) << "handle read failed, error is: " << error.what();
+				if (error == boost::asio::error::eof) LOG(INFO) << "Client closed connection, session id is " << self->_session_id;
+				else LOG(ERROR) << "handle read failed, error is: " << error.what();
 				self->Close();
 				self->DealExceptionSession();
 				return;
@@ -144,7 +145,8 @@ void Session::AsyncReadBody(int total_len)
 	AsyncReadFull(total_len, [self, total_len](const boost::system::error_code& error, std::size_t bytes_transfered) {
 		try {
 			if (error) {
-				LOG(ERROR) << "handle read failed, error is " << error.what();
+				if (error == boost::asio::error::eof) LOG(INFO) << "Client closed connection, session id is " << self->_session_id;
+				else LOG(ERROR) << "handle read failed, error is: " << error.what();
 				self->Close();
 				self->DealExceptionSession();
 				return;
@@ -229,6 +231,7 @@ void Session::DealExceptionSession()
 
 	RedisManager::GetInstance()->Del(USER_SESSION_PREFIX + uid_str);
     RedisManager::GetInstance()->Del(USER_IP_PREFIX + uid_str);
+    RedisManager::GetInstance()->Del(USERTOKENPREFIX + uid_str);
 }
 
 void Session::AsyncReadFull(std::size_t maxLength, std::function<void(const boost::system::error_code&, std::size_t)> handler)

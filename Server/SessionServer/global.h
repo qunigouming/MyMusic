@@ -33,6 +33,8 @@
 // 分布式锁的重试时间
 #define ACQUIRE_TIME_OUT 5
 
+#define TOKEN_EXPIRE_TIME 1800
+
 #define DEFAULT_COLLECT_SONGLIST false		// 默认收藏歌单
 #define OTHER_COLLECT_SONGLIST true		// 其他收藏歌单
 

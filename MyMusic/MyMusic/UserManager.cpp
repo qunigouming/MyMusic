@@ -33,6 +33,11 @@ void UserManager::setToken(QString token)
     _token = token;
 }
 
+QString UserManager::getToken()
+{
+    return _token;
+}
+
 int UserManager::getUid()
 {
     return _userInfo->uid;

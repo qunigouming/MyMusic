@@ -66,6 +66,7 @@ enum ErrorCode {
     EmailNotMatch = 1008,		//邮箱不匹配
     PasswdUpFailed = 1009,		//更新密码失败
     PasswdInvalid = 1010,		//密码无效
+    TokenInvalid = 1010,		//Token失效
     UserNameInvalid = 1011,		//用户名无效
     ERR_UPLOAD_FAILED = 1012,  //文件上传失败
     EtherInvalid = 0x7777        //Ether错误

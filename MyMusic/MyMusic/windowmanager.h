@@ -27,6 +27,7 @@ public:
 private slots:
     void slotSwitchMainWindow();
     void slotOffLine();
+    void slotTokenInvalid();
 
 private:
     void offLineLogin();

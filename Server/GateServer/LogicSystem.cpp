@@ -210,7 +210,7 @@ LogicSystem::LogicSystem()
 			return true;
 		}
 
-		LOG(INFO) << "user login successs, id is: " << id;
+		LOG(INFO) << "Get Server address successs, id is: " << id;
 		retJson["error"] = 0;
 		retJson["id"] = id;
 		retJson["token"] = reply.token();

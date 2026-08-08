@@ -18,6 +18,14 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 		// freeReplyObject(reply);
 		return false;
 	}
+
+	if (reply->type == REDIS_REPLY_NIL) {
+		// key not exist (when initial login)
+		LOG(WARNING) << "[ Get " << key << "] failed";
+		freeReplyObject(reply);
+		return false;
+	}
+
 	if (reply->type != REDIS_REPLY_STRING) {
 		LOG(ERROR) << "[ Get " << key << "] failed";
 		freeReplyObject(reply);
@@ -191,6 +199,21 @@ bool RedisManager::releaseLock(const std::string& lockName, const std::string& i
 	if (!conn)	return false;
 	Defer defer([this, &conn]() { _pool->returnConnection(conn); });
 	return DistributeLock::GetInstance()->releaseLock(conn, lockName, identifier);
+}
+
+bool RedisManager::Expire(const std::string& key, int seconds)
+{
+	auto connect = _pool->getConnection();
+	if (!connect) return false;
+	Defer defer([this, &connect] {_pool->returnConnection(connect); });
+	auto reply = (redisReply*)redisCommand(connect, "EXPIRE %s %d", key.c_str(), seconds);
+	if (!reply) { LOG(ERROR) << "[ EXPIRE " << key << " ] failed"; return false; }
+	if (reply->type != REDIS_REPLY_INTEGER || reply->integer != 1) {
+		LOG(ERROR) << "[ EXPIRE " << key << " ] failed";
+		freeReplyObject(reply);
+		return false;
+	}
+	return true;
 }
 
 void RedisManager::IncreaseCount(std::string server_name)

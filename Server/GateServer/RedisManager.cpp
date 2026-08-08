@@ -17,6 +17,7 @@ bool RedisManager::Get(const std::string& key, std::string& value)
 		// freeReplyObject(reply);
 		return false;
 	}
+
 	if (reply->type != REDIS_REPLY_STRING) {
 		LOG(WARNING) << "[ Get " << key << "] failed";
 		freeReplyObject(reply);

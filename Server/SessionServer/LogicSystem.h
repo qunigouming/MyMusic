@@ -26,6 +26,7 @@ private:
 	void GetSongListPageInfoHandler(std::shared_ptr<Session> session, const short& msg_id, const std::string& msg_data);	// 获取收藏歌单列表请求(歌单歌曲)
 
 	bool GetBaseInfo(std::string base_key, int uid, std::shared_ptr<UserInfo>& userinfo);
+	bool CheckToken(int uid, const std::string& token);
 
 	std::thread _workThread;
 	std::condition_variable _cond;

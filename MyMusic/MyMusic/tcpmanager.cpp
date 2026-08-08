@@ -129,11 +129,13 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Login Failed, error is " << err;
             emit sig_login_failed(static_cast<ErrorCode>(err));
             return;
         }
+
         auto token = jsonObj["token"].toString();
         QJsonObject userInfoObj = jsonObj["user_self_info"].toObject();
         auto uid = userInfoObj["uid"].toInt();
@@ -186,6 +188,12 @@ void TcpManager::initHandler()
         }
         int err = jsonObj["error"].toInt();
 
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Heart Beat Failed, error is " << err;
             return;
@@ -204,6 +212,13 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Upload Meta Type Failed, error is " << err;
             emit sig_upload_meta_result(err);
@@ -226,6 +241,13 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Upload File Failed, error is " << err;
             emit sig_upload_file_result(err);
@@ -256,6 +278,13 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Notify Session Msg Failed, err is " << err;
             return;
@@ -277,6 +306,13 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Get Collect Song Failed, error is " << err;
             return;
@@ -307,6 +343,12 @@ void TcpManager::initHandler()
             return;
         }
         int err = jsonObj["error"].toInt();
+        // token invalid
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+
         if (err != ErrorCode::SUCCESS) {
             LOG(ERROR) << "Get Collect Song Failed, error is " << err;
             return;

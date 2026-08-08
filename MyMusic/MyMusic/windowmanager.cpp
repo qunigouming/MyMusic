@@ -31,6 +31,13 @@ void WindowManager::slotOffLine()
     offLineLogin();
 }
 
+void WindowManager::slotTokenInvalid()
+{
+    QMessageBox::information(this, tr("登录过期"), tr("登录已过期，请重新登录。"));
+    TcpManager::GetInstance()->closeConnection();
+    offLineLogin();
+}
+
 void WindowManager::offLineLogin()
 {
     _mainWindow.reset();

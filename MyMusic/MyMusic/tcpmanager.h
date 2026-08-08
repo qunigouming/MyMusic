@@ -44,6 +44,7 @@ signals:
     void sig_upload_file_progress(int transSize, int totalSize);
     void sig_upload_file_result(int error);
     void sig_notify_off_line();
+    void sig_token_invalid();
 
     void sig_song_list_page_info(std::shared_ptr<SongListPageInfo> pageinfo);
     void sig_song_list_page_songs(QList<std::shared_ptr<MusicInfo>> musiclist);

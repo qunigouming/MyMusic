@@ -81,6 +81,8 @@ public:
 	std::string acquireLock(const std::string& lockName, int lockTimeOut, int acquireTimeOut);
 	bool releaseLock(const std::string& lockName, const std::string& identifier);
 
+	bool Expire(const std::string& key, int seconds);
+
 	void IncreaseCount(std::string server_name);
 	void DecreaseCount(std::string server_name);
 	void InitCount(std::string server_name);

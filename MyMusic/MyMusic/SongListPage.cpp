@@ -77,6 +77,7 @@ SongListPage::SongListPage(QWidget *parent)
 			QJsonObject req;
 			req["playlist_name"] = _pageInfo->title;
 			req["fromuid"] = UserManager::GetInstance()->getUid();
+			req["token"] = UserManager::GetInstance()->getToken();
 			QJsonDocument reqDoc(req);
 			emit TcpManager::GetInstance()->slot_send_data(ReqID::ID_GET_COLLECT_SONG_LIST_REQ, reqDoc.toJson());
 		}
