@@ -143,8 +143,6 @@
     <ClCompile Include="SidebarWidget.cpp" />
     <ClCompile Include="SongListPage.cpp" />
     <ClCompile Include="SysTray.cpp" />
-    <ClCompile Include="tableview\elidedlabel.cpp" />
-    <ClCompile Include="tableview\playitemwidget.cpp" />
     <ClCompile Include="tableview\songdelegate.cpp" />
     <ClCompile Include="tableview\sortproxymodel.cpp" />
     <ClCompile Include="tableview\tableheaderview.cpp" />
@@ -236,8 +234,6 @@
     <QtMoc Include="tableview\tableheaderview.h" />
     <QtMoc Include="tableview\sortproxymodel.h" />
     <QtMoc Include="tableview\songdelegate.h" />
-    <QtMoc Include="tableview\playitemwidget.h" />
-    <QtMoc Include="tableview\elidedlabel.h" />
     <QtMoc Include="windowmanager.h" />
     <QtMoc Include="timerbutton.h" />
     <QtMoc Include="tcpmanager.h" />

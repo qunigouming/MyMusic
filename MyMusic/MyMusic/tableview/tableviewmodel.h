@@ -120,10 +120,9 @@ public:
                 }
                 break;
             case Qt::DecorationRole:
-                if (column == 3) {
-                    if (_type == MusicTableViewType::NET_MODEL)
-                        return song.isLiked ? QIcon(":/source/icon/like.png") : QIcon(":/source/icon/disLike.png");
-                }
+                if (column == 3 && (_type == MusicTableViewType::NET_MODEL))
+                    return song.isLiked ? _likeIcon : _dislikeIcon;   // 成员缓存，避免每格每次paint都构造QIcon
+                break;
             case Qt::EditRole:
                 if (column == 3 && (_type == MusicTableViewType::NET_MODEL)) return song.isLiked;
             //case (Qt::UserRole + 1):
@@ -174,6 +173,9 @@ public:
 
 private:
     QVector<SongInfo> _songs;
+
+    QIcon _likeIcon;      // 点赞图标缓存（构造一次）
+    QIcon _dislikeIcon;   // 未点赞图标缓存（构造一次）
 
     MusicTableViewType _type = MusicTableViewType::NET_MODEL;
     int _insertCounter = 0;     // 插入计数器

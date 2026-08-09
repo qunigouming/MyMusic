@@ -155,12 +155,6 @@
     <ClCompile Include="tableview\tableviewmodel.cpp">
       <Filter>tableview\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tableview\playitemwidget.cpp">
-      <Filter>tableview\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tableview\elidedlabel.cpp">
-      <Filter>tableview\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MetaTag.cpp">
       <Filter>Tool\MetaTag</Filter>
     </ClCompile>
@@ -347,12 +341,6 @@
       <Filter>tableview\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="tableview\tableviewmodel.h">
-      <Filter>tableview\Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="tableview\playitemwidget.h">
-      <Filter>tableview\Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="tableview\elidedlabel.h">
       <Filter>tableview\Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\directoryscannertask.h">

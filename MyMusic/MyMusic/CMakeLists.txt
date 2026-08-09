@@ -107,8 +107,6 @@ set(SOURCE_FILES
     Tool/filescannerworker.cpp
     Tool/FileInspectorImp.cpp
     
-    tableview/elidedlabel.cpp
-    tableview/playitemwidget.cpp
     tableview/songdelegate.cpp
     tableview/sortproxymodel.cpp
     tableview/tableheaderview.cpp
@@ -178,8 +176,6 @@ set(HEADER_FILES
     Tool/directoryscannertask.h
     Tool/filescannerworker.h
     
-    tableview/elidedlabel.h
-    tableview/playitemwidget.h
     tableview/songdelegate.h
     tableview/sortproxymodel.h
     tableview/tableheaderview.h
