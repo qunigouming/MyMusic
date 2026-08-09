@@ -14,11 +14,11 @@ using message::LoginReq;
 using message::LoginRsp;
 using message::StatusService;
 
-class ChatServer {
+class SessionServer {
 public:
-	ChatServer() : host(""), port(""), name("") {}
-	ChatServer(const ChatServer& cs) : host(cs.host), port(cs.port), name(cs.name), con_count(cs.con_count) {}
-	ChatServer& operator=(const ChatServer& cs) {
+	SessionServer() : host(""), port(""), name("") {}
+	SessionServer(const SessionServer& cs) : host(cs.host), port(cs.port), name(cs.name), con_count(cs.con_count) {}
+	SessionServer& operator=(const SessionServer& cs) {
 		if (&cs == this) return *this;
 		host = cs.host;
 		port = cs.port;
@@ -29,7 +29,7 @@ public:
 	std::string host;
 	std::string port;
 	std::string name;
-	int con_count = 0;			//·şÎñÆ÷Á¬½ÓÊıÁ¿
+	int con_count = 0;			//æœåŠ¡å™¨è¿æ¥æ•°é‡
 };
 
 class StatusServiceImpl final : public StatusService::Service
@@ -39,9 +39,9 @@ public:
 	Status GetChatServer(ServerContext* context, const GetChatServerReq* request, GetChatServerRsp* response) override;
 	Status Login(ServerContext* context, const LoginReq* request, LoginRsp* response) override;
 private:
-	ChatServer getChatServer();			//»ñÈ¡Á¬½ÓÊı×îĞ¡µÄ·şÎñÆ÷
+	SessionServer getSessionServer();			//è·å–è¿æ¥æ•°æœ€å°çš„æœåŠ¡å™¨
 	void insertToken(int id, std::string token);
-	std::unordered_map<std::string, ChatServer> _servers;
+	std::unordered_map<std::string, SessionServer> _servers;
 	std::mutex _mutex;
 };
 

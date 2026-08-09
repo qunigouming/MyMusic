@@ -93,7 +93,7 @@ TcpManager::TcpManager(QObject *parent)
                 if (_buffer.size() < static_cast<int>(sizeof(quint16) * 2))    return;
                 stream >> _message_id >> _message_len;
                 _buffer.remove(0, sizeof(quint16)*2);          //delete id and len data
-                LOG(INFO) << "Message ID: " << _message_id << ", Length: " << _message_len;
+                LOG_EVERY_N(INFO, 10) << "Message ID: " << _message_id << ", Length: " << _message_len;
             }
 
             //数据长度不足去处理

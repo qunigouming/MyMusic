@@ -61,5 +61,6 @@ FdfsClient::~FdfsClient()
 
 std::string FdfsClient::getStorageUrl()
 {
-	return std::string("http://") + _fileinfo.storage_ip + "/" + _fileinfo.remote_filename;
+	std::string url_host = ConfigManager::GetInstance()["FDFS"]["HOST"];
+	return std::string("http://") + url_host + "/" + _fileinfo.remote_filename;
 }

@@ -17,7 +17,7 @@ StatusServiceImpl::StatusServiceImpl()
 {
 	//添加ChatServer服务器信息
 	auto& config = ConfigManager::GetInstance();
-	auto server_list = config["ChatServers"]["Name"];
+	auto server_list = config["SessionServers"]["Name"];
 	std::stringstream ss(server_list);
 	std::vector<std::string> words;
 	std::string word;
@@ -27,7 +27,7 @@ StatusServiceImpl::StatusServiceImpl()
 
 	for (auto& name : words) {
 		if (config[name]["Name"].empty())	continue;
-		ChatServer server;
+		SessionServer server;
 		server.host = config[name]["Host"];
 		server.port = config[name]["Port"];
 		server.name = config[name]["Name"];
@@ -37,7 +37,7 @@ StatusServiceImpl::StatusServiceImpl()
 
 Status StatusServiceImpl::GetChatServer(ServerContext* context, const GetChatServerReq* request, GetChatServerRsp* response)
 {
-	const auto& server = getChatServer();
+	const auto& server = getSessionServer();
 	response->set_host(server.host);
 	response->set_port(server.port);
 	response->set_token(generate_unique_token());
@@ -67,7 +67,7 @@ Status StatusServiceImpl::Login(ServerContext* context, const LoginReq* request,
 	return Status::OK;
 }
 
-ChatServer StatusServiceImpl::getChatServer()
+SessionServer StatusServiceImpl::getSessionServer()
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	auto minServer = _servers.begin()->second;
