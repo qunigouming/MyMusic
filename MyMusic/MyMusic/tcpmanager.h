@@ -45,6 +45,7 @@ signals:
     void sig_upload_file_result(int error);
     void sig_notify_off_line();
     void sig_token_invalid();
+    void sig_collect_result(int song_id, bool status, int error);   // 收藏/取消收藏结果（status=本次请求动作）
 
     void sig_song_list_page_info(std::shared_ptr<SongListPageInfo> pageinfo);
     void sig_song_list_page_songs(QList<std::shared_ptr<MusicInfo>> musiclist);

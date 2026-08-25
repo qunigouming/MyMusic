@@ -78,6 +78,16 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
+    // 收藏结果反馈：失败时弹窗并回滚心形状态（点击时是乐观更新）
+    connect(TcpManager::GetInstance().get(), &TcpManager::sig_collect_result, this,
+            [this](int songId, bool status, int error) {
+        if (error != ErrorCode::SUCCESS) {
+            QMessageBox::warning(this, "收藏", "操作失败，请重试");
+            _am_view->setSongLiked(songId, !status);
+            ui->songlistPage->getTableView()->setSongLiked(songId, !status);
+        }
+    });
+
     connect(ui->upload_Btn, &QPushButton::clicked, this, [this]() {
         qDebug() << "Upload clicked";
         UploadWidget* uploadWidget = new UploadWidget();

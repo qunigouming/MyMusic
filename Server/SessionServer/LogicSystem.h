@@ -2,6 +2,10 @@
 #include "Singleton.h"
 #include "global.h"
 #include <map>
+#include <mutex>
+#include <ctime>
+#include <filesystem>
+#include <unordered_map>
 #include "Session.h"
 #include "dataInfo.h"
 
@@ -38,5 +42,17 @@ private:
 	std::shared_ptr<Server> _server = nullptr;
 
 	Song _song;
+
+	// 音频上传 spool：客户端分片暂存（内存/临时文件），完成后 gRPC 流式转发 StorageServer
+	struct SpoolEntry {
+		std::string mem;                    // 内存缓冲（未落盘时）
+		std::filesystem::path tmp_path;     // 落盘后的临时文件路径（空表示未落盘）
+		std::string name;                   // 清洗后的文件名
+		int64_t total = 0;                  // total_size
+		int64_t received = 0;
+		std::time_t last_active = 0;
+	};
+	std::mutex _spool_mutex;
+	std::unordered_map<std::string, SpoolEntry> _spools;   // key = "uid:清洗后文件名"
 };
 

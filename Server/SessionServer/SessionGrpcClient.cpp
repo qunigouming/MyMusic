@@ -15,6 +15,8 @@ KickUserRsp SessionGrpcClient::NotifyKickUser(const std::string& server_ip, cons
     }
     auto& pool = iter->second;
     ClientContext context;
+    // 防止对端不可达时无限阻塞
+    context.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(5));
     auto stub = pool->getConnection();
     Defer conDefer([&pool, &stub] {
         pool->returnConnection(std::move(stub));

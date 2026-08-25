@@ -38,13 +38,10 @@ LoginDialog::LoginDialog(QWidget *parent)
             QMessageBox::warning(this, "连接服务器", "服务器连接失败");
         }
     });
-    connect(TcpManager::GetInstance().get(), &TcpManager::sig_login_status, [&](ErrorCode error){
-        if (error != ErrorCode::SUCCESS) {
-            QMessageBox::warning(this, "用户登录", QString("登录失败，错误码: %1").arg(error));
-            return;
-        }
-        //inform transform-window that change to mainwindow
-        emit sig_switchMainWindow();
+    // TCP 登录失败提示（原 sig_login_status 是永不触发的死信号，改用实际发射的 sig_login_failed）
+    connect(TcpManager::GetInstance().get(), &TcpManager::sig_login_failed, [&](ErrorCode error){
+        TcpManager::GetInstance()->closeConnection();   // 清残留连接/半包，便于重试
+        QMessageBox::warning(this, "用户登录", QString("登录失败，错误码: %1").arg(error));
     });
     connect(ui->savePwdCB, &QCheckBox::clicked, this, [](bool checked) {
         LocalDataManager::GetInstance()->setAutoFillIn(checked);

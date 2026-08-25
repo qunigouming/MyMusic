@@ -56,6 +56,12 @@ UploadWidget::UploadWidget(QWidget *parent)
             QMessageBox::warning(this, tr("上传失败"), tr("请先选择要上传的音频文件。"));
             return;
         }
+        // 防御：token 为空时服务器必然拒绝，直接提示，避免无反馈的失败
+        if (UserManager::GetInstance()->getToken().isEmpty()) {
+            qWarning() << "upload aborted: session token is empty";
+            QMessageBox::warning(this, tr("上传失败"), tr("登录状态异常，请重新登录后再上传。"));
+            return;
+        }
         ShowUploadProgressDialog();
 		// 先发送标签数据给服务器，再在回调中发送文件数据
 		QPixmap cover = ui->select_cover_lab->pixmap();

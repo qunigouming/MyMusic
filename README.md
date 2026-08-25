@@ -17,7 +17,7 @@ MyMusic 是一款基于分布式服务器架构的音乐播放系统，参考网
 - **通信协议**: gRPC (服务间通信)、HTTP/WebSocket (客户端接入)
 - **数据存储**: MySQL + Redis
 - **异步 I/O**: Boost.Asio
-- **文件存储**: FastDFS (封面图片) + 本地磁盘 (音频文件)
+- **文件存储**: FastDFS（封面 + 音频，流式上传）
 
 ## 核心功能
 
@@ -40,7 +40,7 @@ MyMusic 是一款基于分布式服务器架构的音乐播放系统，参考网
 | SessionServer | TCP 8090 / gRPC 50055 | 用户会话管理、登录/登出、心跳、歌单操作、文件上传（多实例时每实例端口不同） |
 | VerifyServer | gRPC 50051 | 邮箱验证码生成与验证、用户注册验证 |
 | StatusServer | gRPC 50052 | 系统监控、服务健康检查、登录计数、SessionServer 分配 |
-| StorageServer | gRPC 50100 | 文件存储、图片流式上传（对接 FastDFS） |
+| StorageServer | gRPC 50100 | 文件存储、图片/音频流式上传（对接 FastDFS，服务间共享密钥鉴权） |
 
 ### 会话认证
 - **双 token 机制**: 登录前由 GateServer 签发一次性握手 token（防重放，登录校验后即焚）；登录成功后服务器签发会话 token（Redis `utoken_<uid>`，TTL 30 分钟）
@@ -237,8 +237,11 @@ Port=6380
 Passwd=123456
 [Store]
 CoverPath=D:/Procedure/COS/Picture/
-RemotePath=http://storage.local/audio/    ; 音频 URL 前缀，会写入 song.file_url
-MusicPath=D:/Procedure/COS/Music/         ; 音频文件落盘目录（需同步到 Linux /home/main/music/）
+RemotePath=http://storage.local/audio/    ; 已废弃（旧数据兼容），新上传音频的 URL 来自 FastDFS storage_url
+MusicPath=D:/Procedure/COS/Music/         ; 仅作 SpoolPath 缺失时的回退目录
+SpoolPath=D:/Procedure/COS/Spool/         ; 音频分片暂存目录（≤8MB 内存缓冲，超过落盘此处）
+[Auth]
+Secret=dev-secret-change-me               ; 服务间共享密钥（与 StorageServer 一致）
 ```
 
 StatusServer 配置 (`Server/StatusServer/config.ini`):
@@ -268,6 +271,19 @@ Port=50056
 - **会话 token**：登录成功后签发，Redis `utoken_<uid>`（TTL 30 分钟），客户端所有请求携带，服务器各 handler 校验
 - **心跳续期**：心跳校验通过后刷新 TTL；TCP 断线（60 秒无消息）清理时同步删除 token
 - **连接绑定**：TCP 登录后 session 与 uid 绑定，请求中的 uid 与会话不一致即拒绝（防伪造他人身份）
+- **服务间鉴权**：SessionServer → StorageServer 的上传通过 gRPC metadata 携带共享密钥（`[Auth] Secret`，两端配置一致），StorageServer 校验不通过返回 `UNAUTHENTICATED`
+- **gRPC 超时**：所有服务间调用均设置 deadline（普通 RPC 5s、流式上传 60s、音频上传 300s），对端不可达时快速失败而非无限阻塞
+
+## 上传链路
+
+```
+客户端 --TCP 分片(32KB base64)--> SessionServer（校验会话 token，spool 暂存 ≤8MB 内存/超出落盘 SpoolPath）
+    -- 完成后 --gRPC 流式(256KB 分块)--> StorageServer --FastDFS 回调流式--> 存储
+    --> 返回 storage_url → song.file_url = http://storage.local/group1/M00/... → 入库
+```
+
+- 旧音频数据（`song.file_url` 为 `http://storage.local/audio/...`）继续由 Linux nginx `/audio/` 服务，与新数据双链路并存，无需迁移
+- 所有 gRPC 调用均带超时；StorageServer 内存占用 O(1)（边收流边写 FastDFS，无整包缓冲）
 
 ## 关键设计模式
 

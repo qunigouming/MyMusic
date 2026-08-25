@@ -6,6 +6,8 @@
 #include "message.pb.h"
 #include <queue>
 #include <memory>
+#include <functional>
+#include <string>
 
 using grpc::Channel;
 using grpc::Status;
@@ -71,11 +73,15 @@ public:
 	~StorageGrpcClient() = default;
 	UploadImageResponse UploadImage(std::string file_name, std::string file_data);
 	UploadImageResponse UploadImage(std::string file_name, std::string file_data, std::string mime_type);
+	// 流式上传音频等大文件：read_cb 返回 0 表示 EOF
+	using ReadCallback = std::function<size_t(char* buf, size_t max_len)>;
+	UploadImageResponse UploadAudio(const std::string& file_name, int64_t file_size, const ReadCallback& read_cb);
 
 private:
     StorageGrpcClient();
 
 private:
 	std::unique_ptr<StorageConPool> _pool;
+	std::string _auth_secret;   // 服务间共享密钥，随请求通过 gRPC metadata 传递
 };
 

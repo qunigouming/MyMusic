@@ -372,6 +372,20 @@ void TcpManager::initHandler()
 
         emit sig_song_list_page_songs(musicList);
     });
+    _handlers.insert(ID_COLLECT_SONG_RSP, [this](ReqID id, int len, QByteArray data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        if (jsonDoc.isNull()) {
+            LOG(ERROR) << "Failed to create QJsonDocument.";
+            return;
+        }
+        QJsonObject jsonObj = jsonDoc.object();
+        int err = jsonObj["error"].toInt(ErrorCode::ERR_JSON);
+        if (err == ErrorCode::TokenInvalid) {
+            emit sig_token_invalid();
+            return;
+        }
+        emit sig_collect_result(jsonObj["song_id"].toInt(), jsonObj["status"].toBool(), err);
+    });
 }
 
 void TcpManager::handleMsg(ReqID id, int len, QByteArray data)

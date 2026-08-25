@@ -70,6 +70,8 @@ class VerifyGrpcClient : public Singleton<VerifyGrpcClient>
 public:
 	GetVerifyRsp GetVerifyCode(std::string email, VerifyPurpose purpose = VerifyPurpose::REGISTER) {
 		ClientContext context;
+		// 防止对端不可达时无限阻塞
+		context.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(5));
 		GetVerifyRsp reply;
 		GetVerifyReq request;
 		request.set_email(email);

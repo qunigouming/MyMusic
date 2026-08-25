@@ -18,8 +18,10 @@ void HttpConnection::Start()
 			}
 
 			boost::ignore_unused(byte_transferred);
+			// 先启动超时定时器再处理请求：HandleRequest 是同步调用，若 handler 阻塞
+			// （如 gRPC 对端不可达），60 秒后 socket 会被关闭，避免连接永久悬挂
+			self->CheckDeadline();
 			self->HandleRequest();
-			self->CheckDeadline();			// ʼ鳬ʱ
 		}
 		catch (std::exception& exp) {
 			LOG(ERROR) << "exception is " << exp.what();

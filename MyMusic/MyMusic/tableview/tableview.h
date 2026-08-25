@@ -24,6 +24,9 @@ public:
 
     SongInfo getSongInfoByProxyRow(int proxyRow) const;
 
+    // 按歌曲 id 设置喜欢状态（收藏失败回滚用）
+    void setSongLiked(int songId, bool liked);
+
 signals:
     void allSongsAdded();       // 添加完成信号
     void rowDoubleClicked(const SongInfo& path);

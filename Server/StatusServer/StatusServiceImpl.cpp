@@ -38,6 +38,11 @@ StatusServiceImpl::StatusServiceImpl()
 Status StatusServiceImpl::GetChatServer(ServerContext* context, const GetChatServerReq* request, GetChatServerRsp* response)
 {
 	const auto& server = getSessionServer();
+	// 配置缺失/解析失败时 _servers 为空，避免下发空地址
+	if (server.host.empty()) {
+		response->set_error(ErrorCodes::RPCFailed);
+		return Status::OK;
+	}
 	response->set_host(server.host);
 	response->set_port(server.port);
 	response->set_token(generate_unique_token());
@@ -70,6 +75,10 @@ Status StatusServiceImpl::Login(ServerContext* context, const LoginReq* request,
 SessionServer StatusServiceImpl::getSessionServer()
 {
 	std::lock_guard<std::mutex> lock(_mutex);
+	// 空 map 时 begin()==end()，解引用是 UB，先判空
+	if (_servers.empty()) {
+		return SessionServer();
+	}
 	auto minServer = _servers.begin()->second;
 	//auto con_count = RedisManager::GetInstance()->HGet(LOGINCOUNT, minServer.name);
 	////不存在默认最大值

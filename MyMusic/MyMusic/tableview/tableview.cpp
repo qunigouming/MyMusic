@@ -193,6 +193,18 @@ SongInfo TableView::getSongInfoByProxyRow(int proxyRow) const
     return _model->songAt(sourceIndex.row());
 }
 
+void TableView::setSongLiked(int songId, bool liked)
+{
+    if (!_proxyModel || !_model)    return;
+    for (int r = 0; r < _proxyModel->rowCount(); ++r) {
+        QModelIndex srcIdx = _proxyModel->mapToSource(_proxyModel->index(r, 3));
+        if (srcIdx.isValid() && _model->songAt(srcIdx.row()).id == songId) {
+            _model->setData(_model->index(srcIdx.row(), 3), liked, Qt::EditRole);
+            return;
+        }
+    }
+}
+
 void TableView::mouseMoveEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());

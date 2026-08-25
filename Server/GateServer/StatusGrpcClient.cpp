@@ -1,9 +1,12 @@
 #include "StatusGrpcClient.h"
 #include "ConfigManager.h"
+#include <chrono>
 
 GetChatServerRsp StatusGrpcClient::GetChatServer(int id)
 {
 	ClientContext context;
+	// 防止对端不可达时无限阻塞（曾导致 /get_server 卡死）
+	context.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(5));
 	GetChatServerReq request;
 	GetChatServerRsp reply;
 	request.set_id(id);

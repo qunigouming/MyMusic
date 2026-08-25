@@ -10,6 +10,11 @@
 #include <iomanip>
 #include <openssl/md5.h>
 #include <filesystem>
+#include <ctime>
+#include <algorithm>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include "UserManager.h"
 #include "Server.h"
 #include "SessionGrpcClient.h"
@@ -18,6 +23,27 @@
 #include "Common/Tools/ImgFmtInspector/ImgFmtInspector.h"
 
 #define DEBUG_TEST_UPLOAD_FILE_FUNCTION
+
+namespace {
+
+// 音频 spool 参数：8MB 以内内存缓冲，超过落盘临时文件；10 分钟未活动视为断传
+const int64_t SPOOL_MEM_THRESHOLD = 8 * 1024 * 1024;
+const int SPOOL_STALE_SECONDS = 600;
+
+// UploadAudio 读取回调的状态：先读内存缓冲，再读临时文件
+struct SpoolReadState {
+	std::string mem;
+	size_t mem_off = 0;
+	std::ifstream ifs;
+};
+
+// 生成会话 token（UUID 随机串，与 StatusServer 握手 token 同风格）
+std::string generate_session_token() {
+	boost::uuids::uuid uuid = boost::uuids::random_generator()();
+	return boost::uuids::to_string(uuid);
+}
+
+} // namespace
 
 std::string decode_base64(const std::string& val) {
 	if (val.empty())	return "";
@@ -36,7 +62,12 @@ std::string decode_base64(const std::string& val) {
 	std::replace(tmp.begin(), tmp.end(), '_', '/');
 
 	// 解码
-	return std::string(It(tmp.begin()), It(tmp.end()));
+	std::string out(It(tmp.begin()), It(tmp.end()));
+	// transform_width 会把 '=' 填充位的残留比特也解成多余字节（每分片多 1 字节，
+	// 导致上传文件每 32KB 错位），按有效字符数截断到正确长度
+	size_t valid_chars = std::count_if(tmp.begin(), tmp.end(), [](char c) { return c != '='; });
+	out.resize(valid_chars * 3 / 4);
+	return out;
 }
 
 LogicSystem::~LogicSystem()
@@ -120,7 +151,7 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 	reader.parse(msg_data, root);
 	auto uid = root["uid"].asInt();
 	auto token = root["token"].asString();
-	LOG(INFO) << "user login uid is " << uid << "user token is " << token;
+	LOG(INFO) << "user login uid is " << uid;
 	Json::Value rspJson;
 	Defer defer([this, &rspJson, session] {
 		std::string str = rspJson.toStyledString();
@@ -229,6 +260,13 @@ void LogicSystem::LoginHandler(std::shared_ptr<Session> session, const short& ms
 
 	// 更新连接数
     RedisManager::GetInstance()->IncreaseCount(server_name);
+
+	// 签发会话token（30分钟过期，心跳续期）——校验半边已有，签发半边此前缺失
+	auto new_token = generate_session_token();
+	auto session_token_key = USERTOKENPREFIX + uid_str;
+	RedisManager::GetInstance()->Set(session_token_key, new_token);
+	RedisManager::GetInstance()->Expire(session_token_key, TOKEN_EXPIRE_TIME);
+	rspJson["token"] = new_token;
 	return;
 }
 
@@ -271,58 +309,155 @@ void LogicSystem::UploadFileHandler(std::shared_ptr<Session> session, const shor
 		retValue["error"] = ErrorCodes::TokenInvalid;
 		return;
 	}
-	auto client_md5 = root["md5"].asString();
 
-	// 将文件保存
+	try {
 	auto data = root["data"].asString();
-
 	std::string decoded = decode_base64(data);
 	auto seq = root["seq"].asInt();
 	auto name = root["name"].asString();
 	auto total_size = root["total_size"].asInt();
 	auto trans_size = root["trans_size"].asInt();
-	std::filesystem::path file_path = std::filesystem::path(ConfigManager::GetInstance()["Store"]["MusicPath"]) / std::filesystem::u8path(name);
-	//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	//std::wstring wide_path = converter.from_bytes(file_path);
-	LOG(INFO) << "file path is " << file_path;
-	std::ofstream outfile;
+
+	// spool 键：uid + 清洗后的文件名（清洗防路径穿越）
+	std::string safe_name = name;
+	for (auto& ch : safe_name) {
+		if (ch == '/' || ch == '\\' || ch == ':') ch = '_';
+	}
+	std::string spool_key = std::to_string(uid) + ":" + safe_name;
+
+	std::unique_lock<std::mutex> lock(_spool_mutex);
+	auto now = std::time(nullptr);
+
 	if (seq == 1) {
-		outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
+		// 新上传：清扫断传的过期条目，并清理同名旧条目
+		for (auto it = _spools.begin(); it != _spools.end();) {
+			if (now - it->second.last_active > SPOOL_STALE_SECONDS || it->first == spool_key) {
+				if (!it->second.tmp_path.empty()) {
+					std::error_code ec;
+					std::filesystem::remove(it->second.tmp_path, ec);
+				}
+				it = _spools.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+		SpoolEntry entry;
+		entry.name = safe_name;
+		entry.total = total_size;
+		entry.last_active = now;
+		_spools[spool_key] = std::move(entry);
+	}
+
+	auto it = _spools.find(spool_key);
+	if (it == _spools.end()) {
+		retValue["error"] = ErrorCodes::EtherInvalid;
+		return;
+	}
+	SpoolEntry& entry = it->second;
+	entry.last_active = now;
+	entry.received += static_cast<int64_t>(decoded.size());
+
+	// 追加分片：优先内存缓冲，超阈值落盘临时文件
+	if (entry.tmp_path.empty() && static_cast<int64_t>(entry.mem.size() + decoded.size()) <= SPOOL_MEM_THRESHOLD) {
+		entry.mem += decoded;
 	}
 	else {
-        outfile.open(file_path, std::ios::out | std::ios::binary | std::ios::app);
+		if (entry.tmp_path.empty()) {
+			auto spool_dir = ConfigManager::GetInstance()["Store"]["SpoolPath"];
+			if (spool_dir.empty()) {
+				spool_dir = ConfigManager::GetInstance()["Store"]["MusicPath"];
+			}
+			// 临时文件名不能含 ':'（spool_key 的 uid 分隔符是 Windows 非法字符，曾导致崩溃）
+			std::string tmp_name = std::to_string(uid) + "_" + safe_name + ".tmp";
+			// 用 u8path 按 UTF-8 解释文件名，避免含非 GBK 字符（emoji 等）时 ANSI 转换抛异常
+			entry.tmp_path = std::filesystem::path(spool_dir) / std::filesystem::u8path(tmp_name);
+		}
+		std::ofstream outfile(entry.tmp_path, std::ios::out | std::ios::binary | std::ios::app);
+		if (!outfile) {
+			LOG(ERROR) << "open spool file failed: " << entry.tmp_path;
+			retValue["error"] = ErrorCodes::EtherInvalid;
+			return;
+		}
+		if (!entry.mem.empty()) {
+			outfile.write(entry.mem.c_str(), static_cast<std::streamsize>(entry.mem.size()));
+			entry.mem.clear();
+		}
+		outfile.write(decoded.c_str(), static_cast<std::streamsize>(decoded.size()));
+		if (!outfile) {
+			LOG(ERROR) << "write spool file failed";
+			retValue["error"] = ErrorCodes::EtherInvalid;
+			return;
+		}
+		outfile.close();
 	}
 
-	if (!outfile) {
-		LOG(ERROR) << "open file failed";
-		retValue["error"] = ErrorCodes::EtherInvalid;
-		return;
-	}
-	outfile.write(decoded.c_str(), decoded.size());
-	if (!outfile) {
-		LOG(ERROR) << "write file failed";
-		retValue["error"] = ErrorCodes::EtherInvalid;
-		return;
-	}
-
-	outfile.close();
-	LOG(INFO) << "file upload success";
+	LOG(INFO) << "file upload progress: " << trans_size << "/" << total_size;
     retValue["error"] = ErrorCodes::Success;
     retValue["seq"] = seq;
 	retValue["name"] = name;
     retValue["total_size"] = total_size;
 	retValue["trans_size"] = trans_size;
-	LOG(INFO) << "file upload progress: " << trans_size << "/" << total_size;
+
+	// 最后一片：构造读取回调，gRPC 流式转发 StorageServer → FastDFS
 	if (total_size == trans_size) {
-		LOG(INFO) << "file upload complete";
-		_song.file_url = ConfigManager::GetInstance()["Store"]["RemotePath"] + name;
+		LOG(INFO) << "file upload complete, forwarding to StorageServer: " << spool_key;
+		SpoolEntry finished = std::move(entry);
+		_spools.erase(it);
+		// 网络 IO 不在锁内进行
+		lock.unlock();
+
+		auto state = std::make_shared<SpoolReadState>();
+		state->mem = std::move(finished.mem);
+		if (!finished.tmp_path.empty()) {
+			state->ifs.open(finished.tmp_path, std::ios::binary);
+		}
+		StorageGrpcClient::ReadCallback read_cb = [state](char* buf, size_t max_len) -> size_t {
+			if (state->mem_off < state->mem.size()) {
+				size_t got = std::min(max_len, state->mem.size() - state->mem_off);
+				memcpy(buf, state->mem.data() + state->mem_off, got);
+				state->mem_off += got;
+				return got;
+			}
+			if (state->ifs.is_open()) {
+				state->ifs.read(buf, static_cast<std::streamsize>(max_len));
+				return static_cast<size_t>(state->ifs.gcount());
+			}
+			return 0;
+		};
+
+		auto response = StorageGrpcClient::GetInstance()->UploadAudio(finished.name, finished.total, read_cb);
+
+		// 清理临时文件（先关流再删，Windows 上打开的文件无法删除）
+		if (state->ifs.is_open()) {
+			state->ifs.close();
+		}
+		if (!finished.tmp_path.empty()) {
+			std::error_code ec;
+			std::filesystem::remove(finished.tmp_path, ec);
+		}
+
+		if (response.error() != ErrorCodes::Success) {
+			LOG(ERROR) << "UploadAudio to StorageServer failed";
+			retValue["error"] = ErrorCodes::EtherInvalid;
+			return;
+		}
+		_song.file_url = response.storage_url();
 		try {
 			MysqlManager::GetInstance()->getOrCreateSong(_song);
 		}
 		catch (std::exception& e) {
 			LOG(ERROR) << "Exception: " << e.what();
+			retValue["error"] = ErrorCodes::EtherInvalid;
+			return;
 		}
 		_song.Clear();
+	}
+	}
+	catch (std::exception& e) {
+		// 任何 spool/转发异常都回错误响应，避免工作线程崩溃
+		LOG(ERROR) << "UploadFileHandler exception: " << e.what();
+		retValue["error"] = ErrorCodes::EtherInvalid;
 	}
 }
 
@@ -454,6 +589,9 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
 
     Json::Value retValue;
     retValue["error"] = ErrorCodes::Success;
+    // 回显请求字段，客户端在失败时能准确回滚心形状态
+    retValue["song_id"] = root["song_id"].asInt();
+    retValue["status"] = root["status"].asBool();
     Defer defer([this, &retValue, session] {
 		std::string str = retValue.toStyledString();
 		session->Send(str, ID_COLLECT_SONG_RSP);
@@ -471,31 +609,37 @@ void LogicSystem::CollectSongHandler(std::shared_ptr<Session> session, const sho
 	if (root["flag"].asBool()) {
 		// 其他类型歌单
 	}
-	
-	// 默认歌单处理
-	if (root["status"].asBool()) {
-		// 添加收藏歌曲		每次用最新添加的歌曲来当作cover
-		Playlist playlist;
-		playlist.name = "喜欢的音乐";
-		playlist.is_default = true;
-		playlist.description = "";
-		playlist.user_id = session->GetUserUid();
-		playlist.cover_url_id = MysqlManager::GetInstance()->getCoverUrlId(root["song_id"].asInt());
-		MysqlManager::GetInstance()->getOrCreatePlaylist(playlist);			// 创建歌单
 
-		// 添加歌曲
-		PlaylistSong playlist_song;
-		playlist_song.playlist_name = "喜欢的音乐";
-		playlist_song.song_id = root["song_id"].asInt();
-        playlist_song.user_id = session->GetUserUid();
-		playlist_song.position = 0;			// 默认添加到最后
-		MysqlManager::GetInstance()->createPlaylistSong(playlist_song);
-		LOG(INFO) << "收藏歌曲" << root["song_id"].asInt() << "成功";
+	try {
+		// 默认歌单处理
+		if (root["status"].asBool()) {
+			// 添加收藏歌曲		每次用最新添加的歌曲来当作cover
+			Playlist playlist;
+			playlist.name = "喜欢的音乐";
+			playlist.is_default = true;
+			playlist.description = "";
+			playlist.user_id = session->GetUserUid();
+			playlist.cover_url_id = MysqlManager::GetInstance()->getCoverUrlId(root["song_id"].asInt());
+			MysqlManager::GetInstance()->getOrCreatePlaylist(playlist);			// 创建歌单
+
+			// 添加歌曲
+			PlaylistSong playlist_song;
+			playlist_song.playlist_name = "喜欢的音乐";
+			playlist_song.song_id = root["song_id"].asInt();
+	        playlist_song.user_id = session->GetUserUid();
+			playlist_song.position = 0;			// 默认添加到最后
+			MysqlManager::GetInstance()->createPlaylistSong(playlist_song);
+			LOG(INFO) << "收藏歌曲" << root["song_id"].asInt() << "成功";
+		}
+		else {
+			// 取消收藏歌曲
+	        MysqlManager::GetInstance()->deletePlaylistSong(session->GetUserUid(), "喜欢的音乐", root["song_id"].asInt());
+	        LOG(INFO) << "取消收藏歌曲" << root["song_id"].asInt() << "成功";
+		}
 	}
-	else {
-		// 取消收藏歌曲
-        MysqlManager::GetInstance()->deletePlaylistSong(session->GetUserUid(), "喜欢的音乐", root["song_id"].asInt());
-        LOG(INFO) << "取消收藏歌曲" << root["song_id"].asInt() << "成功";
+	catch (std::exception& e) {
+		LOG(ERROR) << "collect song exception: " << e.what();
+		retValue["error"] = ErrorCodes::EtherInvalid;
 	}
 }
 

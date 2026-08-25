@@ -24,7 +24,8 @@ struct UploadSession {
 	std::string mime_type;
 	int64_t expected_size;
 	int64_t received_size;
-	std::vector<char> buffer;
+	grpc::ServerReader<UploadImageRequest>* reader = nullptr;   // 流式上传回调上下文：从 gRPC 流取数据
+	bool ok = true;                                             // 回调中置 false 表示流异常中止
 };
 
 class StorageServiceImpl final : public StorageService::Service
